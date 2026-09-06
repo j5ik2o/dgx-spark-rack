@@ -21,6 +21,7 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 | `scripts/check_stl.py` | 書き出したSTLの形状検査 |
 | `comparison/freecad/` | FreeCADへの移行試験用データと比較結果 |
 | `comparison/freecad-native-crossbar/` | FreeCADで作り直した履歴付き支持棒と検査記録 |
+| `comparison/freecad-native-sideplate/` | FreeCADで作り直した履歴付き左側板と検査記録 |
 
 旧モデルと初期生成用データは削除しました。比較用のCADデータを作る場合も、設計マスターとは分けて扱います。
 
@@ -31,3 +32,5 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 [CAD比較](docs/CAD比較.md)に、形状の一致、引き継げない設計履歴、読み込み時間、macOSのクラッシュをまとめています。
 
 [FreeCAD支持棒の評価](docs/FreeCAD支持棒の評価.md)では、支持棒1種類を履歴付きで作り直し、寸法変更と保存後の再編集を確認しています。
+
+[FreeCAD側板の評価](docs/FreeCAD側板の評価.md)では、窓・差込口・固定穴・丸みを含む左側板を再構築し、7種類の寸法変更と再編集を確認しています。

@@ -1,0 +1,2155 @@
+{
+  "status": "passed",
+  "evaluation_only": true,
+  "freecad_version": [
+    "1",
+    "1",
+    "3",
+    "20260725 (Git shallow)",
+    "Unknown",
+    "2026/07/25 04:52:02",
+    "grafted,grafted",
+    "145529fe741292ff0b3977a01195bf0247425794"
+  ],
+  "source_f3d_sha256": "0cdc90280bd4355aad2649bd557033832fefabf2ca7fc33afdc331bd8089d869",
+  "baseline": {
+    "inputs_mm": {
+      "ModuleWidth": 210.0,
+      "ModuleDepth": 230.0,
+      "FrameHeight": 170.0,
+      "SideThickness": 12.0,
+      "FitClearance": 0.3,
+      "SupportTop": 60.0,
+      "DgxFront": 60.0,
+      "DgxDepth": 150.0,
+      "FanDepth": 27.0,
+      "PinDiameter": 4.0,
+      "LocatorDiameter": 6.0,
+      "WindowRadius": 3.0,
+      "NutAF": 7.0
+    },
+    "dimensions_mm": [
+      12.000000000001478,
+      192.00000000000168,
+      170.00000000000227
+    ],
+    "volume_mm3": 183297.4232966335,
+    "fully_constrained_sketches": 10,
+    "window_corner_radii_mm": [
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+    ],
+    "solid_valid_closed": true,
+    "independent_geometry_comparison": {
+      "added_volume_mm3": 0.0,
+      "missing_volume_mm3": 0.0,
+      "tolerance_mm3": 0.0001
+    },
+    "object_states": {
+      "Parameters": [
+        "Up-to-date"
+      ],
+      "Sideplate": [
+        "Up-to-date"
+      ],
+      "Origin": [
+        "Up-to-date"
+      ],
+      "X_Axis": [
+        "Up-to-date"
+      ],
+      "Y_Axis": [
+        "Up-to-date"
+      ],
+      "Z_Axis": [
+        "Up-to-date"
+      ],
+      "XY_Plane": [
+        "Up-to-date"
+      ],
+      "XZ_Plane": [
+        "Up-to-date"
+      ],
+      "YZ_Plane": [
+        "Up-to-date"
+      ],
+      "Origin001": [
+        "Up-to-date"
+      ],
+      "PlateOutline": [
+        "Up-to-date"
+      ],
+      "PlatePad": [
+        "Up-to-date"
+      ],
+      "WindowProfiles": [
+        "Up-to-date"
+      ],
+      "WindowCut": [
+        "Up-to-date"
+      ],
+      "WindowFillet": [
+        "Up-to-date"
+      ],
+      "SocketProfiles": [
+        "Up-to-date"
+      ],
+      "SocketCut": [
+        "Up-to-date"
+      ],
+      "LowerPinProfiles": [
+        "Up-to-date"
+      ],
+      "LowerPinCut": [
+        "Up-to-date"
+      ],
+      "UpperPinProfile": [
+        "Up-to-date"
+      ],
+      "UpperPinCut": [
+        "Up-to-date"
+      ],
+      "BottomLocatorProfiles": [
+        "Up-to-date"
+      ],
+      "BottomLocatorCut": [
+        "Up-to-date"
+      ],
+      "TopLocatorProfiles": [
+        "Up-to-date"
+      ],
+      "TopLocatorCut": [
+        "Up-to-date"
+      ],
+      "CassetteSocketProfile": [
+        "Up-to-date"
+      ],
+      "CassetteSocketCut": [
+        "Up-to-date"
+      ],
+      "ScrewProfile": [
+        "Up-to-date"
+      ],
+      "ScrewCut": [
+        "Up-to-date"
+      ],
+      "NutProfile": [
+        "Up-to-date"
+      ],
+      "NutCut": [
+        "Up-to-date"
+      ]
+    }
+  },
+  "fusion_boolean_comparison": {
+    "added_volume_mm3": 0.0,
+    "missing_volume_mm3": 0.0,
+    "tolerance_mm3": 0.0001
+  },
+  "parameter_changes": [
+    {
+      "parameter": "FrameHeight",
+      "value": "174 mm",
+      "recompute_seconds": 0.9784817090258002,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 174.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001492,
+          192.00000000000168,
+          174.00000000000227
+        ],
+        "volume_mm3": 185217.4232966336,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "ModuleDepth",
+      "value": "234 mm",
+      "recompute_seconds": 0.8530705838929862,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 234.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001492,
+          196.0000000000017,
+          170.0000000000023
+        ],
+        "volume_mm3": 186177.4232966336,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "FitClearance",
+      "value": "0.4 mm",
+      "recompute_seconds": 0.8758555420208722,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.4,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001478,
+          192.00000000000168,
+          170.00000000000227
+        ],
+        "volume_mm3": 182923.44980226105,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "WindowRadius",
+      "value": "4 mm",
+      "recompute_seconds": 0.7868184170220047,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 4.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001478,
+          192.00000000000168,
+          170.00000000000227
+        ],
+        "volume_mm3": 183441.55538954455,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "SupportTop",
+      "value": "64 mm",
+      "recompute_seconds": 0.8841698749456555,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 64.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001478,
+          192.00000000000168,
+          170.00000000000227
+        ],
+        "volume_mm3": 183297.42329663353,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "SideThickness",
+      "value": "14 mm",
+      "recompute_seconds": 0.8855113328900188,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 14.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          14.00000000000152,
+          192.00000000000168,
+          170.0000000000023
+        ],
+        "volume_mm3": 214105.365961105,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "ModuleWidth",
+      "value": "214 mm",
+      "recompute_seconds": 0.8387796669267118,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 214.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001506,
+          192.0000000000017,
+          170.00000000000233
+        ],
+        "volume_mm3": 183297.4232966336,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    }
+  ],
+  "restored_geometry": {
+    "inputs_mm": {
+      "ModuleWidth": 210.0,
+      "ModuleDepth": 230.0,
+      "FrameHeight": 170.0,
+      "SideThickness": 12.0,
+      "FitClearance": 0.3,
+      "SupportTop": 60.0,
+      "DgxFront": 60.0,
+      "DgxDepth": 150.0,
+      "FanDepth": 27.0,
+      "PinDiameter": 4.0,
+      "LocatorDiameter": 6.0,
+      "WindowRadius": 3.0,
+      "NutAF": 7.0
+    },
+    "dimensions_mm": [
+      12.000000000001478,
+      192.00000000000168,
+      170.00000000000227
+    ],
+    "volume_mm3": 183297.42329663358,
+    "fully_constrained_sketches": 10,
+    "window_corner_radii_mm": [
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+    ],
+    "solid_valid_closed": true,
+    "independent_geometry_comparison": {
+      "added_volume_mm3": 0.0,
+      "missing_volume_mm3": 0.0,
+      "tolerance_mm3": 0.0001
+    },
+    "object_states": {
+      "Parameters": [
+        "Up-to-date"
+      ],
+      "Sideplate": [
+        "Up-to-date"
+      ],
+      "Origin": [
+        "Up-to-date"
+      ],
+      "X_Axis": [
+        "Up-to-date"
+      ],
+      "Y_Axis": [
+        "Up-to-date"
+      ],
+      "Z_Axis": [
+        "Up-to-date"
+      ],
+      "XY_Plane": [
+        "Up-to-date"
+      ],
+      "XZ_Plane": [
+        "Up-to-date"
+      ],
+      "YZ_Plane": [
+        "Up-to-date"
+      ],
+      "Origin001": [
+        "Up-to-date"
+      ],
+      "PlateOutline": [
+        "Up-to-date"
+      ],
+      "PlatePad": [
+        "Up-to-date"
+      ],
+      "WindowProfiles": [
+        "Up-to-date"
+      ],
+      "WindowCut": [
+        "Up-to-date"
+      ],
+      "WindowFillet": [
+        "Up-to-date"
+      ],
+      "SocketProfiles": [
+        "Up-to-date"
+      ],
+      "SocketCut": [
+        "Up-to-date"
+      ],
+      "LowerPinProfiles": [
+        "Up-to-date"
+      ],
+      "LowerPinCut": [
+        "Up-to-date"
+      ],
+      "UpperPinProfile": [
+        "Up-to-date"
+      ],
+      "UpperPinCut": [
+        "Up-to-date"
+      ],
+      "BottomLocatorProfiles": [
+        "Up-to-date"
+      ],
+      "BottomLocatorCut": [
+        "Up-to-date"
+      ],
+      "TopLocatorProfiles": [
+        "Up-to-date"
+      ],
+      "TopLocatorCut": [
+        "Up-to-date"
+      ],
+      "CassetteSocketProfile": [
+        "Up-to-date"
+      ],
+      "CassetteSocketCut": [
+        "Up-to-date"
+      ],
+      "ScrewProfile": [
+        "Up-to-date"
+      ],
+      "ScrewCut": [
+        "Up-to-date"
+      ],
+      "NutProfile": [
+        "Up-to-date"
+      ],
+      "NutCut": [
+        "Up-to-date"
+      ]
+    }
+  },
+  "reopened_baseline": {
+    "inputs_mm": {
+      "ModuleWidth": 210.0,
+      "ModuleDepth": 230.0,
+      "FrameHeight": 170.0,
+      "SideThickness": 12.0,
+      "FitClearance": 0.3,
+      "SupportTop": 60.0,
+      "DgxFront": 60.0,
+      "DgxDepth": 150.0,
+      "FanDepth": 27.0,
+      "PinDiameter": 4.0,
+      "LocatorDiameter": 6.0,
+      "WindowRadius": 3.0,
+      "NutAF": 7.0
+    },
+    "dimensions_mm": [
+      12.000000000001293,
+      192.00000000000122,
+      170.00000000000128
+    ],
+    "volume_mm3": 183297.42329663297,
+    "fully_constrained_sketches": 10,
+    "window_corner_radii_mm": [
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0,
+      3.0
+    ],
+    "solid_valid_closed": true,
+    "independent_geometry_comparison": {
+      "added_volume_mm3": 0.0,
+      "missing_volume_mm3": 0.0,
+      "tolerance_mm3": 0.0001
+    },
+    "object_states": {
+      "Parameters": [
+        "Up-to-date"
+      ],
+      "Sideplate": [
+        "Up-to-date"
+      ],
+      "Origin": [
+        "Up-to-date"
+      ],
+      "X_Axis": [
+        "Up-to-date"
+      ],
+      "Y_Axis": [
+        "Up-to-date"
+      ],
+      "Z_Axis": [
+        "Up-to-date"
+      ],
+      "XY_Plane": [
+        "Up-to-date"
+      ],
+      "XZ_Plane": [
+        "Up-to-date"
+      ],
+      "YZ_Plane": [
+        "Up-to-date"
+      ],
+      "Origin001": [
+        "Up-to-date"
+      ],
+      "PlateOutline": [
+        "Up-to-date"
+      ],
+      "PlatePad": [
+        "Up-to-date"
+      ],
+      "WindowProfiles": [
+        "Up-to-date"
+      ],
+      "WindowCut": [
+        "Up-to-date"
+      ],
+      "WindowFillet": [
+        "Up-to-date"
+      ],
+      "SocketProfiles": [
+        "Up-to-date"
+      ],
+      "SocketCut": [
+        "Up-to-date"
+      ],
+      "LowerPinProfiles": [
+        "Up-to-date"
+      ],
+      "LowerPinCut": [
+        "Up-to-date"
+      ],
+      "UpperPinProfile": [
+        "Up-to-date"
+      ],
+      "UpperPinCut": [
+        "Up-to-date"
+      ],
+      "BottomLocatorProfiles": [
+        "Up-to-date"
+      ],
+      "BottomLocatorCut": [
+        "Up-to-date"
+      ],
+      "TopLocatorProfiles": [
+        "Up-to-date"
+      ],
+      "TopLocatorCut": [
+        "Up-to-date"
+      ],
+      "CassetteSocketProfile": [
+        "Up-to-date"
+      ],
+      "CassetteSocketCut": [
+        "Up-to-date"
+      ],
+      "ScrewProfile": [
+        "Up-to-date"
+      ],
+      "ScrewCut": [
+        "Up-to-date"
+      ],
+      "NutProfile": [
+        "Up-to-date"
+      ],
+      "NutCut": [
+        "Up-to-date"
+      ]
+    }
+  },
+  "reopened_edits": [
+    {
+      "parameter": "WindowRadius",
+      "value": "4 mm",
+      "recompute_seconds": 0.7454417091794312,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 170.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 4.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001478,
+          192.00000000000168,
+          170.00000000000227
+        ],
+        "volume_mm3": 183441.55538954455,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0,
+          4.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    },
+    {
+      "parameter": "FrameHeight",
+      "value": "174 mm",
+      "recompute_seconds": 0.8348897080868483,
+      "geometry": {
+        "inputs_mm": {
+          "ModuleWidth": 210.0,
+          "ModuleDepth": 230.0,
+          "FrameHeight": 174.0,
+          "SideThickness": 12.0,
+          "FitClearance": 0.3,
+          "SupportTop": 60.0,
+          "DgxFront": 60.0,
+          "DgxDepth": 150.0,
+          "FanDepth": 27.0,
+          "PinDiameter": 4.0,
+          "LocatorDiameter": 6.0,
+          "WindowRadius": 3.0,
+          "NutAF": 7.0
+        },
+        "dimensions_mm": [
+          12.000000000001492,
+          192.00000000000168,
+          174.00000000000227
+        ],
+        "volume_mm3": 185217.4232966336,
+        "fully_constrained_sketches": 10,
+        "window_corner_radii_mm": [
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0,
+          3.0
+        ],
+        "solid_valid_closed": true,
+        "independent_geometry_comparison": {
+          "added_volume_mm3": 0.0,
+          "missing_volume_mm3": 0.0,
+          "tolerance_mm3": 0.0001
+        },
+        "object_states": {
+          "Parameters": [
+            "Up-to-date"
+          ],
+          "Sideplate": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "PlateOutline": [
+            "Up-to-date"
+          ],
+          "PlatePad": [
+            "Up-to-date"
+          ],
+          "WindowProfiles": [
+            "Up-to-date"
+          ],
+          "WindowCut": [
+            "Up-to-date"
+          ],
+          "WindowFillet": [
+            "Up-to-date"
+          ],
+          "SocketProfiles": [
+            "Up-to-date"
+          ],
+          "SocketCut": [
+            "Up-to-date"
+          ],
+          "LowerPinProfiles": [
+            "Up-to-date"
+          ],
+          "LowerPinCut": [
+            "Up-to-date"
+          ],
+          "UpperPinProfile": [
+            "Up-to-date"
+          ],
+          "UpperPinCut": [
+            "Up-to-date"
+          ],
+          "BottomLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "BottomLocatorCut": [
+            "Up-to-date"
+          ],
+          "TopLocatorProfiles": [
+            "Up-to-date"
+          ],
+          "TopLocatorCut": [
+            "Up-to-date"
+          ],
+          "CassetteSocketProfile": [
+            "Up-to-date"
+          ],
+          "CassetteSocketCut": [
+            "Up-to-date"
+          ],
+          "ScrewProfile": [
+            "Up-to-date"
+          ],
+          "ScrewCut": [
+            "Up-to-date"
+          ],
+          "NutProfile": [
+            "Up-to-date"
+          ],
+          "NutCut": [
+            "Up-to-date"
+          ]
+        }
+      }
+    }
+  ],
+  "reopened_restored_geometry": {
+    "added_volume_mm3": 0.0,
+    "missing_volume_mm3": 0.0,
+    "tolerance_mm3": 0.0001
+  },
+  "parameter_sheet": {
+    "ModuleWidth": {
+      "cell": "B2",
+      "contents": "=210 mm",
+      "description": "ラック幅"
+    },
+    "ModuleDepth": {
+      "cell": "B3",
+      "contents": "=230 mm",
+      "description": "ラック奥行"
+    },
+    "FrameHeight": {
+      "cell": "B4",
+      "contents": "=170 mm",
+      "description": "側板高さ"
+    },
+    "SideThickness": {
+      "cell": "B5",
+      "contents": "=12 mm",
+      "description": "側板厚さ"
+    },
+    "FitClearance": {
+      "cell": "B6",
+      "contents": "=0.3 mm",
+      "description": "接合部の片側の隙間"
+    },
+    "SupportTop": {
+      "cell": "B7",
+      "contents": "=60 mm",
+      "description": "本体を支える棒の上面高さ"
+    },
+    "DgxFront": {
+      "cell": "B8",
+      "contents": "=60 mm",
+      "description": "本体前面の位置"
+    },
+    "DgxDepth": {
+      "cell": "B9",
+      "contents": "=150 mm",
+      "description": "本体奥行"
+    },
+    "FanDepth": {
+      "cell": "B10",
+      "contents": "=27 mm",
+      "description": "ファン厚さ"
+    },
+    "PinDiameter": {
+      "cell": "B11",
+      "contents": "=4 mm",
+      "description": "支持棒用ピン径"
+    },
+    "LocatorDiameter": {
+      "cell": "B12",
+      "contents": "=6 mm",
+      "description": "上下連結ピン径"
+    },
+    "WindowRadius": {
+      "cell": "B13",
+      "contents": "=3 mm",
+      "description": "窓の隅の丸み"
+    },
+    "NutAF": {
+      "cell": "B14",
+      "contents": "=7 mm",
+      "description": "M4ナットの対辺"
+    },
+    "InnerX": {
+      "cell": "B15",
+      "contents": "=ModuleWidth / 2 - SideThickness",
+      "description": "側板内面の位置"
+    },
+    "PinX": {
+      "cell": "B16",
+      "contents": "=InnerX + 4 mm",
+      "description": "支持棒用ピン中心"
+    },
+    "PostX": {
+      "cell": "B17",
+      "contents": "=ModuleWidth / 2 - SideThickness / 2",
+      "description": "側板厚さ方向の中心"
+    },
+    "FrontY": {
+      "cell": "B18",
+      "contents": "=FanDepth + 11 mm",
+      "description": "側板前端"
+    },
+    "SupportFrontY": {
+      "cell": "B19",
+      "contents": "=DgxFront + 22 mm",
+      "description": "前の支持棒中心"
+    },
+    "SupportRearY": {
+      "cell": "B20",
+      "contents": "=DgxFront + DgxDepth - 12 mm",
+      "description": "後ろの支持棒中心"
+    },
+    "UpperBarY": {
+      "cell": "B21",
+      "contents": "=ModuleDepth - 50 mm",
+      "description": "上の支持棒中心"
+    },
+    "CassetteUpperZ": {
+      "cell": "B22",
+      "contents": "=FrameHeight - 25 mm",
+      "description": "ファン保持部の上側ねじ高さ"
+    }
+  },
+  "feature_expressions": {
+    "PlateOutline": [
+      [
+        ".Constraints.PlateHeight",
+        "Parameters.FrameHeight"
+      ],
+      [
+        ".Constraints.PlateWidth",
+        "Parameters.ModuleDepth - Parameters.FrontY"
+      ],
+      [
+        ".Constraints.PlateX",
+        "Parameters.FrontY"
+      ],
+      [
+        ".Placement.Base.x",
+        "-Parameters.ModuleWidth / 2"
+      ]
+    ],
+    "PlatePad": [
+      [
+        "Length",
+        "Parameters.SideThickness"
+      ]
+    ],
+    "WindowProfiles": [
+      [
+        ".Constraints.LowerHeight",
+        "Parameters.SupportTop - 30 mm"
+      ],
+      [
+        ".Constraints.LowerWidth",
+        "Parameters.ModuleDepth - Parameters.FrontY - 40 mm"
+      ],
+      [
+        ".Constraints.LowerX",
+        "Parameters.FrontY + 20 mm"
+      ],
+      [
+        ".Constraints.LowerY",
+        "18 mm"
+      ],
+      [
+        ".Constraints.UpperHeight",
+        "Parameters.FrameHeight - Parameters.SupportTop - 30 mm"
+      ],
+      [
+        ".Constraints.UpperWidth",
+        "Parameters.ModuleDepth - Parameters.FrontY - 40 mm"
+      ],
+      [
+        ".Constraints.UpperX",
+        "Parameters.FrontY + 20 mm"
+      ],
+      [
+        ".Constraints.UpperY",
+        "Parameters.SupportTop + 12 mm"
+      ],
+      [
+        ".Placement.Base.x",
+        "-Parameters.ModuleWidth / 2"
+      ]
+    ],
+    "WindowFillet": [
+      [
+        "Radius",
+        "Parameters.WindowRadius"
+      ]
+    ],
+    "SocketProfiles": [
+      [
+        ".Constraints.FrontHeight",
+        "8 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.FrontWidth",
+        "20 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.FrontX",
+        "Parameters.SupportFrontY - 10 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.FrontY",
+        "Parameters.SupportTop - 8 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearHeight",
+        "8 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearWidth",
+        "20 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearX",
+        "Parameters.SupportRearY - 10 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearY",
+        "Parameters.SupportTop - 8 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.UpperHeight",
+        "8 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.UpperWidth",
+        "20 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.UpperX",
+        "Parameters.UpperBarY - 10 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.UpperY",
+        "Parameters.FrameHeight - 10 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Placement.Base.x",
+        "-Parameters.InnerX"
+      ]
+    ],
+    "SocketCut": [
+      [
+        "Length",
+        "Parameters.SideThickness - 3 mm + Parameters.FitClearance"
+      ]
+    ],
+    "LowerPinProfiles": [
+      [
+        ".Constraints.FrontDiameter",
+        "Parameters.PinDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.FrontX",
+        "-Parameters.PinX"
+      ],
+      [
+        ".Constraints.FrontY",
+        "Parameters.SupportFrontY"
+      ],
+      [
+        ".Constraints.RearDiameter",
+        "Parameters.PinDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearX",
+        "-Parameters.PinX"
+      ],
+      [
+        ".Constraints.RearY",
+        "Parameters.SupportRearY"
+      ],
+      [
+        ".Placement.Base.z",
+        "Parameters.SupportTop - 20 mm"
+      ]
+    ],
+    "LowerPinCut": [
+      [
+        "Length",
+        "44 mm"
+      ]
+    ],
+    "UpperPinProfile": [
+      [
+        ".Constraints.UpperDiameter",
+        "Parameters.PinDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.UpperX",
+        "-Parameters.PinX"
+      ],
+      [
+        ".Constraints.UpperY",
+        "Parameters.UpperBarY"
+      ],
+      [
+        ".Placement.Base.z",
+        "Parameters.FrameHeight - 22 mm"
+      ]
+    ],
+    "UpperPinCut": [
+      [
+        "Length",
+        "44 mm"
+      ]
+    ],
+    "BottomLocatorProfiles": [
+      [
+        ".Constraints.FrontDiameter",
+        "Parameters.LocatorDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.FrontX",
+        "-Parameters.PostX"
+      ],
+      [
+        ".Constraints.FrontY",
+        "Parameters.FrontY + 8 mm"
+      ],
+      [
+        ".Constraints.RearDiameter",
+        "Parameters.LocatorDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearX",
+        "-Parameters.PostX"
+      ],
+      [
+        ".Constraints.RearY",
+        "Parameters.ModuleDepth - 8 mm"
+      ],
+      [
+        ".Placement.Base.z",
+        "0 mm"
+      ]
+    ],
+    "BottomLocatorCut": [
+      [
+        "Length",
+        "8.3 mm"
+      ]
+    ],
+    "TopLocatorProfiles": [
+      [
+        ".Constraints.FrontDiameter",
+        "Parameters.LocatorDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.FrontX",
+        "-Parameters.PostX"
+      ],
+      [
+        ".Constraints.FrontY",
+        "Parameters.FrontY + 8 mm"
+      ],
+      [
+        ".Constraints.RearDiameter",
+        "Parameters.LocatorDiameter + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.RearX",
+        "-Parameters.PostX"
+      ],
+      [
+        ".Constraints.RearY",
+        "Parameters.ModuleDepth - 8 mm"
+      ],
+      [
+        ".Placement.Base.z",
+        "Parameters.FrameHeight"
+      ]
+    ],
+    "TopLocatorCut": [
+      [
+        "Length",
+        "8.3 mm"
+      ]
+    ],
+    "CassetteSocketProfile": [
+      [
+        ".Constraints.CassetteHeight",
+        "8 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.CassetteWidth",
+        "8 mm + 2 * Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.CassetteX",
+        "-Parameters.PostX - 4 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Constraints.CassetteY",
+        "20 mm - Parameters.FitClearance"
+      ],
+      [
+        ".Placement.Base.y",
+        "Parameters.FrontY"
+      ]
+    ],
+    "CassetteSocketCut": [
+      [
+        "Length",
+        "8 mm + Parameters.FitClearance"
+      ]
+    ],
+    "ScrewProfile": [
+      [
+        ".Constraints.ScrewDiameter",
+        "4.5 mm"
+      ],
+      [
+        ".Constraints.ScrewX",
+        "-Parameters.PostX"
+      ],
+      [
+        ".Constraints.ScrewY",
+        "Parameters.CassetteUpperZ"
+      ],
+      [
+        ".Placement.Base.y",
+        "Parameters.FrontY"
+      ]
+    ],
+    "ScrewCut": [
+      [
+        "Length",
+        "18 mm"
+      ]
+    ],
+    "NutProfile": [
+      [
+        ".Constraints.CenterX",
+        "-Parameters.PostX"
+      ],
+      [
+        ".Constraints.CenterY",
+        "Parameters.CassetteUpperZ"
+      ],
+      [
+        ".Constraints.Radius",
+        "(Parameters.NutAF + 0.5 mm) / sqrt(3)"
+      ],
+      [
+        ".Placement.Base.y",
+        "Parameters.FrontY + 12.4 mm"
+      ]
+    ],
+    "NutCut": [
+      [
+        "Length",
+        "8.1 mm"
+      ]
+    ]
+  },
+  "stl": {
+    "units": "mm",
+    "orientation": "outer face down, minimum XYZ = 0",
+    "linear_deflection_mm": 0.02,
+    "angular_deflection_rad": 0.15,
+    "triangles": 4536,
+    "outer_face_at_bed_verified": true
+  },
+  "files_sha256": {
+    "side-L-native.FCStd": "eac43099650f4f02eb15c3f0fb9f9a2b019a24a03df2d6a0e397af5a1bc016ae",
+    "side-L-native.step": "5e351cdec66fdd43ef670b4fb4e49f76a29e7dbf1d94d5e6fac83edc0f53b739",
+    "side-L-native.stl": "0cb6a2008a91ea6cb6cc801845ae014196af24c9811eb25688b73124492e1022"
+  },
+  "fusion_master_unchanged": true,
+  "physical_validation": "造形、接合、荷重、冷却は未検証",
+  "preview_render": "camera orientation set directly without view animation"
+}
