@@ -1,0 +1,209 @@
+{
+  "status": "passed",
+  "parts": {
+    "bar_coupon": {
+      "triangles": 112,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 3388.5610310309116,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        21.999998092651367,
+        20.0,
+        8.0
+      ]
+    },
+    "bridge_clip": {
+      "triangles": 28,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 4497.600511932376,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        42.60000228881836,
+        20.0,
+        16.0
+      ]
+    },
+    "crossbar": {
+      "triangles": 212,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 32377.122769376565,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        204.0,
+        20.0,
+        8.0
+      ]
+    },
+    "fan_cassette": {
+      "triangles": 1872,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 89803.87104327415,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        210.0,
+        162.0,
+        46.0
+      ]
+    },
+    "fit_coupon_020": {
+      "triangles": 228,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 6828.982294629016,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        23.999996185302734,
+        30.0,
+        11.999998092651367
+      ]
+    },
+    "fit_coupon_030": {
+      "triangles": 228,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 6739.391262728496,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        23.999996185302734,
+        30.0,
+        11.999998092651367
+      ]
+    },
+    "fit_coupon_040": {
+      "triangles": 236,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 6647.255696288245,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        23.999996185302734,
+        30.0,
+        11.999998092651367
+      ]
+    },
+    "hardware_coupon": {
+      "triangles": 748,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 32232.679105444615,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        96.0,
+        44.0,
+        8.0
+      ]
+    },
+    "locking_pin": {
+      "triangles": 216,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 398.0423641719145,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        8.0,
+        8.0,
+        23.0
+      ]
+    },
+    "side_L": {
+      "triangles": 1528,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 183321.78940230663,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        170.0,
+        192.0,
+        11.999998092651367
+      ]
+    },
+    "side_R": {
+      "triangles": 1528,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 183321.79852514976,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        170.0,
+        192.0,
+        11.999998092651367
+      ]
+    },
+    "stack_locator": {
+      "triangles": 364,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 761.1689239630622,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        10.0,
+        10.0,
+        20.0
+      ]
+    }
+  }
+}
