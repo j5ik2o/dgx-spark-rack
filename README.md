@@ -19,9 +19,12 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 | `scripts/fusion_rack_cli.py` | アクティブな正本の検査・書き出し |
 | `scripts/fusion_mcp.py` | Fusion組み込みMCPへの接続 |
 | `scripts/check_stl.py` | 書き出したSTLの形状検査 |
+| `comparison/freecad/` | FreeCADへの移行試験用データと比較結果 |
 
 旧モデルと初期生成用データは削除しました。比較用のCADデータを作る場合も、設計マスターとは分けて扱います。
 
 ## 変更を記録する
 
 変更時には、対象部品・パラメーター・検査結果を記録し、正本と派生データを一緒にGitへコミットします。FreeCADへの移行試験中も、Fusionの正本を保持します。
+
+[CAD比較](docs/CAD比較.md)に、形状の一致、引き継げない設計履歴、読み込み時間、macOSのクラッシュをまとめています。

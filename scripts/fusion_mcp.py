@@ -86,8 +86,10 @@ def main():
     elif args.command == "call":
         result = client.call(args.tool, json.loads(args.arguments.read_text()))
     else:
+        path = args.path.resolve()
         result = client.call("fusion_mcp_execute", {
-            "featureType": "script", "object": {"script": args.path.read_text()}})
+            "featureType": "script", "object": {
+                "script": f"__file__ = {str(path)!r}\n" + path.read_text(encoding="utf-8")}})
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

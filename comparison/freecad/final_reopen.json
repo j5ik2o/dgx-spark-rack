@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "comparison": {
+    "matched_solids": 128,
+    "all_valid_closed": true,
+    "all_face_counts_equal": true,
+    "bbox_max_error_mm": 5.684341886080802e-14,
+    "center_max_error_mm": 7.988489869603654e-10,
+    "volume_relative_error": 1.752159972667755e-09,
+    "area_relative_error": 1.0378922166154325e-09,
+    "passed": true
+  },
+  "fcstd_sha256": "de9f6a9053d414b98c810e52b1be1bea55ec1a1dafa1b99fdc6eb1ea71b6c32a",
+  "visible_roots": [
+    true
+  ],
+  "fusion_master_unchanged": true
+}
