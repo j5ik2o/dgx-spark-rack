@@ -1,0 +1,12 @@
+"""FreeCAD GUIで支持棒の作成と評価を続けて実行する。既存出力は上書きしない。"""
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from freecad_crossbar import create
+from check_freecad_crossbar import OUT, main
+
+if (OUT / "crossbar-native.FCStd").exists():
+    raise FileExistsError("新規評価用の出力先を指定してください")
+create()
+main()

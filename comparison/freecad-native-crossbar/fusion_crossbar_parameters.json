@@ -1,0 +1,101 @@
+{
+  "parameters": [
+    {
+      "name": "d276",
+      "expression": "abs(-InnerX - 9 mm)",
+      "value": 10.200000000000001
+    },
+    {
+      "name": "d277",
+      "expression": "abs(-10 mm)",
+      "value": 1.0
+    },
+    {
+      "name": "d278",
+      "expression": "( InnerX + 9 mm ) - ( -InnerX - 9 mm )",
+      "value": 20.400000000000002
+    },
+    {
+      "name": "d279",
+      "expression": "( 10 mm ) - ( -10 mm )",
+      "value": 2.0
+    },
+    {
+      "name": "d280",
+      "expression": "( 8 mm ) - ( 0 mm )",
+      "value": 0.8
+    },
+    {
+      "name": "d281",
+      "expression": "0.0 deg",
+      "value": 0.0
+    },
+    {
+      "name": "d282",
+      "expression": "1 * ( -1 mm )",
+      "value": -0.1
+    },
+    {
+      "name": "d284",
+      "expression": "abs(-( PinX ))",
+      "value": 9.700000000000001
+    },
+    {
+      "name": "d285",
+      "expression": "PinDiameter + 2 * FitClearance",
+      "value": 0.46
+    },
+    {
+      "name": "d286",
+      "expression": "( 9 mm ) - ( -1 mm )",
+      "value": 1.0
+    },
+    {
+      "name": "d287",
+      "expression": "0.0 deg",
+      "value": 0.0
+    },
+    {
+      "name": "d288",
+      "expression": "1 * ( -1 mm )",
+      "value": -0.1
+    },
+    {
+      "name": "d290",
+      "expression": "abs(PinX)",
+      "value": 9.700000000000001
+    },
+    {
+      "name": "d291",
+      "expression": "PinDiameter + 2 * FitClearance",
+      "value": 0.46
+    },
+    {
+      "name": "d292",
+      "expression": "( 9 mm ) - ( -1 mm )",
+      "value": 1.0
+    },
+    {
+      "name": "d293",
+      "expression": "0.0 deg",
+      "value": 0.0
+    }
+  ],
+  "sketches": [
+    {
+      "name": "支持棒_輪郭",
+      "lines": 4,
+      "circles": 0
+    },
+    {
+      "name": "固定ピン穴_輪郭",
+      "lines": 0,
+      "circles": 1
+    },
+    {
+      "name": "固定ピン穴_輪郭 (1)",
+      "lines": 0,
+      "circles": 1
+    }
+  ]
+}
