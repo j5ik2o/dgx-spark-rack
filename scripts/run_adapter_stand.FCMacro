@@ -1,0 +1,12 @@
+"""FreeCAD GUIでアダプタースタンドの仮寸法モデルを作成・保存する。"""
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from freecad_adapter_stand import create
+from export_adapter_stand import TARGET, main
+
+if TARGET.exists():
+    raise FileExistsError("既存のスタンドを保持するため、別の出力先を指定してください")
+create()
+main()

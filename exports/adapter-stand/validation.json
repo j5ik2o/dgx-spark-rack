@@ -1,0 +1,328 @@
+{
+  "status": "passed_for_provisional_dimensions",
+  "fit_status": "awaiting_user_measurements",
+  "design_dimensions_are_provisional": true,
+  "published_reference_model": "Delta ADP-240LB B",
+  "nominal_adapter_mm": [
+    100,
+    100,
+    36
+  ],
+  "published_measurements_mm": [
+    98.99,
+    99.05,
+    35.17
+  ],
+  "dimension_source": "https://www.ednchina.com/technews/40374.html",
+  "physical_validation": "実寸、端子の干渉、造形、荷重、樹脂の耐熱、冷却は未検証",
+  "two_units": {
+    "visible_units": 2,
+    "solids_with_adapter_references": 20,
+    "dimensions_mm": [
+      264.0,
+      140.0,
+      66.0
+    ],
+    "fully_constrained_sketches": 17,
+    "interference_threshold_mm3": 0.001,
+    "interferences": [],
+    "part_volumes_mm3": {
+      "Saddle": 17892.576685051245,
+      "Rail": 9785.003518818601,
+      "LockPin": 324.3694414831461,
+      "JoinClip": 1828.5309649148733
+    }
+  },
+  "four_units": {
+    "visible_units": 4,
+    "solids_with_adapter_references": 42,
+    "dimensions_mm": [
+      536.0,
+      140.0,
+      66.0
+    ],
+    "fully_constrained_sketches": 17,
+    "interference_threshold_mm3": 0.001,
+    "interferences": [],
+    "part_volumes_mm3": {
+      "Saddle": 17892.576685051245,
+      "Rail": 9785.003518818601,
+      "LockPin": 324.3694414831461,
+      "JoinClip": 1828.5309649148733
+    }
+  },
+  "alternate_dimensions": {
+    "visible_units": 2,
+    "solids_with_adapter_references": 20,
+    "dimensions_mm": [
+      284.0,
+      150.0,
+      75.0
+    ],
+    "fully_constrained_sketches": 17,
+    "interference_threshold_mm3": 0.001,
+    "interferences": [],
+    "part_volumes_mm3": {
+      "Saddle": 20190.789083074946,
+      "Rail": 10505.003518818601,
+      "LockPin": 359.71235883603134,
+      "JoinClip": 1828.5309649148733
+    }
+  },
+  "reopened": {
+    "visible_units": 2,
+    "solids_with_adapter_references": 20,
+    "dimensions_mm": [
+      264.0,
+      140.0,
+      66.0
+    ],
+    "fully_constrained_sketches": 17,
+    "interference_threshold_mm3": 0.001,
+    "interferences": [],
+    "part_volumes_mm3": {
+      "Saddle": 17892.576685051245,
+      "Rail": 9785.003518818601,
+      "LockPin": 324.3694414831461,
+      "JoinClip": 1828.5309649148733
+    }
+  },
+  "parameters": {
+    "AdapterWidth": {
+      "cell": "B2",
+      "contents": "=100 mm",
+      "description": "アダプター幅：仮寸法"
+    },
+    "AdapterLength": {
+      "cell": "B3",
+      "contents": "=100 mm",
+      "description": "アダプター長さ：仮寸法"
+    },
+    "AdapterHeight": {
+      "cell": "B4",
+      "contents": "=36 mm",
+      "description": "アダプター厚さ：仮寸法"
+    },
+    "LiftHeight": {
+      "cell": "B5",
+      "contents": "=30 mm",
+      "description": "アダプター底面の高さ"
+    },
+    "SideGap": {
+      "cell": "B6",
+      "contents": "=1 mm",
+      "description": "左右の余裕、片側"
+    },
+    "ModuleGap": {
+      "cell": "B7",
+      "contents": "=8 mm",
+      "description": "隣のスタンドとの隙間"
+    },
+    "FitClearance": {
+      "cell": "B8",
+      "contents": "=0.3 mm",
+      "description": "印刷部品どうしの片側の隙間"
+    },
+    "PostWidth": {
+      "cell": "B9",
+      "contents": "=12 mm",
+      "description": "支持台の柱幅"
+    },
+    "BeamHeight": {
+      "cell": "B10",
+      "contents": "=8 mm",
+      "description": "支持梁の高さ"
+    },
+    "BeamDepth": {
+      "cell": "B11",
+      "contents": "=12 mm",
+      "description": "支持台の前後厚さ"
+    },
+    "LipHeight": {
+      "cell": "B12",
+      "contents": "=6 mm",
+      "description": "左右のずれ止め高さ"
+    },
+    "RailWidth": {
+      "cell": "B13",
+      "contents": "=14 mm",
+      "description": "底レールの幅"
+    },
+    "RailBase": {
+      "cell": "B14",
+      "contents": "=3 mm",
+      "description": "底レールの底板厚さ"
+    },
+    "StemWidth": {
+      "cell": "B15",
+      "contents": "=6 mm",
+      "description": "底レールの差込幅"
+    },
+    "StemHeight": {
+      "cell": "B16",
+      "contents": "=5 mm",
+      "description": "底レールの差込高さ"
+    },
+    "PinDiameter": {
+      "cell": "B17",
+      "contents": "=3 mm",
+      "description": "印刷する固定ピン径"
+    },
+    "PinHeadDiameter": {
+      "cell": "B18",
+      "contents": "=7 mm",
+      "description": "固定ピンの頭径"
+    },
+    "PinHeadHeight": {
+      "cell": "B19",
+      "contents": "=2 mm",
+      "description": "固定ピンの頭厚さ"
+    },
+    "DockPitch": {
+      "cell": "B20",
+      "contents": "=28 mm",
+      "description": "後付けブラケットのM4穴ピッチ"
+    },
+    "DockHole": {
+      "cell": "B21",
+      "contents": "=4.5 mm",
+      "description": "後付けブラケットのM4通し穴"
+    },
+    "DockNutAF": {
+      "cell": "B22",
+      "contents": "=7.5 mm",
+      "description": "M4ナット座の対辺"
+    },
+    "DockNutDepth": {
+      "cell": "B23",
+      "contents": "=3.5 mm",
+      "description": "M4ナット座の深さ"
+    },
+    "JoinPegDiameter": {
+      "cell": "B24",
+      "contents": "=4 mm",
+      "description": "横連結クリップの差込ピン径"
+    },
+    "JoinPegLength": {
+      "cell": "B25",
+      "contents": "=4 mm",
+      "description": "横連結クリップの差込長さ"
+    },
+    "JoinThickness": {
+      "cell": "B26",
+      "contents": "=4 mm",
+      "description": "横連結クリップの厚さ"
+    },
+    "InsideWidth": {
+      "cell": "B27",
+      "contents": "=AdapterWidth + 2 * SideGap",
+      "description": "アダプターを受ける内幅"
+    },
+    "PostCenter": {
+      "cell": "B28",
+      "contents": "=InsideWidth / 2 + PostWidth / 2",
+      "description": "左右の柱とレールの中心"
+    },
+    "SaddleWidth": {
+      "cell": "B29",
+      "contents": "=InsideWidth + 2 * PostWidth",
+      "description": "支持台の幅"
+    },
+    "SaddleLift": {
+      "cell": "B30",
+      "contents": "=LiftHeight - RailBase",
+      "description": "支持台単体の受け面高さ"
+    },
+    "SaddleHeight": {
+      "cell": "B31",
+      "contents": "=SaddleLift + LipHeight",
+      "description": "支持台単体の全高"
+    },
+    "SupportPitch": {
+      "cell": "B32",
+      "contents": "=AdapterLength * 0.65",
+      "description": "前後の支持台の中心間隔"
+    },
+    "RailLength": {
+      "cell": "B33",
+      "contents": "=AdapterLength + 40 mm",
+      "description": "底レールの長さ"
+    },
+    "RailHeight": {
+      "cell": "B34",
+      "contents": "=RailBase + StemHeight",
+      "description": "底レールの全高"
+    },
+    "ModuleWidth": {
+      "cell": "B35",
+      "contents": "=2 * PostCenter + RailWidth",
+      "description": "1台分の幅"
+    },
+    "ModulePitch": {
+      "cell": "B36",
+      "contents": "=ModuleWidth + ModuleGap",
+      "description": "横に増設する中心間隔"
+    },
+    "PinLength": {
+      "cell": "B37",
+      "contents": "=LiftHeight + LipHeight - 1 mm",
+      "description": "固定ピンの軸長さ"
+    },
+    "JoinSpacing": {
+      "cell": "B38",
+      "contents": "=ModulePitch - 2 * PostCenter",
+      "description": "横連結の差込ピン間隔"
+    },
+    "JoinLength": {
+      "cell": "B39",
+      "contents": "=JoinSpacing + 14 mm",
+      "description": "横連結クリップの長さ"
+    }
+  },
+  "stl": {
+    "saddle": {
+      "triangles": 756,
+      "units": "mm",
+      "sha256": "b7652e0534e634be79da3fdf33c27b84e739a848f3eaacc4e4573fee57229e95"
+    },
+    "rail": {
+      "triangles": 1540,
+      "units": "mm",
+      "sha256": "a30c394fc6e074a1b16cf451cee47251312d5a92b668106457822e6a75a82f05"
+    },
+    "locking_pin": {
+      "triangles": 668,
+      "units": "mm",
+      "sha256": "7166c2a1deb2d4e9efb44d26d0553d82cab5c06887f50257b4ee028b8e44dcc2"
+    },
+    "join_clip": {
+      "triangles": 684,
+      "units": "mm",
+      "sha256": "9ffa9c0879c8d4f4dc9d657589f9473e1c4d4e8713b7d1abce82efa07be6e928"
+    }
+  },
+  "bom": {
+    "two_units": {
+      "saddle": 4,
+      "rail": 4,
+      "locking_pin": 8,
+      "join_clip": 2
+    },
+    "four_units": {
+      "saddle": 8,
+      "rail": 8,
+      "locking_pin": 16,
+      "join_clip": 6
+    }
+  },
+  "fan_mount": {
+    "fan_included": false,
+    "bracket_included": false,
+    "hole_diameter_mm": 4.5,
+    "hole_pitch_mm": 28,
+    "nut_pocket_af_mm": 7.5,
+    "nut_pocket_depth_mm": 3.5,
+    "location": "横一列の外端レール。内側の同じ穴は横連結クリップが使用する"
+  },
+  "file_sha256": "832c45ee5c74e4ff999ab3543b2d9b29787989f98673eb4eedb1e7fb87d7a9d4"
+}

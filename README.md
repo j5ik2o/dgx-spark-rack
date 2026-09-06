@@ -18,6 +18,7 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 |---|---|
 | `DGX-SPARK-RACK-FUSION-v1.f3d` | 変換元・元の設計履歴を保持 |
 | `DGX-SPARK-RACK-FREECAD-v1.FCStd` | Fusionから生成した全体形状と印刷部品 |
+| `DGX-SPARK-ADAPTER-STAND-v1.FCStd` | ACアダプター用の開放スタンド。実寸確認待ち |
 | `exports/fusion/` | STEP・STL・プレビュー・検査記録 |
 | `exports/freecad/` | 変換用STEP・全体画像・変換記録 |
 | `scripts/fusion_rack_cli.py` | アクティブな正本の検査・書き出し |
@@ -38,3 +39,5 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 [FreeCAD支持棒の評価](docs/FreeCAD支持棒の評価.md)では、支持棒1種類を履歴付きで作り直し、寸法変更と保存後の再編集を確認しています。
 
 [FreeCAD側板の評価](docs/FreeCAD側板の評価.md)では、窓・差込口・固定穴・丸みを含む左側板を再構築し、7種類の寸法変更と再編集を確認しています。
+
+[ACアダプタースタンド](docs/ACアダプタースタンド.md)は、本体ラックと分けて横に置く開放型です。2台から4台へ増設でき、ファン用ブラケットの取付部を用意しています。アダプターの実寸は未確認です。

@@ -1,0 +1,73 @@
+{
+  "status": "passed",
+  "parts": {
+    "join_clip": {
+      "triangles": 684,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 1828.437243701295,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        36.0,
+        12.0,
+        8.0
+      ]
+    },
+    "locking_pin": {
+      "triangles": 668,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 324.0670460668107,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        7.0,
+        7.0,
+        37.0
+      ]
+    },
+    "rail": {
+      "triangles": 1540,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 9785.28877331047,
+      "minimum_mm": [
+        0.0,
+        1.4210854715202004e-14,
+        0.0
+      ],
+      "dimensions_mm": [
+        14.0,
+        140.0,
+        8.0
+      ]
+    },
+    "saddle": {
+      "triangles": 756,
+      "non_manifold_edges": 0,
+      "degenerate_triangles": 0,
+      "connected_components": 1,
+      "volume_mm3": 17893.102094107122,
+      "minimum_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dimensions_mm": [
+        126.0,
+        33.0,
+        12.0
+      ]
+    }
+  }
+}
