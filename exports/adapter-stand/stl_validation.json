@@ -40,7 +40,7 @@
       "non_manifold_edges": 0,
       "degenerate_triangles": 0,
       "connected_components": 1,
-      "volume_mm3": 9785.28877331047,
+      "volume_mm3": 9712.568979666985,
       "minimum_mm": [
         0.0,
         1.4210854715202004e-14,
@@ -48,7 +48,7 @@
       ],
       "dimensions_mm": [
         14.0,
-        140.0,
+        138.99000549316406,
         8.0
       ]
     },
@@ -57,14 +57,14 @@
       "non_manifold_edges": 0,
       "degenerate_triangles": 0,
       "connected_components": 1,
-      "volume_mm3": 17893.102094107122,
+      "volume_mm3": 17897.902915193255,
       "minimum_mm": [
         0.0,
         0.0,
         0.0
       ],
       "dimensions_mm": [
-        126.0,
+        126.05000305175781,
         33.0,
         12.0
       ]

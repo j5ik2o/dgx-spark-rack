@@ -15,7 +15,7 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 | 場所 | 役割 |
 |---|---|
 | `DGX-SPARK-RACK-FREECAD-v1.FCStd` | ラック全体と印刷部品を保持する基準ファイル |
-| `DGX-SPARK-ADAPTER-STAND-v1.FCStd` | 履歴付きのACアダプタースタンド。実寸確認待ち |
+| `DGX-SPARK-ADAPTER-STAND-v1.FCStd` | 履歴付きのACアダプタースタンド。純正電源の公開実測値を採用 |
 | `exports/freecad/stl/` | 印刷部品12種類。単位mm |
 | `exports/freecad/parts/` | 個別部品を他のCADへ渡す汎用STEP |
 | `exports/freecad/` | 組立STEP、配置画像、ファイル一覧、STL検査記録 |
@@ -24,7 +24,7 @@ DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント
 | `exports/adapter-stand/` | アダプタースタンドの試作用STL・画像・検査記録 |
 | `scripts/freecad_adapter_stand.py` | 履歴付きアダプタースタンドの作成 |
 
-[ACアダプタースタンド](docs/ACアダプタースタンド.md)は寸法表で編集でき、2台から4台へ横に増設できます。現在は電源の実寸確認待ちです。
+[ACアダプタースタンド](docs/ACアダプタースタンド.md)は寸法表で編集でき、2台から4台へ横に増設できます。純正電源ADP-240LB Bの公開実測値を設計基準にしています。
 
 ## 変更を記録する
 

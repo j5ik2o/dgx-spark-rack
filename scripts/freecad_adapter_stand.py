@@ -1,4 +1,4 @@
-"""ACアダプター用の開放スタンド。寸法は公開実測を参考にした仮置き。"""
+"""DGX Spark純正ACアダプターの公開実測値に基づく開放スタンド。"""
 
 from pathlib import Path
 import sys
@@ -10,11 +10,11 @@ from freecad_features import Features
 
 
 INPUTS = [
-    ("AdapterWidth", "100 mm", "アダプター幅：仮寸法"),
-    ("AdapterLength", "100 mm", "アダプター長さ：仮寸法"),
-    ("AdapterHeight", "36 mm", "アダプター厚さ：仮寸法"),
+    ("AdapterWidth", "99.05 mm", "ADP-240LB Bの幅：公開実測値"),
+    ("AdapterLength", "98.99 mm", "ADP-240LB Bの長さ：公開実測値"),
+    ("AdapterHeight", "35.17 mm", "ADP-240LB Bの厚さ：公開実測値"),
     ("LiftHeight", "30 mm", "アダプター底面の高さ"),
-    ("SideGap", "1 mm", "左右の余裕、片側"),
+    ("SideGap", "1.5 mm", "左右の余裕、片側"),
     ("ModuleGap", "8 mm", "隣のスタンドとの隙間"),
     ("FitClearance", "0.3 mm", "印刷部品どうしの片側の隙間"),
     ("PostWidth", "12 mm", "支持台の柱幅"),
@@ -137,10 +137,10 @@ def make_join(doc):
 
 
 def make_reference(doc):
-    body, f = new_body(doc, "REFAdapter", "参考_ACアダプター_実寸未確認")
+    body, f = new_body(doc, "REFAdapter", "参考_ADP-240LB B_公開実測外形")
     s = f.sketch("AdapterEnvelope", "XY", "LiftHeight")
     f.rectangle(s, "-AdapterWidth / 2", "-AdapterLength / 2", "AdapterWidth", "AdapterLength", "Adapter")
-    f.extrude("AdapterEnvelopePad", "アダプターの仮外形", s, "AdapterHeight", cut=False)
+    f.extrude("AdapterEnvelopePad", "アダプターの外形包絡", s, "AdapterHeight", cut=False)
     return body
 
 
@@ -168,10 +168,10 @@ def show_units(doc, count):
 
 def create():
     doc = App.newDocument("DGXSparkAdapterStand")
-    doc.Label = "ACアダプタースタンド_仮寸法"
+    doc.Label = "ACアダプタースタンド_ADP-240LB B"
     try:
         sheet = doc.addObject("Spreadsheet::Sheet", "Parameters")
-        sheet.Label = "寸法表_電源外寸は未確認"
+        sheet.Label = "寸法表_電源外寸は公開実測値"
         for cell, value in (("A1", "パラメーター"), ("B1", "値・式"), ("C1", "意味")):
             sheet.set(cell, value)
         for row, (name, value, description) in enumerate(INPUTS + DERIVED, 2):
@@ -195,7 +195,9 @@ def create():
         assembly = doc.addObject("App::Part", "StandAssembly")
         assembly.Label = "開放スタンド_初期2台_横に4台まで"
         assembly.addProperty("App::PropertyString", "DesignStatus", "Design")
-        assembly.DesignStatus = "Provisional dimensions; adapter model and cable exits await confirmation."
+        assembly.DesignStatus = "Based on published ADP-240LB B measurements; physical fit and thermal performance not tested."
+        assembly.addProperty("App::PropertyString", "CableLayout", "Design")
+        assembly.CableLayout = "AC C6 inlet: -Y; captive USB-C cable: +Y; opposite end faces."
         for i in range(4):
             unit = doc.addObject("App::Part", f"Unit{i + 1}")
             unit.Label = f"アダプター{i + 1}"
@@ -208,7 +210,7 @@ def create():
                 for side, x in (("L", "-Parameters.PostCenter"), ("R", "Parameters.PostCenter")):
                     link(doc, unit, parts["LockPin"], f"Pin{end}{side}{i}", "固定ピン", x=x, y=y,
                          z="Parameters.LiftHeight + Parameters.LipHeight + Parameters.PinHeadHeight", inverted=True)
-            link(doc, unit, parts["REFAdapter"], f"Adapter{i}", "参考_電源外形_実寸未確認")
+            link(doc, unit, parts["REFAdapter"], f"Adapter{i}", "参考_ADP-240LB B_公開実測外形")
         for i in range(3):
             group = doc.addObject("App::Part", f"JoinPair{i + 1}")
             group.Label = f"横連結_{i + 1}と{i + 2}"

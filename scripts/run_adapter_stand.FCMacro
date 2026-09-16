@@ -1,4 +1,4 @@
-"""FreeCAD GUIでアダプタースタンドの仮寸法モデルを作成・保存する。"""
+"""FreeCAD GUIでDGX Spark純正アダプター用スタンドを作成・保存する。"""
 from pathlib import Path
 import sys
 

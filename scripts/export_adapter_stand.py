@@ -1,4 +1,4 @@
-"""開放型ACアダプタースタンドの仮寸法モデルを確認し、FreeCADと試作用STLへ保存する。"""
+"""DGX Spark純正アダプター用スタンドを確認し、FreeCADとSTLへ保存する。"""
 
 import hashlib
 import json
@@ -46,10 +46,27 @@ def inspect(doc, count):
             if volume > 0.001:
                 collisions.append({"solids": [i, j], "volume_mm3": volume})
     assert not collisions, collisions
+    # 写真で確認した両端の入出力に、設計上の配線余白を確保する。
+    def value(name):
+        return doc.Parameters.evalExpression(name).Value
+    width, length, height, lift, pitch = [value(n) for n in
+        ("AdapterWidth", "AdapterLength", "AdapterHeight", "LiftHeight", "ModulePitch")]
+    cable_overlaps = []
+    for unit in range(count):
+        for end, y in (("AC", -length / 2 - 40), ("USB-C", length / 2)):
+            zone = Part.makeBox(width + 20, 40, height + 20,
+                                App.Vector(unit * pitch - width / 2 - 10, y, lift - 10))
+            overlap = assembly.common(zone).Volume
+            if overlap > 0.001:
+                cable_overlaps.append({"unit": unit + 1, "end": end, "volume_mm3": overlap})
+    assert not cable_overlaps, cable_overlaps
     box = assembly.BoundBox
     return {"visible_units": count, "solids_with_adapter_references": len(solids),
             "dimensions_mm": [box.XLength, box.YLength, box.ZLength],
             "fully_constrained_sketches": len(sketches), "interference_threshold_mm3": 0.001,
+            "cable_exit_clearance": {"outward_mm": 40, "side_and_vertical_margin_mm": 10,
+                                     "basis": "design allowance, not manufacturer connector dimensions",
+                                     "interferences": cable_overlaps},
             "interferences": collisions, "part_volumes_mm3": {name: doc.getObject(name).Shape.Volume for name in PRINT_PARTS}}
 
 
@@ -64,17 +81,23 @@ def render(doc, count, path):
     view.saveImage(str(path), 1500, 900, "White")
 
 
-def main():
-    if TARGET.exists():
+def main(*, update_existing=False):
+    if TARGET.exists() and not update_existing:
         raise FileExistsError(TARGET)
     OUT.mkdir(parents=True, exist_ok=True)
     doc = App.ActiveDocument
     assert doc and doc.getObject("StandAssembly") and doc.getObject("REFAdapter")
-    report = {"status": "running", "fit_status": "awaiting_user_measurements", "design_dimensions_are_provisional": True,
-              "published_reference_model": "Delta ADP-240LB B", "nominal_adapter_mm": [100, 100, 36],
-              "published_measurements_mm": [98.99, 99.05, 35.17],
-              "dimension_source": "https://www.ednchina.com/technews/40374.html",
-              "physical_validation": "実寸、端子の干渉、造形、荷重、樹脂の耐熱、冷却は未検証"}
+    if update_existing:
+        assert Path(doc.FileName).resolve() == TARGET.resolve(), "更新対象のスタンド文書が一致しません"
+    spec = json.loads((OUT / "adapter_spec.json").read_text())
+    report = {"status": "running", "fit_status": "published_measurements_based",
+              "dimension_basis": spec["dimension_basis"], "published_reference_model": spec["model"],
+              "design_adapter_dimensions_mm": {axis: doc.Parameters.evalExpression(name).Value
+                  for axis, name in (("width_x", "AdapterWidth"), ("length_y", "AdapterLength"), ("height_z", "AdapterHeight"))},
+              "side_clearance_mm": doc.Parameters.evalExpression("SideGap").Value,
+              "connector_layout": spec["connector_layout"],
+              "sources": spec["sources"], "physical_fit_tested": False,
+              "physical_validation": "造形後の適合、荷重、樹脂の耐熱、冷却は未検証"}
     try:
         report["two_units"] = inspect(doc, 2)
         report["four_units"] = inspect(doc, 4)
@@ -107,7 +130,7 @@ def main():
         assert max(abs(a - b) for a, b in zip(report["reopened"]["dimensions_mm"], restored["dimensions_mm"])) < 1e-6
         report["parameters"] = {name: {"cell": CELLS[name], "contents": doc.Parameters.getContents(CELLS[name]), "description": text}
                                 for name, _, text in INPUTS + DERIVED}
-        directory = OUT / "provisional-stl"
+        directory = OUT / "stl"
         directory.mkdir(exist_ok=True)
         report["stl"] = {}
         for name, filename in PRINT_PARTS.items():
@@ -126,7 +149,7 @@ def main():
                                "hole_pitch_mm": 28, "nut_pocket_af_mm": 7.5, "nut_pocket_depth_mm": 3.5,
                                "location": "横一列の外端レール。内側の同じ穴は横連結クリップが使用する"}
         report["file_sha256"] = hashlib.sha256(TARGET.read_bytes()).hexdigest()
-        report["status"] = "passed_for_provisional_dimensions"
+        report["status"] = "passed_for_published_dimensions"
     except Exception as error:
         report["status"] = "failed"
         report["error"] = f"{type(error).__name__}: {error}"
