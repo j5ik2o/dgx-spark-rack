@@ -1,0 +1,125 @@
+{
+  "file": "DGX-SPARK-RACK-FREECAD-v1.FCStd",
+  "file_sha256": "8ec379675d1181fb2723165496166333b969322b4547c7708ec8b61729eecd58",
+  "assembly_step": "exports/freecad/DGX-SPARK-RACK-v1.step",
+  "assembly_units": 4,
+  "assembly_solids": 128,
+  "assembly_dimensions_mm": [
+    434,
+    235,
+    347.5
+  ],
+  "print_part_types": 12,
+  "model_type": "imported_solids",
+  "parameter_table_drives_geometry": false,
+  "parameters_reference": {
+    "ModuleWidth": "210.0 mm",
+    "ModuleDepth": "230.0 mm",
+    "FrameHeight": "170.0 mm",
+    "SideThickness": "12.0 mm",
+    "StackGap": "4.0 mm",
+    "ColumnGap": "10.0 mm",
+    "FitClearance": "0.3 mm",
+    "DgxWidth": "150.0 mm",
+    "DgxDepth": "150.0 mm",
+    "DgxHeight": "50.5 mm",
+    "DgxFront": "60.0 mm",
+    "SupportTop": "60.0 mm",
+    "FanSize": "140.0 mm",
+    "FanDepth": "27.0 mm",
+    "FanHolePitch": "124.5 mm",
+    "FanMountHole": "4.5 mm",
+    "RearReserve": "100.0 mm",
+    "InnerX": "ModuleWidth / 2 - SideThickness",
+    "PinX": "InnerX + 4 mm",
+    "PostX": "ModuleWidth / 2 - SideThickness / 2",
+    "FrontY": "FanDepth + 11 mm",
+    "SupportFrontY": "DgxFront + 22 mm",
+    "SupportRearY": "DgxFront + DgxDepth - 12 mm",
+    "UpperBarY": "ModuleDepth - 50 mm",
+    "FanCenterZ": "FrameHeight / 2",
+    "CassetteUpperZ": "FrameHeight - 25 mm",
+    "FanRimRadius": "( FanSize + 22 mm ) / 2",
+    "ColumnPitch": "ModuleWidth + ColumnGap",
+    "RowPitch": "FrameHeight + StackGap",
+    "PinDiameter": "4 mm",
+    "LocatorDiameter": "6 mm",
+    "WindowRadius": "3 mm",
+    "NutAF": "7 mm"
+  },
+  "print_parts": {
+    "side_L": {
+      "step": "parts/side_L.step",
+      "step_sha256": "95d03c97bacfd3107e6fc90df0a85eaee71461558d4eb33cf7d6dcd06faab275",
+      "stl": "stl/side_L.stl",
+      "stl_sha256": "64177a38a32840dfd84ef319fb225cc40d9de17fa92bc3a64e5e55b875a1ec5c"
+    },
+    "side_R": {
+      "step": "parts/side_R.step",
+      "step_sha256": "92f88ff514fde6705f34cefe6ecd89467ce39b2c790b632a1bed6ec2fca8edb9",
+      "stl": "stl/side_R.stl",
+      "stl_sha256": "4a5d88d1782043de8f07cde168e42ec62e3a8f51e7e35b8c51e217fa547b0ef0"
+    },
+    "crossbar": {
+      "step": "parts/crossbar.step",
+      "step_sha256": "2186cd322d54eaac0954c381cd361a30b436e226666e6bf2ee000c684b1c9807",
+      "stl": "stl/crossbar.stl",
+      "stl_sha256": "bd1a52a23ac415076eff96dd817a551461c3b1815dbd91e5fbf18ec224819f59"
+    },
+    "locking_pin": {
+      "step": "parts/locking_pin.step",
+      "step_sha256": "fd8539601d5335e77ca9fac3b65eaddb9bfadcb4a11072b6f5158e6adf9dfd41",
+      "stl": "stl/locking_pin.stl",
+      "stl_sha256": "c6cb4b8906c90a659e64f1c32a23f74028c1fbb1f54f4f7b5b423ae171e48cc8"
+    },
+    "stack_locator": {
+      "step": "parts/stack_locator.step",
+      "step_sha256": "e369f2767d946168a301e773425a2f3eba868d111197c3e7c5dbaa87a26feb1c",
+      "stl": "stl/stack_locator.stl",
+      "stl_sha256": "688b623c20516c58da4f0b34b2b8377c81074e99c2ce2827fb0c2e7159a11520"
+    },
+    "bridge_clip": {
+      "step": "parts/bridge_clip.step",
+      "step_sha256": "8014db93a25b96a34e9a78f82b43ea0648a07f4814624e503f7a50fcd8ec3199",
+      "stl": "stl/bridge_clip.stl",
+      "stl_sha256": "78ccf3a34d34a6a38af6d33529d8e9de552f31e4dec0500387c4c47693c7f1e1"
+    },
+    "fan_cassette": {
+      "step": "parts/fan_cassette.step",
+      "step_sha256": "4bea6c8f0f67b3384358204d9a2f268326267f8e8157b285cfb3873f3bcaacd6",
+      "stl": "stl/fan_cassette.stl",
+      "stl_sha256": "0751b385692b6ce59031b27cf95299e2c4751db244ddad3744a6140aca876865"
+    },
+    "fit_coupon_020": {
+      "step": "parts/fit_coupon_020.step",
+      "step_sha256": "3baf606cf80f3bf8fc5a72019f8da47a0247bfaa00380f9e5aa963c4a275fcb3",
+      "stl": "stl/fit_coupon_020.stl",
+      "stl_sha256": "cd3fb97c8ca0ee807176fd29cee39c6b6af43afd21bbb6f52bddf08ea83931f8"
+    },
+    "fit_coupon_030": {
+      "step": "parts/fit_coupon_030.step",
+      "step_sha256": "39c54bd5fac7a6119b89f7fa0b27bf902cf5b49a238063be20f2679e6ca19210",
+      "stl": "stl/fit_coupon_030.stl",
+      "stl_sha256": "1b6d4ab566fa3ac8bdf0504bc5e8820487ddbca4ae2dc0a42ad6a8421062ce00"
+    },
+    "fit_coupon_040": {
+      "step": "parts/fit_coupon_040.step",
+      "step_sha256": "e7a1aeaef630e2c08303970f867c79ee757b2e9436335e51222aa8e0a0772951",
+      "stl": "stl/fit_coupon_040.stl",
+      "stl_sha256": "dddcb418c311cc3c21ab13d2548f23fc7cef422e6c946463d78eede70939f059"
+    },
+    "bar_coupon": {
+      "step": "parts/bar_coupon.step",
+      "step_sha256": "eb9e0b68a5e289b7d4d24a1f419615c909a45795269c0e6780ca35b299a1294f",
+      "stl": "stl/bar_coupon.stl",
+      "stl_sha256": "d6e5bf7639673c81c809e8f275b493c9afd4b91174d8aef54547166827aab1c6"
+    },
+    "hardware_coupon": {
+      "step": "parts/hardware_coupon.step",
+      "step_sha256": "6e9068a80ece4c82c5c32ac77b8ef06c84b68ece22f1380358bfe8636419891d",
+      "stl": "stl/hardware_coupon.stl",
+      "stl_sha256": "097a2f18c0e864b2428caf36fdf7aa560078cb780c89c6986618c9775798cdba"
+    }
+  },
+  "assembly_step_sha256": "154ff160eda5e5e9a4a2d476f0b6a1f72f0cc1cb802edf9cdbd55294a97ff602"
+}
