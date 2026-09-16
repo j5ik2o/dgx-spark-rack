@@ -1,8 +1,0 @@
-"""FreeCADまたはfreecadcmdから比較試験を実行する入口。"""
-from pathlib import Path
-import sys
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from freecad_evaluate import main
-
-main()

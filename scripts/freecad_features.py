@@ -1,4 +1,4 @@
-"""側板のネイティブなスケッチと加工フィーチャーを作る補助処理。"""
+"""FreeCADのスケッチと加工フィーチャーを作る共通処理。"""
 
 import math
 import re
@@ -9,9 +9,9 @@ import Sketcher
 
 
 class Features:
-    def __init__(self, doc, aliases):
+    def __init__(self, doc, body, aliases):
         self.doc = doc
-        self.body = doc.Sideplate
+        self.body = body
         self.aliases = set(aliases)
 
     def value(self, expression):
@@ -108,26 +108,3 @@ class Features:
                 obj.Visibility = obj == feature
         self.body.Visibility = True
         feature.Visibility = True
-
-    def round_windows(self, window_cut):
-        y0, y1 = self.value("FrontY + 20 mm"), self.value("ModuleDepth - 20 mm")
-        zs = [18, self.value("SupportTop - 12 mm"), self.value("SupportTop + 12 mm"), self.value("FrameHeight - 18 mm")]
-        corners = [(y, z) for y in (y0, y1) for z in zs]
-        selected = []
-        for i, edge in enumerate(window_cut.Shape.Edges, 1):
-            if len(edge.Vertexes) != 2:
-                continue
-            a, b = [v.Point for v in edge.Vertexes]
-            if (abs(abs(a.x - b.x) - self.value("SideThickness")) < 1e-6
-                    and abs(a.y - b.y) < 1e-6 and abs(a.z - b.z) < 1e-6
-                    and any(abs(a.y - y) < 1e-6 and abs(a.z - z) < 1e-6 for y, z in corners)):
-                selected.append("Edge" + str(i))
-        assert len(selected) == 8, selected
-        fillet = self.body.newObject("PartDesign::Fillet", "WindowFillet")
-        fillet.Label = "03_窓の丸み"
-        fillet.Base = (window_cut, selected)
-        fillet.setExpression("Radius", "Parameters.WindowRadius")
-        self.doc.recompute()
-        assert not fillet.Shape.isNull() and fillet.Shape.isValid()
-        self.show_tip(fillet)
-        return fillet

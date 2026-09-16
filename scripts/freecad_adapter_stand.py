@@ -6,7 +6,7 @@ import sys
 import FreeCAD as App
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from freecad_sideplate_features import Features
+from freecad_features import Features
 
 
 INPUTS = [
@@ -54,16 +54,11 @@ DERIVED = [
 CELLS = {name: f"B{row}" for row, (name, _, _) in enumerate(INPUTS + DERIVED, 2)}
 
 
-class StandFeatures(Features):
-    def __init__(self, doc, body):
-        self.doc, self.body, self.aliases = doc, body, set(CELLS)
-
-
 def new_body(doc, name, label):
     body = doc.addObject("PartDesign::Body", name)
     body.Label = label
     doc.PartLibrary.addObject(body)
-    return body, StandFeatures(doc, body)
+    return body, Features(doc, body, CELLS)
 
 
 def make_saddle(doc):

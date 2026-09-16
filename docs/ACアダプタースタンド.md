@@ -2,7 +2,7 @@
 
 [DGX-SPARK-ADAPTER-STAND-v1.FCStd](../DGX-SPARK-ADAPTER-STAND-v1.FCStd)は、本体ラックの横に置く独立したスタンドです。アダプターの底面を30 mm持ち上げ、前後2本の桟で支えます。天井と側面は開放し、最初はファンを付けません。
 
-**現在はアダプターの外寸を100 × 100 × 36 mmとした仮寸法モデルです。お手元の型番・実寸・端子位置は確認待ちです。** 印刷前に実寸へ合わせてください。既存のDGXラック、Fusionデータ、比較用データは変更していません。
+**現在はアダプターの外寸を100 × 100 × 36 mmとした仮寸法モデルです。お手元の型番・実寸・端子位置は確認待ちです。** 印刷前に実寸へ合わせてください。DGXラックとは独立したFreeCAD文書です。
 
 [2台配置](../exports/adapter-stand/two_units.png)／[スタンドだけを見る](../exports/adapter-stand/stand_only.png)／[4台配置](../exports/adapter-stand/four_units.png)
 
