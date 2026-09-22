@@ -43,3 +43,9 @@ mise run 3mf:fan-controller     # ケースのCADから、部品別3MFまで生�
 3. `build/<モデル名>/`で形状と検査結果を確認する。印刷設定を確認するときだけ[print-projects](print-projects/README.md)を開く。
 
 生成物は各モデルとも `build/<モデル名>/<実行ID>/` に保存し、Gitには含めません。詳細は[正本と生成物の管理](docs/設計コードと生成物の管理.md)を参照してください。
+
+## ライセンス
+
+[Apache License 2.0](LICENSE)
+
+Copyright 2026 IDEO PLUS LLC

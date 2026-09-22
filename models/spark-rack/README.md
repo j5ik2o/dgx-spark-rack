@@ -14,3 +14,9 @@
 現在の接合隙間は0.30mm、ファンは140mmです。0.20mmへの変更は今回のコード移行に含みません。実物の強度・冷却は別途確認が必要です。
 
 [印刷設定](../../print-projects/README.md) と [移行前データ](../../archive/spark-rack-fcstd-v1/README.md) は別管理です。
+
+## ライセンス
+
+[Apache License 2.0](../../LICENSE)
+
+Copyright 2026 IDEO PLUS LLC

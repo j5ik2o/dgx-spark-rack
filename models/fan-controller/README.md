@@ -16,3 +16,9 @@ FreeCADでマクロを実行すると、`build/fan-controller/<実行ID>/` に�
 元の `designs/fan-controller/FanControllerCase.FCMacro` の形状コードはそのままPythonへ移しました。元マクロ、既存プレビュー、過去の検査記録は [取り込み時のアーカイブ](../../archive/fan-controller-import/README.md) に保全しています。元worktreeは変更していません。今後の編集先はこの `source/` です。
 
 USB/JST開口などに仮寸法が残ります。実物の適合・操作性、およびアダプターラックとの取付は未検証・未設計です。データの統合と機械的な一体化は別作業です。
+
+## ライセンス
+
+[Apache License 2.0](../../LICENSE)
+
+Copyright 2026 IDEO PLUS LLC
