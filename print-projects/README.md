@@ -15,3 +15,9 @@
 ## 自動生成する
 
 `mise run 3mf:<モデル名>` でCADから再生成し、部品別3MFを `<モデル名>/generated/<実行ID>/` に出力します。既存の手調整済み3MFは上書きしません。生成物はGit管理対象外、共通の設定は `profiles/` で管理します。[操作と検査の範囲](../docs/タスクランナー.md)を参照してください。
+
+## ライセンス
+
+[Apache License 2.0](../LICENSE)
+
+Copyright 2026 IDEO PLUS LLC

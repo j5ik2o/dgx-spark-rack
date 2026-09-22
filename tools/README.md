@@ -8,3 +8,9 @@
 
 - `tasks/cad.py`：miseから呼ぶCAD・3MF生成タスク。
 - `tasks/cad_worker.py`：FreeCAD専用プロセスの実行入口。
+
+## ライセンス
+
+[Apache License 2.0](../LICENSE)
+
+Copyright 2026 IDEO PLUS LLC

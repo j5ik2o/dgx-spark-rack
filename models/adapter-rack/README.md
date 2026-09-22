@@ -14,3 +14,9 @@
 出力先はリポジトリ直下の `build/adapter-rack/<実行ID>/` です。実行ごとに新しいフォルダを作り、FCStd・STEP・STL・画像・検査結果・manifestを保存します。正本を選ぶ際に、この出力フォルダからファイルを選ぶ必要はありません。
 
 [設計と組立](docs/設計と組立.md)で構成・部品表・試作手順を確認できます。実物の適合・耐荷重・冷却は未検証です。旧スタンドは[アーカイブ](../../archive/adapter-stand-v1/README.md)に退避しています。
+
+## ライセンス
+
+[Apache License 2.0](../../LICENSE)
+
+Copyright 2026 IDEO PLUS LLC
