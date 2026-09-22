@@ -1,12 +1,14 @@
-"""FreeCAD GUIでDGX Spark純正アダプター用スタンドを作成・保存する。"""
+"""設計コードから生成する入口。既存のFCStdを入力にしない。"""
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from freecad_adapter_stand import create
-from export_adapter_stand import TARGET, main
+# 同じFreeCADセッションでも、編集後のコードを読み直す。
+import importlib
+for name in ("adapter_stand_parameters", "freecad_features", "freecad_adapter_stand",
+             "check_stl", "export_adapter_stand", "build_adapter_stand"):
+    if name in sys.modules:
+        importlib.reload(sys.modules[name])
+from build_adapter_stand import build
 
-if TARGET.exists():
-    raise FileExistsError("既存のスタンドを保持するため、別の出力先を指定してください")
-create()
-main()
+build()
