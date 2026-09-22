@@ -1,0 +1,13 @@
+"""縦横連結アダプターラックv2を、設計コードから生成する入口。"""
+from pathlib import Path
+import importlib
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+for name in ("adapter_rack_parameters", "freecad_features", "freecad_adapter_rack",
+             "check_stl", "validate_adapter_rack", "build_adapter_rack"):
+    if name in sys.modules:
+        importlib.reload(sys.modules[name])
+from build_adapter_rack import build
+
+build()

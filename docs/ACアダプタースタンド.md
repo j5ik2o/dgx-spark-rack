@@ -1,5 +1,7 @@
 # ACアダプターを浮かせる開放スタンド
 
+この文書は横連結のみのv1です。縦横連結と120mmファンを追加した次版は[ACアダプターラックv2](ACアダプターラックv2.md)を参照してください。v1のコード・生成物は比較用に保持しています。
+
 [DGX-SPARK-ADAPTER-STAND-v1.FCStd](../DGX-SPARK-ADAPTER-STAND-v1.FCStd)は、本体ラックの横に置く独立したスタンドです。アダプターの底面を30 mm持ち上げ、前後2本の桟で支えます。天井と側面は開放し、最初はファンを付けません。
 
 **DGX Spark純正電源「Delta ADP-240LB B」の公開実測値を設計基準にしています。** 電源外形は幅99.05 × 長さ98.99 × 厚さ35.17 mm、左右の余裕は片側1.5 mmです。DGXラックとは独立したFreeCAD文書です。
@@ -54,7 +56,7 @@ NVIDIAはACアダプターを通風のある場所で使うよう指定してい
 
 ## FreeCADで寸法を変更する
 
-寸法表の先頭の青いセルを編集します。スケッチ・加工・部品の配置が式で連動します。
+寸法表の先頭の青いセルで寸法を試せます。スケッチ・加工・部品の配置が式で連動します。採用する値は `scripts/adapter_stand_parameters.py` に戻し、マクロで再生成してください。生成したFCStdだけの編集は設計の正本にしません。
 
 | セル | パラメーター | 初期値 |
 |---|---|---:|
@@ -78,6 +80,6 @@ NVIDIAはACアダプターを通風のある場所で使うよう指定してい
 
 このSTLは公開実測値に基づく設計です。造形後の実機適合、荷重、樹脂の耐熱、温度低下は未検証です。材質は既存ラックと同じASAを候補としますが、実物の温度と荷重を確認して採用します。
 
-記録は[CAD確認](../exports/adapter-stand/validation.json)と[STL確認](../exports/adapter-stand/stl_validation.json)です。再作成用の入口は[scripts/run_adapter_stand.FCMacro](../scripts/run_adapter_stand.FCMacro)で、既存ファイルへの上書きは行いません。
+従来版の記録は[CAD確認](../exports/adapter-stand/validation.json)と[STL確認](../exports/adapter-stand/stl_validation.json)です。再生成の入口は[scripts/run_adapter_stand.FCMacro](../scripts/run_adapter_stand.FCMacro)です。新しい出力は実行ごとに `build/adapter-stand/` の別フォルダへ保存し、既存ファイルは上書きしません。[設計コードと生成物の管理](設計コードと生成物の管理.md)に手順を記載しています。
 
 次は1台分をスライスし、接合と載せた状態を試作で確認します。
