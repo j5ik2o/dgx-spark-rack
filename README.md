@@ -1,31 +1,34 @@
 # DGX Spark Rack
 
-DGX Sparkを最初は2台、最終的に2段×2列で4台置く、3Dプリント用ラックの設計です。電源アダプターは別置きとし、各ユニットに140mmファンを取り付けます。
+DGX Spark本体とACアダプターを置く、3Dプリント用ラックです。**現行モデルは3つです。編集する正本は `models/` にあります。**
 
-**CADはFreeCADで管理します。** [DGX-SPARK-RACK-FREECAD-v1.FCStd](DGX-SPARK-RACK-FREECAD-v1.FCStd)に4台の組立と印刷部品12種類を収録しています。全体モデルは取り込んだソリッドで、参考用の寸法表は形状に連動しません。実物の適合・耐荷重・冷却性能は試作で確認します。
+## 何を編集するか
 
-## 始める
+| 現行モデル | 正本（SSoT） | 最初に開く案内 |
+|---|---|---|
+| Spark本体ラック | [source内のPythonコードと寸法定義](models/spark-rack/source/) | [本体ラック](models/spark-rack/README.md) |
+| ACアダプターラック | [source内のPythonコードと寸法定義](models/adapter-rack/source/) | [アダプターラック](models/adapter-rack/README.md) |
+| ファンコンケース | [source内のPythonコード（冒頭に寸法定義）](models/fan-controller/source/freecad_fan_controller.py) | [ファンコンケース](models/fan-controller/README.md) |
 
-1. FCStdをFreeCADで開きます。
-2. [FreeCAD版の操作](docs/FreeCAD版の操作.md)で組立と個別部品の表示方法を確認します。
-3. [接合用の試験片](exports/freecad/stl)を印刷し、[試作ガイド](docs/試作ガイド.md)に沿って1台分から組み立てます。
+3モデルともPythonを正本とし、FCMacroを実行入口にします。ファンコンケースの設計データは統合済みですが、ラックへの機械的な取り付けは未設計です。
 
-## データの役割
+## フォルダは用途で分ける
 
-| 場所 | 役割 |
-|---|---|
-| `DGX-SPARK-RACK-FREECAD-v1.FCStd` | ラック全体と印刷部品を保持する基準ファイル |
-| `DGX-SPARK-ADAPTER-STAND-v1.FCStd` | 履歴付きのACアダプタースタンド。純正電源の公開実測値を採用 |
-| `exports/freecad/stl/` | 印刷部品12種類。単位mm |
-| `exports/freecad/parts/` | 個別部品を他のCADへ渡す汎用STEP |
-| `exports/freecad/` | 組立STEP、配置画像、ファイル一覧、STL検査記録 |
-| `scripts/freecad_mcp.py` | FreeCAD MCPへの接続 |
-| `scripts/check_stl.py` | 印刷用STLの形状検査 |
-| `exports/adapter-stand/` | アダプタースタンドの試作用STL・画像・検査記録 |
-| `scripts/freecad_adapter_stand.py` | 履歴付きアダプタースタンドの作成 |
+| フォルダ | 入れるもの | 正本として編集するか |
+|---|---|---|
+| `models/` | 現行モデルの設計コード・CAD正本、参照仕様、モデル別の説明 | `source/`を編集する。`reference/`は購入品の根拠資料 |
+| `build/` | 現行モデルから作ったFCStd・STEP・STL・画像・検査結果 | 編集しない。正本から出力する |
+| `print-projects/` | スライサーの3MF。配置、材料、ブリム等の印刷設定 | 印刷条件の変更先。形状の正本ではない |
+| `archive/` | 旧アダプタースタンド、採用をやめた印刷配置、過去の生成結果 | 現行設計には使わない |
+| `tools/` | 複数モデルで使うCAD補助・検査ツール | 共通処理を変更するときだけ編集 |
+| `docs/` | リポジトリ全体の運用ルール | 運用を変更するときに編集 |
 
-[ACアダプタースタンド](docs/ACアダプタースタンド.md)は寸法表で編集でき、2台から4台へ横に増設できます。純正電源ADP-240LB Bの公開実測値を設計基準にしています。
+`exports/`、`design/`、`scripts/`と直下のFCStdは廃止し、上の用途に応じて移動しました。旧スタンドは[archive/adapter-stand-v1](archive/adapter-stand-v1/README.md)にまとめています。
 
-## 変更を記録する
+## レビューを始める
 
-変更したFCStdと派生データを、検査結果と一緒にGitへコミットします。以前のCAD専用ファイル、変換スクリプト、比較用のモデル・スクリプト・資料は削除しました。現在のラックのファイル一覧とハッシュは[manifest.json](exports/freecad/manifest.json)に記録しています。
+1. 上の表で対象モデルを選び、その案内を開く。
+2. `source/`で設計を確認する。各モデルの案内に記載した生成マクロをFreeCADで実行する。
+3. `build/<モデル名>/`で形状と検査結果を確認する。印刷設定を確認するときだけ[print-projects](print-projects/README.md)を開く。
+
+生成物は各モデルとも `build/<モデル名>/<実行ID>/` に保存し、Gitには含めません。詳細は[正本と生成物の管理](docs/設計コードと生成物の管理.md)を参照してください。

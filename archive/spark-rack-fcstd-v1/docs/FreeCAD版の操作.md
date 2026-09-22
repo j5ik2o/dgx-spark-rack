@@ -1,6 +1,6 @@
 # FreeCADでラックを開く
 
-[DGX-SPARK-RACK-FREECAD-v1.FCStd](../DGX-SPARK-RACK-FREECAD-v1.FCStd)をFreeCADで開いてください。4台の組立、印刷部品12種類、参考用の寸法表を1つのファイルにまとめています。[全体画像](../exports/freecad/four_units.png)も参照できます。
+[DGX-SPARK-RACK-FREECAD-v1.FCStd](../source/DGX-SPARK-RACK-FREECAD-v1.FCStd)をFreeCADで開いてください。4台の組立、印刷部品12種類、参考用の寸法表を1つのファイルにまとめています。[全体画像](../generated/four_units.png)も参照できます。
 
 全体モデルはソリッドとして取り込んだ形状です。スケッチ・寸法連動・ジョイントの設計履歴は含みません。モデルはこのFCStdだけで開けます。
 
@@ -20,15 +20,15 @@
 
 ## 印刷と書き出し
 
-印刷には[部品別STL](../exports/freecad/stl)を使ってください。組立全体には購入部品の参照形状も入っているため、そのまま印刷しません。造形方向や接合部の確認は[試作ガイド](試作ガイド.md)にまとめています。
+印刷には[部品別STL](../generated/stl)を使ってください。組立全体には購入部品の参照形状も入っているため、そのまま印刷しません。造形方向や接合部の確認は[試作ガイド](試作ガイド.md)にまとめています。
 
 編集したFCStdを保存し、書き出す部品だけを選択してFreeCADのエクスポートを使います。CAD間で形状を渡す場合はSTEP、スライサーへ渡す場合はSTLを選びます。STLでは単位と造形方向を確認してください。
 
-保存済みの[組立STEP](../exports/freecad/DGX-SPARK-RACK-v1.step)と[部品別STEP](../exports/freecad/parts)は、元の形状を保持する汎用データです。FreeCADモデルを編集しても、これらのファイルやSTLは自動では更新されません。
+保存済みの[組立STEP](../generated/DGX-SPARK-RACK-v1.step)と[部品別STEP](../generated/parts)は、元の形状を保持する汎用データです。FreeCADモデルを編集しても、これらのファイルやSTLは自動では更新されません。
 
 ## 保存している記録
 
-[manifest.json](../exports/freecad/manifest.json)にFCStd・STEP・STLの場所とハッシュを記録しています。[STL検査記録](../exports/freecad/stl_validation.json)には閉じた形状、接続成分、体積、造形寸法を記録しています。実物の強度、放熱、造形の適合は別途確認が必要です。
+[manifest.json](../generated/manifest.json)にFCStd・STEP・STLの場所とハッシュを記録しています。[STL検査記録](../generated/stl_validation.json)には閉じた形状、接続成分、体積、造形寸法を記録しています。実物の強度、放熱、造形の適合は別途確認が必要です。
 
 ファイル内に残る変換元名や識別用の属性は過去の記録です。外部のCADファイルを読み込むリンクではありません。旧CAD専用のファイルやプログラムは、現在の作業に不要なため削除しました。
 

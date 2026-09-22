@@ -1,0 +1,16 @@
+"""設計コードから生成する入口。既存のFCStdを入力にしない。"""
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+# 同じFreeCADセッションでも、編集後のコードを読み直す。
+import importlib
+for name in ("adapter_stand_parameters", "freecad_features", "freecad_adapter_stand",
+             "check_stl", "export_adapter_stand", "build_adapter_stand"):
+    if name in sys.modules:
+        importlib.reload(sys.modules[name])
+from build_adapter_stand import build
+
+build()

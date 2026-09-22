@@ -1,0 +1,23 @@
+{
+  "fan": {
+    "model": "Noctua NF-A12x25 G2 PWM PPA/PPB",
+    "size_mm": [120, 120, 27],
+    "mounting_pitch_mm": 105,
+    "voltage_v": 12,
+    "max_current_a": 0.15,
+    "source": "https://www.noctua.at/en/products/nf-a12x25-g2-pwm-sx2-pp/specifications",
+    "checked_date": "2026-09-22"
+  },
+  "adapter": {
+    "specification": "models/adapter-rack/reference/adapter_spec.json",
+    "orientation": "ACとUSB-Cの出口を左右X方向、送風を前後Y方向に分ける"
+  },
+  "controller": {
+    "model": "Noctua NA-FC1",
+    "case_source": null,
+    "status": "既存ケースの入手先は未特定。今回の生成物は汎用取り付け面のみ。ケースの適合は未検証。",
+    "mounting_pitch_mm": 28,
+    "source": "https://www.noctua.at/en/products/na-fc1/downloads"
+  },
+  "cooling_assumption": "縦2台までを1列とし、列ごとに120mmファン1基を装着する。1段だけでも同じ保持板を使い、上方へ張り出す。冷却性能は未測定。"
+}

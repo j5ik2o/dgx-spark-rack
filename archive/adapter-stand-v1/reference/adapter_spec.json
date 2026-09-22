@@ -1,0 +1,23 @@
+{
+  "device": "NVIDIA DGX Spark original 240W power adapter",
+  "manufacturer": "Delta Electronics",
+  "model": "ADP-240LB B",
+  "dimension_basis": "published_teardown_measurements",
+  "manufacturer_toleranced_drawing_available": false,
+  "dimensions_mm": {"length_y": 98.99, "width_x": 99.05, "height_z": 35.17},
+  "reported_weight_g": 542.3,
+  "rated_output_w": 240,
+  "ac_input": "Recessed IEC C6 inlet; detachable cable with C5 connector",
+  "dc_output": "Captive USB-C cable, reported length approximately 180 cm",
+  "connector_layout": "opposite_end_faces",
+  "connector_layout_basis": "photographs in the original teardown article",
+  "design_orientation": "AC inlet toward -Y, captive USB-C cable toward +Y",
+  "physical_fit_tested": false,
+  "verified_date": "2026-09-16",
+  "sources": {
+    "manufacturer_power_spec": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+    "original_measurements": "https://www.chargerlab.com/teardown-of-the-nvidia-dgx-spark-original-240w-usb-c-power-adapter",
+    "connector_layout_photo": "https://www.chargerlab.com/wp-content/uploads/2026/06/2026061210471560.jpg",
+    "label_photo": "https://www.chargerlab.com/wp-content/uploads/2026/06/2026061210472347.jpg"
+  }
+}

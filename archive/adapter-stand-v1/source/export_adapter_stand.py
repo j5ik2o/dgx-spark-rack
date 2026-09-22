@@ -5,6 +5,9 @@ import json
 from pathlib import Path
 import sys
 
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
 import FreeCAD as App
 import FreeCADGui as Gui
 import MeshPart
@@ -12,11 +15,12 @@ import Part
 # カメラのSWIG型を登録する。
 from pivy import coin
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "exports/adapter-stand"
-TARGET = ROOT / "DGX-SPARK-ADAPTER-STAND-v1.FCStd"
-sys.path.insert(0, str(ROOT / "scripts"))
-from freecad_adapter_stand import CELLS, INPUTS, DERIVED, show_units
+ROOT = Path(__file__).resolve().parents[3]
+SPEC = ROOT / "archive/adapter-stand-v1/reference/adapter_spec.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from adapter_stand_parameters import CELLS, INPUTS, DERIVED
+from freecad_adapter_stand import show_units
+from check_stl import inspect as inspect_stl
 
 PRINT_PARTS = {"Saddle": "saddle", "Rail": "rail", "LockPin": "locking_pin", "JoinClip": "join_clip"}
 
@@ -81,15 +85,12 @@ def render(doc, count, path):
     view.saveImage(str(path), 1500, 900, "White")
 
 
-def main(*, update_existing=False):
-    if TARGET.exists() and not update_existing:
-        raise FileExistsError(TARGET)
-    OUT.mkdir(parents=True, exist_ok=True)
-    doc = App.ActiveDocument
+def main(doc, output_dir, *, render_images=True):
+    out = Path(output_dir).resolve()
+    out.mkdir(parents=True, exist_ok=False)
+    target = out / "DGX-SPARK-ADAPTER-STAND.FCStd"
     assert doc and doc.getObject("StandAssembly") and doc.getObject("REFAdapter")
-    if update_existing:
-        assert Path(doc.FileName).resolve() == TARGET.resolve(), "更新対象のスタンド文書が一致しません"
-    spec = json.loads((OUT / "adapter_spec.json").read_text())
+    spec = json.loads(SPEC.read_text())
     report = {"status": "running", "fit_status": "published_measurements_based",
               "dimension_basis": spec["dimension_basis"], "published_reference_model": spec["model"],
               "design_adapter_dimensions_mm": {axis: doc.Parameters.evalExpression(name).Value
@@ -116,49 +117,52 @@ def main(*, update_existing=False):
             show_units(doc, 2)
         restored = inspect(doc, 2)
         assert max(abs(a - b) for a, b in zip(restored["dimensions_mm"], report["two_units"]["dimensions_mm"])) < 1e-6
-        render(doc, 4, OUT / "four_units.png")
-        for i in range(4):
-            doc.getObject(f"Adapter{i}").Visibility = False
-        render(doc, 2, OUT / "stand_only.png")
-        for i in range(4):
-            doc.getObject(f"Adapter{i}").Visibility = True
-        render(doc, 2, OUT / "two_units.png")
-        doc.saveAs(str(TARGET))
+        if render_images:
+            render(doc, 4, out / "four_units.png")
+            for i in range(4):
+                doc.getObject(f"Adapter{i}").Visibility = False
+            render(doc, 2, out / "stand_only.png")
+            for i in range(4):
+                doc.getObject(f"Adapter{i}").Visibility = True
+            render(doc, 2, out / "two_units.png")
+        doc.saveAs(str(target))
         App.closeDocument(doc.Name)
-        doc = App.openDocument(str(TARGET))
+        doc = App.openDocument(str(target))
         report["reopened"] = inspect(doc, 2)
         assert max(abs(a - b) for a, b in zip(report["reopened"]["dimensions_mm"], restored["dimensions_mm"])) < 1e-6
         report["parameters"] = {name: {"cell": CELLS[name], "contents": doc.Parameters.getContents(CELLS[name]), "description": text}
                                 for name, _, text in INPUTS + DERIVED}
-        directory = OUT / "stl"
+        directory = out / "stl"
         directory.mkdir(exist_ok=True)
         report["stl"] = {}
+        step_dir = out / "step"
+        step_dir.mkdir()
+        stl_report = {}
         for name, filename in PRINT_PARTS.items():
             shape = doc.getObject(name).Shape.copy(True, False)
             if name == "Saddle":
                 shape.rotate(App.Vector(0, 0, 0), App.Vector(1, 0, 0), 90)
             box = shape.BoundBox
             shape.translate(App.Vector(-box.XMin, -box.YMin, -box.ZMin))
+            shape.exportStep(str(step_dir / (filename + ".step")))
             mesh = MeshPart.meshFromShape(Shape=shape, LinearDeflection=0.02, AngularDeflection=0.15, Relative=False)
             path = directory / (filename + ".stl")
             mesh.write(str(path), "STL")
+            stl_report[filename] = inspect_stl(path)
             report["stl"][filename] = {"triangles": mesh.CountFacets, "units": "mm", "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        (out / "stl_validation.json").write_text(json.dumps(stl_report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        Part.getShape(doc.StandAssembly).exportStep(str(out / "assembly-two-units.step"))
         report["bom"] = {"two_units": {"saddle": 4, "rail": 4, "locking_pin": 8, "join_clip": 2},
                          "four_units": {"saddle": 8, "rail": 8, "locking_pin": 16, "join_clip": 6}}
         report["fan_mount"] = {"fan_included": False, "bracket_included": False, "hole_diameter_mm": 4.5,
                                "hole_pitch_mm": 28, "nut_pocket_af_mm": 7.5, "nut_pocket_depth_mm": 3.5,
                                "location": "横一列の外端レール。内側の同じ穴は横連結クリップが使用する"}
-        report["file_sha256"] = hashlib.sha256(TARGET.read_bytes()).hexdigest()
+        report["file_sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
         report["status"] = "passed_for_published_dimensions"
     except Exception as error:
         report["status"] = "failed"
         report["error"] = f"{type(error).__name__}: {error}"
         raise
     finally:
-        (OUT / "validation.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"status": report["status"], "file": str(TARGET), "fit_confirmed": False,
-                      "two_units_mm": report["two_units"]["dimensions_mm"], "four_units_mm": report["four_units"]["dimensions_mm"]}))
-
-
-if __name__ == "__main__":
-    main()
+        (out / "validation.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return report

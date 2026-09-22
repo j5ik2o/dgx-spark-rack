@@ -1,0 +1,11 @@
+{
+  "origin": "/Users/j5ik2o/.codex/worktrees/8be8/dgx-spark-rack/designs/fan-controller",
+  "files_sha256": {
+    "render_preview.py": "21326908b205f66d067fcff1e1c16db69a847b74c70c39cc9a7f7773b6b6a82b",
+    "FanControllerCase.FCMacro": "8115449ec76b29dc5dfef36f35d97dd0112edd8db197d443db904a0621cd3a17",
+    "validation.json": "410063ed06bcf61f3d92b6df1e67e0b3cdfc27f6b42ee343eb5ff2b4d25723e3",
+    "preview/details.png": "37ba8c0fc26081d07c870ebc131b40d1b3b1fb8e3e7488956378e6d9fedbe15b",
+    "preview/assembly.png": "50bea979d1c219627038087a4f55a1626f7f93036ecdcac1cbc11c2d8098c8d5"
+  },
+  "note": "取り込み時の原本。元worktreeは変更していない。"
+}

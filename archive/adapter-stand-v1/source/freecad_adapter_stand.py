@@ -3,55 +3,16 @@
 from pathlib import Path
 import sys
 
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
 import FreeCAD as App
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from freecad_features import Features
 
 
-INPUTS = [
-    ("AdapterWidth", "99.05 mm", "ADP-240LB Bの幅：公開実測値"),
-    ("AdapterLength", "98.99 mm", "ADP-240LB Bの長さ：公開実測値"),
-    ("AdapterHeight", "35.17 mm", "ADP-240LB Bの厚さ：公開実測値"),
-    ("LiftHeight", "30 mm", "アダプター底面の高さ"),
-    ("SideGap", "1.5 mm", "左右の余裕、片側"),
-    ("ModuleGap", "8 mm", "隣のスタンドとの隙間"),
-    ("FitClearance", "0.3 mm", "印刷部品どうしの片側の隙間"),
-    ("PostWidth", "12 mm", "支持台の柱幅"),
-    ("BeamHeight", "8 mm", "支持梁の高さ"),
-    ("BeamDepth", "12 mm", "支持台の前後厚さ"),
-    ("LipHeight", "6 mm", "左右のずれ止め高さ"),
-    ("RailWidth", "14 mm", "底レールの幅"),
-    ("RailBase", "3 mm", "底レールの底板厚さ"),
-    ("StemWidth", "6 mm", "底レールの差込幅"),
-    ("StemHeight", "5 mm", "底レールの差込高さ"),
-    ("PinDiameter", "3 mm", "印刷する固定ピン径"),
-    ("PinHeadDiameter", "7 mm", "固定ピンの頭径"),
-    ("PinHeadHeight", "2 mm", "固定ピンの頭厚さ"),
-    ("DockPitch", "28 mm", "後付けブラケットのM4穴ピッチ"),
-    ("DockHole", "4.5 mm", "後付けブラケットのM4通し穴"),
-    ("DockNutAF", "7.5 mm", "M4ナット座の対辺"),
-    ("DockNutDepth", "3.5 mm", "M4ナット座の深さ"),
-    ("JoinPegDiameter", "4 mm", "横連結クリップの差込ピン径"),
-    ("JoinPegLength", "4 mm", "横連結クリップの差込長さ"),
-    ("JoinThickness", "4 mm", "横連結クリップの厚さ"),
-]
-DERIVED = [
-    ("InsideWidth", "=AdapterWidth + 2 * SideGap", "アダプターを受ける内幅"),
-    ("PostCenter", "=InsideWidth / 2 + PostWidth / 2", "左右の柱とレールの中心"),
-    ("SaddleWidth", "=InsideWidth + 2 * PostWidth", "支持台の幅"),
-    ("SaddleLift", "=LiftHeight - RailBase", "支持台単体の受け面高さ"),
-    ("SaddleHeight", "=SaddleLift + LipHeight", "支持台単体の全高"),
-    ("SupportPitch", "=AdapterLength * 0.65", "前後の支持台の中心間隔"),
-    ("RailLength", "=AdapterLength + 40 mm", "底レールの長さ"),
-    ("RailHeight", "=RailBase + StemHeight", "底レールの全高"),
-    ("ModuleWidth", "=2 * PostCenter + RailWidth", "1台分の幅"),
-    ("ModulePitch", "=ModuleWidth + ModuleGap", "横に増設する中心間隔"),
-    ("PinLength", "=LiftHeight + LipHeight - 1 mm", "固定ピンの軸長さ"),
-    ("JoinSpacing", "=ModulePitch - 2 * PostCenter", "横連結の差込ピン間隔"),
-    ("JoinLength", "=JoinSpacing + 14 mm", "横連結クリップの長さ"),
-]
-CELLS = {name: f"B{row}" for row, (name, _, _) in enumerate(INPUTS + DERIVED, 2)}
+from adapter_stand_parameters import CELLS, INPUTS, DERIVED
 
 
 def new_body(doc, name, label):
