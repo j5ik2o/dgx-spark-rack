@@ -10,4 +10,8 @@
 | [pla-pins-3-brim5.3mf](spark-rack/pla-pins-3-brim5.3mf) | 追加ピン3本、外側5mmブリム |
 | [pla-fan-cassette.3mf](spark-rack/pla-fan-cassette.3mf) | 140mmファン用保持部1個 |
 
-いずれもPLA仮組み用の記録です。現在のプリンター・プレート・素材割り当てを確認してから印刷します。旧混在配置とバックアップは [../archive/print-projects/](../archive/print-projects/) に分けました。アダプターラックの印刷用3MFはまだ作っていません。
+いずれもPLA仮組み用の記録です。現在のプリンター・プレート・素材割り当てを確認してから印刷します。旧混在配置とバックアップは [../archive/print-projects/](../archive/print-projects/) に分けました。この一覧は手調整済みの保存ファイルです。3モデルの自動生成3MFは下記の別フォルダに出力します。
+
+## 自動生成する
+
+`mise run 3mf:<モデル名>` でCADから再生成し、部品別3MFを `<モデル名>/generated/<実行ID>/` に出力します。既存の手調整済み3MFは上書きしません。生成物はGit管理対象外、共通の設定は `profiles/` で管理します。[操作と検査の範囲](../docs/タスクランナー.md)を参照してください。

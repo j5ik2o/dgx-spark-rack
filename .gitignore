@@ -5,3 +5,5 @@ __pycache__/
 *.FCStd1
 /build/
 /archive/build-history/
+
+/print-projects/*/generated/
