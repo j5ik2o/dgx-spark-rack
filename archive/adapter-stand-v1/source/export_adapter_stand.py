@@ -5,6 +5,9 @@ import json
 from pathlib import Path
 import sys
 
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
 import FreeCAD as App
 import FreeCADGui as Gui
 import MeshPart
@@ -12,9 +15,9 @@ import Part
 # カメラのSWIG型を登録する。
 from pivy import coin
 
-ROOT = Path(__file__).resolve().parents[1]
-SPEC = ROOT / "design/adapter-stand/adapter_spec.json"
-sys.path.insert(0, str(ROOT / "scripts"))
+ROOT = Path(__file__).resolve().parents[3]
+SPEC = ROOT / "archive/adapter-stand-v1/reference/adapter_spec.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from adapter_stand_parameters import CELLS, INPUTS, DERIVED
 from freecad_adapter_stand import show_units
 from check_stl import inspect as inspect_stl

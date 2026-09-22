@@ -9,7 +9,7 @@
     "checked_date": "2026-09-22"
   },
   "adapter": {
-    "specification": "design/adapter-stand/adapter_spec.json",
+    "specification": "models/adapter-rack/reference/adapter_spec.json",
     "orientation": "ACとUSB-Cの出口を左右X方向、送風を前後Y方向に分ける"
   },
   "controller": {

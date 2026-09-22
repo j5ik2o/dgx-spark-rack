@@ -1,7 +1,7 @@
 {
-  "file": "DGX-SPARK-RACK-FREECAD-v1.FCStd",
+  "file": "archive/spark-rack-fcstd-v1/source/DGX-SPARK-RACK-FREECAD-v1.FCStd",
   "file_sha256": "8ec379675d1181fb2723165496166333b969322b4547c7708ec8b61729eecd58",
-  "assembly_step": "exports/freecad/DGX-SPARK-RACK-v1.step",
+  "assembly_step": "archive/spark-rack-fcstd-v1/generated/DGX-SPARK-RACK-v1.step",
   "assembly_units": 4,
   "assembly_solids": 128,
   "assembly_dimensions_mm": [

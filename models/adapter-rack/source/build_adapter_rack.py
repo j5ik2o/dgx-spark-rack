@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 import uuid
 
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
 import FreeCAD as App
 import FreeCADGui as Gui
 import MeshPart
@@ -17,12 +21,12 @@ from freecad_adapter_rack import create, PRINT_PARTS, LAYOUTS, show_layout
 from validate_adapter_rack import validate, inspect, visible_links, assert_equivalent
 from check_stl import inspect as inspect_stl
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 SOURCES = [
-    "scripts/run_adapter_rack.FCMacro", "scripts/build_adapter_rack.py",
-    "scripts/freecad_adapter_rack.py", "scripts/adapter_rack_parameters.py",
-    "scripts/validate_adapter_rack.py", "scripts/freecad_features.py", "scripts/check_stl.py",
-    "design/adapter-stand/adapter_spec.json", "design/adapter-rack/components.json",
+    "models/adapter-rack/source/run_adapter_rack.FCMacro", "models/adapter-rack/source/build_adapter_rack.py",
+    "models/adapter-rack/source/freecad_adapter_rack.py", "models/adapter-rack/source/adapter_rack_parameters.py",
+    "models/adapter-rack/source/validate_adapter_rack.py", "tools/cad/freecad_features.py", "tools/cad/check_stl.py",
+    "models/adapter-rack/reference/adapter_spec.json", "models/adapter-rack/reference/components.json",
 ]
 
 

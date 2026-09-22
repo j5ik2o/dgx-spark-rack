@@ -4,3 +4,4 @@ __pycache__/
 *.FCBak
 *.FCStd1
 /build/
+/archive/build-history/

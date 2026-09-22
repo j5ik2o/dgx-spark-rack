@@ -2,6 +2,8 @@
 from pathlib import Path
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 # 同じFreeCADセッションでも、編集後のコードを読み直す。
 import importlib

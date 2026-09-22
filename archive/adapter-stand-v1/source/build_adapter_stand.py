@@ -6,21 +6,25 @@ import json
 from pathlib import Path
 import uuid
 
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
+
 import FreeCAD as App
 
 from freecad_adapter_stand import create
 from export_adapter_stand import main as export
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 SOURCES = (
-    "scripts/run_adapter_stand.FCMacro",
-    "scripts/build_adapter_stand.py",
-    "scripts/adapter_stand_parameters.py",
-    "scripts/freecad_adapter_stand.py",
-    "scripts/freecad_features.py",
-    "scripts/export_adapter_stand.py",
-    "scripts/check_stl.py",
-    "design/adapter-stand/adapter_spec.json",
+    "archive/adapter-stand-v1/source/run_adapter_stand.FCMacro",
+    "archive/adapter-stand-v1/source/build_adapter_stand.py",
+    "archive/adapter-stand-v1/source/adapter_stand_parameters.py",
+    "archive/adapter-stand-v1/source/freecad_adapter_stand.py",
+    "tools/cad/freecad_features.py",
+    "archive/adapter-stand-v1/source/export_adapter_stand.py",
+    "tools/cad/check_stl.py",
+    "archive/adapter-stand-v1/reference/adapter_spec.json",
 )
 
 
@@ -31,7 +35,7 @@ def sha256(path):
 def build(output_dir=None, *, render_images=True):
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     out = Path(output_dir) if output_dir is not None else (
-        ROOT / "build/adapter-stand" / f"{stamp}-{uuid.uuid4().hex[:8]}"
+        ROOT / "archive/build-history/adapter-stand" / f"{stamp}-{uuid.uuid4().hex[:8]}"
     )
     out = out.resolve()
     if out.exists():
