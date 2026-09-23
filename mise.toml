@@ -6,34 +6,54 @@ run = "python3 tools/tasks/cad.py doctor"
 description = "全3モデルのCAD・STL・検査結果を生成"
 run = "python3 tools/tasks/cad.py build all"
 
-[tasks."3mf"]
-description = "全3モデルをCADから生成し、部品別PLA試作用3MFを作成"
-run = "python3 tools/tasks/cad.py 3mf all"
 
 [tasks."build:spark-rack"]
 description = "spark-rack のbuildを生成"
 run = "python3 tools/tasks/cad.py build spark-rack"
 
-[tasks."3mf:spark-rack"]
-description = "spark-rack の3mfを生成"
-run = "python3 tools/tasks/cad.py 3mf spark-rack"
 
 [tasks."build:adapter-rack"]
 description = "adapter-rack のbuildを生成"
 run = "python3 tools/tasks/cad.py build adapter-rack"
 
-[tasks."3mf:adapter-rack"]
-description = "adapter-rack の3mfを生成"
-run = "python3 tools/tasks/cad.py 3mf adapter-rack"
 
 [tasks."build:fan-controller"]
 description = "fan-controller のbuildを生成"
 run = "python3 tools/tasks/cad.py build fan-controller"
 
-[tasks."3mf:fan-controller"]
-description = "fan-controller の3mfを生成"
-run = "python3 tools/tasks/cad.py 3mf fan-controller"
 
 [tasks.test]
 description = "生成物の検査と再利用条件をテスト"
 run = "python3 -m unittest discover -s tests -v"
+
+[tasks."3mf:prototype"]
+description = "all のPLA試作用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf all --purpose prototype"
+
+[tasks."3mf:prototype:spark-rack"]
+description = "spark-rack のPLA試作用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf spark-rack --purpose prototype"
+
+[tasks."3mf:prototype:adapter-rack"]
+description = "adapter-rack のPLA試作用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf adapter-rack --purpose prototype"
+
+[tasks."3mf:prototype:fan-controller"]
+description = "fan-controller のPLA試作用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf fan-controller --purpose prototype"
+
+[tasks."3mf:production"]
+description = "all の本番（条件設定が必要）用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf all --purpose production"
+
+[tasks."3mf:production:spark-rack"]
+description = "spark-rack の本番（条件設定が必要）用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf spark-rack --purpose production"
+
+[tasks."3mf:production:adapter-rack"]
+description = "adapter-rack の本番（条件設定が必要）用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf adapter-rack --purpose production"
+
+[tasks."3mf:production:fan-controller"]
+description = "fan-controller の本番（条件設定が必要）用3MFを生成"
+run = "python3 tools/tasks/cad.py 3mf fan-controller --purpose production"

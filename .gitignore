@@ -6,4 +6,5 @@ __pycache__/
 /build/
 /archive/build-history/
 
-/print-projects/*/generated/
+/print-projects/*/prototype/generated/
+/print-projects/*/production/generated/

@@ -77,30 +77,48 @@ def build(model):
     return output
 
 
-def inspect_3mf(path, copies):
+def inspect_3mf(path, copies, expected=None):
     with zipfile.ZipFile(path) as archive:
         if archive.testzip() is not None:
             raise ValueError(f'3MFが破損しています: {path}')
         config = json.loads(archive.read('Metadata/project_settings.config'))
-        expected = {'printer_settings_id': 'Bambu Lab X1 Carbon 0.4 nozzle',
-                    'curr_bed_type': 'Textured PEI Plate', 'wall_loops': '4', 'layer_height': '0.2'}
+        expected = expected or {'printer_settings_id': 'Bambu Lab X1 Carbon 0.4 nozzle',
+                    'curr_bed_type': 'Textured PEI Plate', 'wall_loops': '4', 'layer_height': '0.2', 'filament_type': ['PLA']}
         for key, value in expected.items():
             if config.get(key) != value:
                 raise ValueError(f'{path.name}: {key} が指定設定と異なります')
-        if config.get('filament_type') != ['PLA']:
-            raise ValueError('PLAプロファイルが反映されていません')
         model = ET.fromstring(archive.read('3D/3dmodel.model'))
         items = model.findall('{*}build/{*}item')
         if len(items) != copies:
             raise ValueError(f'個数が不一致です: {len(items)} != {copies}')
-        return {'objects': len(items), 'settings': {key: config[key] for key in expected}, 'filament': 'PLA'}
+        return {'objects': len(items), 'settings': {key: config[key] for key in expected}, 'filament': config['filament_type']}
 
 
-def project(model, folder=None, part=None, copies=1):
+def print_settings(model, purpose, cfg):
+    if purpose == 'prototype':
+        return PROFILE, cfg['profiles'] / 'filament/Bambu PLA Basic @BBL X1C.json', None
+    if purpose != 'production':
+        raise ValueError('試作／本番を指定してください')
+    recipe = ROOT / 'print-projects/profiles/production' / (model + '.json')
+    if not recipe.exists():
+        raise ValueError(f'本番用の素材・印刷条件は未設定です: {recipe}')
+    data = json.loads(recipe.read_text())
+    expected = data['expected_settings']
+    required = ('printer_settings_id', 'filament_type', 'curr_bed_type', 'layer_height', 'wall_loops')
+    if any(not expected.get(key) for key in required):
+        raise ValueError('本番設定にはプリンター・素材・プレート・積層・壁数の検査値が必要です')
+    if expected['printer_settings_id'] != 'Bambu Lab X1 Carbon 0.4 nozzle':
+        raise ValueError('現在の対応機種はX1 Carbon・0.4mmノズルです')
+    if not isinstance(expected['filament_type'], list):
+        raise ValueError('filament_type は素材名の配列で指定してください')
+    return (ROOT / data['process_profile']).resolve(), (ROOT / data['filament_profile']).resolve(), expected
+
+
+def project(model, folder=None, part=None, copies=1, *, purpose):
     cfg = settings()
     machine = cfg['profiles'] / 'machine/Bambu Lab X1 Carbon 0.4 nozzle.json'
-    filament = cfg['profiles'] / 'filament/Bambu PLA Basic @BBL X1C.json'
-    require_paths(cfg['bambu'], machine, filament, PROFILE)
+    profile, filament, expected = print_settings(model, purpose, cfg)
+    require_paths(cfg['bambu'], machine, filament, profile)
     folder = folder.resolve() if folder else build(model)
     checked_build(model, folder)
     parts = sorted((folder / 'stl').glob('*.stl'))
@@ -109,18 +127,18 @@ def project(model, folder=None, part=None, copies=1):
         if not parts:
             raise ValueError(f'部品がありません: {part}')
     stamp = datetime.now().strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8]
-    output = ROOT / 'print-projects' / model / 'generated' / stamp
+    output = ROOT / 'print-projects' / model / purpose / 'generated' / stamp
     output.mkdir(parents=True, exist_ok=False)
-    report = {'status': 'running', 'model': model, 'cad_build': str(folder.relative_to(ROOT)),
+    report = {'status': 'running', 'model': model, 'purpose': purpose, 'cad_build': str(folder.relative_to(ROOT)),
               'cad_manifest_sha256': digest(folder / 'manifest.json'), 'copies_per_part': copies,
-              'sliced': False, 'parts': {}, 'profile_sha256': digest(PROFILE),
+              'sliced': False, 'parts': {}, 'profile_sha256': digest(profile),
               'machine_profile_sha256': digest(machine), 'filament_profile_sha256': digest(filament),
               'generator_sha256': digest(Path(__file__)),
               'bambu_binary': str(cfg['bambu'])}
     try:
         for stl in parts:
             target = output / (stl.stem + '.3mf')
-            command = [str(cfg['bambu']), '--debug', '1', '--load-settings', f'{machine};{PROFILE}',
+            command = [str(cfg['bambu']), '--debug', '1', '--load-settings', f'{machine};{profile}',
                        '--load-filaments', str(filament), '--arrange', '1', '--orient', '0',
                        '--clone-objects', str(copies), '--export-3mf', target.name,
                        '--outputdir', str(output), str(stl)]
@@ -128,11 +146,11 @@ def project(model, folder=None, part=None, copies=1):
             (output / (stl.stem + '.log')).write_text(run.stdout + run.stderr)
             if run.returncode or not target.exists():
                 raise RuntimeError(f'{stl.stem} の3MF生成に失敗しました: {output / (stl.stem + ".log")}')
-            report['parts'][stl.stem] = {**inspect_3mf(target, copies),
+            report['parts'][stl.stem] = {**inspect_3mf(target, copies, expected),
                                         'stl_sha256': digest(stl), '3mf_sha256': digest(target)}
             print(f'3MF: {target}', flush=True)
         checked_build(model, folder)
-        if digest(PROFILE) != report['profile_sha256']:
+        if digest(profile) != report['profile_sha256']:
             raise ValueError('生成中に印刷プロファイルが変更されました')
         report['status'] = 'passed'
     except Exception as error:
@@ -150,7 +168,12 @@ def main():
     parser.add_argument('--build-dir', type=Path, help='検査済みのCAD出力を再利用（単一モデルのみ）')
     parser.add_argument('--part', help='STL拡張子を除いた部品名（3MFのみ）')
     parser.add_argument('--copies', type=int, default=1, help='各部品の個数（既定1、3MFのみ）')
+    parser.add_argument('--purpose', choices=('prototype', 'production'), help='3MFの用途（必須）')
     args = parser.parse_args()
+    if args.action == '3mf' and not args.purpose:
+        parser.error('--purpose prototype または production を指定してください')
+    if args.action != '3mf' and args.purpose:
+        parser.error('--purpose は3mf専用です')
     if args.copies < 1 or (args.build_dir and args.model == 'all'):
         parser.error('個数は1以上、--build-dirは単一モデルを指定してください')
     if args.action != '3mf' and (args.build_dir or args.part or args.copies != 1):
@@ -164,7 +187,7 @@ def main():
         if args.action == 'build':
             build(model)
         else:
-            project(model, args.build_dir, args.part, args.copies)
+            project(model, args.build_dir, args.part, args.copies, purpose=args.purpose)
 
 
 if __name__ == '__main__':
