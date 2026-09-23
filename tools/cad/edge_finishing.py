@@ -6,8 +6,9 @@ TOUCH_CHAMFER = 0.3
 SMALL_CHAMFER = 0.2
 
 
-def convex_plane_edges(shape, planes, minimum_length=1.0):
-    """planesは [('X',座標), ...]。対象面に載る直線の凸稜線だけを返す。"""
+def convex_plane_edges(shape, planes, minimum_length=1.0, allow_openings=False):
+    """指定面と外接面が交わる外周を選択。通風窓の入口は明示した場合のみ含める。"""
+    envelope=shape.optimalBoundingBox(False)
     adjacent = {}
     for face in shape.Faces:
         for edge in face.Edges:
@@ -17,8 +18,16 @@ def convex_plane_edges(shape, planes, minimum_length=1.0):
         if type(edge.Curve).__name__ != 'Line' or edge.Length < minimum_length:
             continue
         bounds = edge.BoundBox
-        if not any(abs(getattr(bounds, axis+'Min')-value)<1e-6
-                   and abs(getattr(bounds, axis+'Max')-value)<1e-6 for axis,value in planes):
+        matching_axes=[axis for axis,value in planes
+                       if abs(getattr(bounds,axis+'Min')-value)<1e-6
+                       and abs(getattr(bounds,axis+'Max')-value)<1e-6]
+        if not matching_axes:
+            continue
+        # 切抜きの入口も立体としては凸稜線になり得る。外周との区別を別に行う。
+        if not allow_openings and not any(
+                other != axis and abs(getattr(bounds,other+'Min')-getattr(envelope,other+end))<1e-6
+                and abs(getattr(bounds,other+'Max')-getattr(envelope,other+end))<1e-6
+                for axis in matching_axes for other in 'XYZ' for end in ('Min','Max')):
             continue
         faces = adjacent.get(edge.hashCode(), [])
         if len(faces) != 2 or any(type(face.Surface).__name__ != 'Plane' for face in faces):
@@ -34,8 +43,8 @@ def convex_plane_edges(shape, planes, minimum_length=1.0):
     return selected
 
 
-def chamfer(shape, planes, size=TOUCH_CHAMFER):
-    selected = convex_plane_edges(shape, planes)
+def chamfer(shape, planes, size=TOUCH_CHAMFER, allow_openings=False):
+    selected = convex_plane_edges(shape, planes, allow_openings=allow_openings)
     if not selected:
         raise ValueError('指定された面に面取り対象の凸稜線がありません')
     result = shape.makeChamfer(size,[edge for _,edge in selected])

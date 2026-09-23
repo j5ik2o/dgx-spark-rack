@@ -55,7 +55,8 @@ def dock():
         r=5.8/math.sqrt(3)
         pts=[App.Vector(u+r*math.cos(i*math.pi/3),r*math.sin(i*math.pi/3),0) for i in range(7)]
         s=s.cut(Part.Face(Part.makePolygon(pts)).extrude(App.Vector(0,0,2.8)))
-    return chamfer(s.removeSplitter(),[('Z',THICKNESS)])
+    # ここは非接合の通風窓だけが直線の入口稜線として該当する。
+    return chamfer(s.removeSplitter(),[('Z',THICKNESS)],allow_openings=True)
 
 
 def case_ears(shape, xmin, xmax, cy, bottom):

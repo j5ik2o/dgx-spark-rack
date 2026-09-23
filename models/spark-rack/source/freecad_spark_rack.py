@@ -142,7 +142,8 @@ def shapes(p):
             continue
         if name=='side_L': planes=[('X',bounds.XMin)]
         elif name=='side_R': planes=[('X',bounds.XMax)]
-        elif name=='fan_cassette': planes=extrema(shape,'Y')
+        elif name=='fan_cassette': planes=[('Y',0),('Y',p.cassette_plate)]
+        elif name=='bridge_clip': planes=extrema(shape,'X')+[('Z',bounds.ZMax)]
         elif name=='hardware_coupon': planes=extrema(shape,'XY')
         elif name.startswith('fit_coupon'): planes=[('X',bounds.XMin)]  # 側枠と同じ外側面だけ処理
         else: planes=extrema(shape,'YZ')
