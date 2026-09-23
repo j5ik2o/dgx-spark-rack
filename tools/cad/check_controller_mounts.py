@@ -52,7 +52,12 @@ def main():
         aa,bb=a.BoundBox,b.BoundBox
         if any(min(getattr(aa,k+'Max'),getattr(bb,k+'Max'))-max(getattr(aa,k+'Min'),getattr(bb,k+'Min'))<=1e-7 for k in 'XYZ'):
             return 0.0
-        return a.common(b).Volume
+        # 同じ相対配置を部品aの局所座標で評価する。回転配置された六角穴で
+        # OCCがナット全体を干渉と誤判定する場合があり、原点側へ戻すと安定する。
+        local_a=a.copy();local_b=b.copy()
+        local_a.Placement=App.Placement()
+        local_b.Placement=a.Placement.inverse().multiply(b.Placement)
+        return local_a.common(local_b).Volume
 
     def cylinder(u,v,w,r,h):
         return Part.makeCylinder(r,h,App.Vector(u,v,w))
@@ -171,9 +176,26 @@ def main():
             camera=Gui.activeDocument().activeView().getCameraNode()
             camera.nearDistance.setValue(0.1);camera.farDistance.setValue(10000)
             Gui.activeDocument().activeView().saveImage(str(out/(scene+'.png')),1500,1000,'White')
+            if scene != 'mount_detail':
+                camera.orientation.setValue(coin.SbRotation(coin.SbVec3f(1,0,0),math.pi/2))
+                Gui.activeDocument().activeView().fitAll();Gui.updateGui();QApplication.processEvents()
+                camera=Gui.activeDocument().activeView().getCameraNode()
+                # 視点切替のアニメーション途中を画像に保存しない。
+                camera.orientation.setValue(coin.SbRotation(coin.SbVec3f(1,0,0),math.pi/2))
+                bounds=Part.makeCompound([s for _,s in scenes[scene]]).optimalBoundingBox(False)
+                center=bounds.Center
+                camera.position.setValue(center.x,center.y-1000,center.z)
+                camera.focalDistance.setValue(1000)
+                if hasattr(camera,'height'):
+                    camera.height.setValue(max(bounds.ZLength,bounds.XLength/1.5)*1.12)
+                camera.nearDistance.setValue(0.1);camera.farDistance.setValue(10000)
+                Gui.activeDocument().activeView().saveImage(str(out/(scene+'-front.png')),1500,1000,'White')
             doc.getObject(scene).Visibility=False
         doc.spark_two_horizontal.Visibility=True
-        doc.recompute();doc.saveAs(str(out/'ControllerMountChecks.FCStd'))
+        doc.recompute();Gui.updateGui();QApplication.processEvents()
+        Gui.activeDocument().activeView().viewAxonometric();QApplication.processEvents()
+        Gui.activeDocument().activeView().fitAll();Gui.updateGui();QApplication.processEvents()
+        doc.saveAs(str(out/'ControllerMountChecks.FCStd'))
         report['status']='passed'
         assert hashes=={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
         (out/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')

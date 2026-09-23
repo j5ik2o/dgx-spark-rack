@@ -4,11 +4,11 @@ import FreeCAD as App
 import Part
 
 LENGTH = 100.0
-WIDTH = 48.0
+WIDTH = 43.4  # ケース幅39.4mmに対して左右2mmずつの見付け
 THICKNESS = 8.0
 STANDOFF = 3.0
 RACK_PITCH = 28.0
-RACK_U = -30.0
+RACK_U = -42.0  # Sparkのドック上下端をZ=52/152、アダプター前端をY=-75へ揃える
 CASE_PITCH = 92.0
 EAR_THICKNESS = 4.0
 CASE_COUNTERSINK_DEPTH = 1.5
@@ -43,7 +43,7 @@ def dock():
     # 触れる外周だけを小さく丸め、締結面と穴の寸法は維持する。
     rims=[e for e in s.Edges if e.BoundBox.ZLength<1e-7]
     s=s.makeFillet(EDGE_RADIUS,rims)
-    opening=rounded_plate(-22,-18,-1,60,36,THICKNESS+2,WINDOW_RADIUS)
+    opening=rounded_plate(-22,-WIDTH/2+6,-1,60,WIDTH-12,THICKNESS+2,WINDOW_RADIUS)
     s=s.cut(opening)
     for v in (-RACK_PITCH/2,RACK_PITCH/2):
         s=s.fuse(hole(RACK_U,v,-STANDOFF,6,STANDOFF))

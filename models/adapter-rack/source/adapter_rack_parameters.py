@@ -37,7 +37,7 @@ INPUTS = [
     ("FanHolePitch", "105 mm", "ファン取付穴の中心距離"),
     ("FanOpening", "114 mm", "送風用開口径"),
     ("FanPlateThickness", "4 mm", "ファン保持板の厚さ"),
-    ("FanMargin", "8 mm", "ファン上下の保持板余白"),
+    ("FanMargin", "12 mm", "前面枠の上下余白。縦2段の外形に対して上下4mm内側"),
     ("FanMountLow", "16 mm", "保持板の下側ボルト高さ"),
     ("FanMountHigh", "60 mm", "保持板の上側ボルト高さ"),
     ("AccessoryPitch", "28 mm", "ファンコン取り付け面用M4穴間隔"),
