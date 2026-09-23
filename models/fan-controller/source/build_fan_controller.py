@@ -33,9 +33,16 @@ def build():
     try:
         model = runpy.run_path(str(SOURCE / 'freecad_fan_controller.py'))
         doc = model['doc']
-        report = {'status': 'passed', 'physical_fit_verified': False, 'parts': {}}
+        report = {'status': 'passed', 'physical_fit_verified': False, 'parts': {},
+                  'clamp_checks': model['clamp_validation'],
+                  'printed_bom': {'CaseBody': 1, 'CaseLid': 1, 'PCBClamp': 4},
+                  'fasteners': {'lid': {'count': 4, 'nominal_diameter_mm': 2, 'length_mm': model['SCREW_LENGTH']},
+                                'pcb_clamps': {'count': 4, 'nominal_diameter_mm': 2,
+                                               'length_mm': model['CLAMP_SCREW_LENGTH'],
+                                               'max_head_diameter_mm': model['CLAMP_HEAD_DIAMETER'],
+                                               'max_head_height_mm': model['CLAMP_HEAD_HEIGHT']}}}
         (out / 'stl').mkdir()
-        for name in ('CaseBody', 'CaseLid'):
+        for name in model['PRINT_PARTS']:
             shape = doc.getObject(name).Shape
             if not shape.isValid() or len(shape.Solids) != 1 or not shape.isClosed():
                 raise ValueError(f'{name}: 有効な閉ソリッドではありません')

@@ -31,10 +31,10 @@ DGX Spark本体とACアダプターを置く、3Dプリント用ラックです�
 mise trust
 mise run doctor
 mise run build                 # 全モデルのCAD・STL・検査結果
-mise run 3mf:fan-controller     # ケースのCADから、部品別3MFまで生成
+mise run 3mf:prototype:fan-controller     # ケースのCADから、部品別3MFまで生成
 ```
 
-全モデルの3MFは `mise run 3mf`。部品・個数の指定と生成先は[タスクランナーの案内](docs/タスクランナー.md)を参照してください。3MFはX1C向けPLA試作設定で、スライス前の状態です。
+全モデルの3MFは `mise run 3mf:prototype`。部品・個数の指定と生成先は[タスクランナーの案内](docs/タスクランナー.md)を参照してください。3MFはX1C向けPLA試作設定で、スライス前の状態です。
 
 ## レビューを始める
 

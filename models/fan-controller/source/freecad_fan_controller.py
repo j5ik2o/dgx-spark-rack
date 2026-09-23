@@ -4,7 +4,8 @@
 要採寸の仮配置モデル。写真のピクセル比から寸法を推定していない。
 原点=(PCB左下角, PCB下面)。X=全長方向、Y=幅方向、Z=上方向。
 左短辺をX_MIN、右短辺をX_MAX、手前長辺をY_MIN、奥長辺をY_MAXとする。
-PCBを上から置き、蓋の押さえで抜けを防ぐ。基板ねじは不要。
+PCBを上から置き、本体側の独立したねじ留め押さえ4個で抜けを防ぐ。
+基板への穴あけは不要。押さえは着座面まで締め、基板を直接締め付けない。
 蓋の固定は厚い側壁に樹脂用呼び径2mmの小ねじ4本。下穴径は試験片で調整。
 初期状態は組立座標。印刷時は本体を底面下、蓋を天面下にする。
 """
@@ -65,10 +66,18 @@ ENCODER_Y = ENCODER_BASE_BOTTOM_Y + ENCODER_BASE_WIDTH / 2 # 軸中央の前提�
 
 # (面, 面上の中心位置, 中心Z, 実寸幅, 実寸高さ)
 # X面の中心位置はY座標、Y面はX座標。Zは常にPCB下面基準。
-# 追加の注釈画像でUSB-Cは左短辺(X_MIN)と確認。中心Y=8.0とZ=-1.4は
-# 要採寸の仮値で、画像から求めた値ではない。9x3.5に余裕を足し9.5x4になる。
+# USB-Cは左短辺(X_MIN)。2026-09-23の実測値を採用。
+# Y=0はUSB-Cに近い基板の長辺。9.72は金属枠の全幅を含む遠い端まで。
+USB_OUTER_WIDTH = 8.91        # 写真2283: 金属枠の外幅（直接実測）
+USB_INNER_HEIGHT = 2.65       # ユーザー実測: 口の内側高さ
+USB_SHELL_WALL = 0.26        # ユーザー実測: 金属枠の肉厚
+USB_TOP_Z = 4.80             # 写真2281: 基板下面から金属枠上端
+USB_FAR_EDGE_Y = 9.72        # 基板長辺から金属枠の遠い端（全幅を含む）
+USB_OUTER_HEIGHT = USB_INNER_HEIGHT + 2 * USB_SHELL_WALL  # 上下同じ肉厚として算出
+USB_CENTER_Y = USB_FAR_EDGE_Y - USB_OUTER_WIDTH / 2
+USB_CENTER_Z = USB_TOP_Z - USB_OUTER_HEIGHT / 2
 # 電源には黒いねじ端子台を使用中。端子台の配線出口を確保し、USB開口も残す。
-USB_PORT = ("X_MIN", 8.0, -1.4, 9.0, 3.5)
+USB_PORT = ("X_MIN", USB_CENTER_Y, USB_CENTER_Z, USB_OUTER_WIDTH, USB_OUTER_HEIGHT)
 TERMINAL_PORT = ("X_MIN", PCB_WIDTH - TERMINAL_TOP_MARGIN - TERMINAL_WIDTH / 2,
                  (TERMINAL_PORT_BOTTOM_Z + TERMINAL_PORT_TOP_Z) / 2,
                  TERMINAL_PORT_WIDTH, TERMINAL_PORT_HEIGHT)
@@ -80,10 +89,21 @@ SUPPORT_X_FRONT = (18.0, 57.0) # 要確認: 手前長辺の部品/ランドの�
 SUPPORT_X_BACK = (47.0, 57.0)  # 要確認: 奥長辺。実測した表示器の範囲を避けた仮位置
 SUPPORT_LENGTH = 4.0          # 支え・押さえのX方向長さ
 SUPPORT_EDGE_OVERLAP = 0.80   # PCB端から内側へ掛かる量。両面の部品と要照合
-RETAINER_Z_GAP = 0.20         # PCB上面と蓋側押さえの上下遊び
-RETAINER_WALL_GAP = 0.05      # 押さえと本体内壁の隙間（位置決めはねじによる）
+RETAINER_Z_GAP = 0.20         # PCB上面と独立押さえの上下遊び
+CLAMP_THICKNESS = 3.0         # 旧0.9mm薄板を廃止。別部品を平置き造形する
+CLAMP_LUG_WIDTH = 6.0         # ねじ周囲のX方向幅
+CLAMP_LUG_LENGTH = 4.0        # ねじ周囲のY方向長さ
+CLAMP_SCREW_OFFSET = 2.5      # 内壁から外側へねじ中心までの距離
+CLAMP_POCKET_CLEARANCE = 0.30 # 着座用ポケットの片側隙間
+CLAMP_PILOT_DIAMETER = 1.6   # 呼び径2mm樹脂用ねじの仮下穴
+CLAMP_CLEAR_DIAMETER = 2.5
+CLAMP_SCREW_LENGTH = 8.0     # 押さえ専用: 呼び径2mm×8mmを4本
+CLAMP_PILOT_DEPTH = 6.0
+CLAMP_HEAD_DIAMETER = 4.0    # 許容するねじ頭の外径上限（実物要確認）
+CLAMP_HEAD_HEIGHT = 1.6      # 許容するねじ頭高さ上限
+CLAMP_DRIVER_DIAMETER = 4.5  # 上からアクセスするドライバー軸の検査外径
 
-SCREW_X = (21.0, 61.0)       # 側壁内のねじ中心X。支持リブ・開口とは別の位置
+SCREW_X = (9.0, 68.0)        # 蓋用。独立押さえの着座ポケットを避ける新版位置
 SCREW_ZONE_LENGTH = 7.0      # ねじの周囲で配線開口を避けるX方向幅
 SCREW_RAIL_WIDTH = 5.0       # 基本壁の外側に加えるねじ固定用側壁の幅
 SCREW_PILOT_DIAMETER = 1.6   # 樹脂用呼び径2mmねじの仮下穴。材質ごとに要調整
@@ -170,8 +190,17 @@ envelope_width = envelope_back - envelope_y
 require(min(PCB_LENGTH, PCB_WIDTH, PCB_THICKNESS, WALL, FLOOR, LID_THICKNESS,
             BOTTOM_CLEARANCE, SUPPORT_LENGTH, SUPPORT_EDGE_OVERLAP) > 0,
         "基板・壁・底・支持部の寸法は正値にしてください。")
-require(0 <= RETAINER_WALL_GAP < gap, "押さえの壁隙間は片側PCB隙間未満にしてください。")
-require(lid_z > retainer_bottom_z, "蓋の押さえ高さが不足しています。")
+require(lid_z > retainer_bottom_z + CLAMP_THICKNESS + CLAMP_HEAD_HEIGHT,
+        "独立押さえとねじ頭が蓋の下に収まりません。")
+require(RETAINER_Z_GAP >= 0 and CLAMP_THICKNESS >= 3.0, "押さえの上下隙間・厚さが不適切です。")
+require(CLAMP_THICKNESS < CLAMP_SCREW_LENGTH
+        <= CLAMP_THICKNESS + CLAMP_PILOT_DEPTH - SCREW_TIP_CLEARANCE,
+        "基板押さえのねじ長さが下穴に適合しません。")
+require(retainer_bottom_z - CLAMP_PILOT_DEPTH > bottom_z + FLOOR,
+        "基板押さえの下穴が底の肉厚へ入り込みます。")
+require(CLAMP_POCKET_CLEARANCE > 0
+        and 0 < CLAMP_PILOT_DIAMETER < CLAMP_CLEAR_DIAMETER < CLAMP_LUG_WIDTH,
+        "基板押さえの穴径・隙間が不適切です。")
 knob_exposed = KNOB_TOP_Z - lid_top_z
 require(KNOB_TOP_Z > ENCODER_BASE_TOP_Z >= PCB_THICKNESS,
         "つまみ先端・土台上面・基板上面の高さ関係を確認してください。")
@@ -197,7 +226,9 @@ terminal_cavity = box(terminal_cavity_x, terminal_cavity_y, floor_top_z,
 body_cavity_expanded = body_cavity.fuse(terminal_cavity)
 body_shell = body_outer.cut(body_cavity_expanded)
 body_with_supports = body_shell
-retainers = []
+clamps = []
+clamp_pockets = []
+clamp_screw_centers = []
 support_groups = (
     (SUPPORT_X_FRONT, inner_y - BOOLEAN_OVERLAP, SUPPORT_EDGE_OVERLAP),
     (SUPPORT_X_BACK, PCB_WIDTH - SUPPORT_EDGE_OVERLAP,
@@ -210,18 +241,28 @@ for positions, y_min, y_max in support_groups:
         support = box(x - SUPPORT_LENGTH / 2, y_min, floor_top_z,
                       SUPPORT_LENGTH, y_max - y_min, -floor_top_z)
         body_with_supports = body_with_supports.fuse(support)
-        retainer_y_min = max(y_min, inner_y + RETAINER_WALL_GAP)
-        retainer_y_max = min(y_max, PCB_WIDTH + gap - RETAINER_WALL_GAP)
-        retainer = box(x - SUPPORT_LENGTH / 2, retainer_y_min, retainer_bottom_z,
-                       SUPPORT_LENGTH, retainer_y_max - retainer_y_min,
-                       lid_z - retainer_bottom_z + BOOLEAN_OVERLAP)
-        retainers.append(retainer)
+        front = y_min < 0
+        screw_y = inner_y - CLAMP_SCREW_OFFSET if front else PCB_WIDTH + gap + CLAMP_SCREW_OFFSET
+        reach = CLAMP_SCREW_OFFSET + gap + SUPPORT_EDGE_OVERLAP
+        clamp = box(-CLAMP_LUG_WIDTH/2, -CLAMP_LUG_LENGTH/2, 0,
+                    CLAMP_LUG_WIDTH, CLAMP_LUG_LENGTH, CLAMP_THICKNESS)
+        tongue = box(-SUPPORT_LENGTH/2, 0, 0, SUPPORT_LENGTH, reach, CLAMP_THICKNESS)
+        clamp = clamp.fuse(tongue).cut(Part.makeCylinder(
+            CLAMP_CLEAR_DIAMETER/2, CLAMP_THICKNESS + 2*BOOLEAN_OVERLAP,
+            App.Vector(0, 0, -BOOLEAN_OVERLAP))).removeSplitter()
+        if not front:
+            clamp.rotate(App.Vector(), App.Vector(0, 0, 1), 180)
+        clamp.translate(App.Vector(x, screw_y, retainer_bottom_z))
+        clamps.append(clamp)
+        clamp_screw_centers.append((x, screw_y))
+        b = clamp.optimalBoundingBox(False)
+        c = CLAMP_POCKET_CLEARANCE
+        pocket = box(b.XMin-c, b.YMin-c, retainer_bottom_z,
+                     b.XLength+2*c, b.YLength+2*c, lid_z-retainer_bottom_z+BOOLEAN_OVERLAP)
+        clamp_pockets.append(pocket)
 
 lid_plate = box(envelope_x, envelope_y, lid_z,
                 envelope_length, envelope_width, LID_THICKNESS)
-lid_with_retainers = lid_plate
-for retainer in retainers:
-    lid_with_retainers = lid_with_retainers.fuse(retainer)
 
 # ねじ固定部を長方形外枠の厚い側壁に内蔵する。外側への耳は設けない。
 screw_centers = []
@@ -288,7 +329,7 @@ for index in range(VENT_COUNT):
                FLOOR + BOOLEAN_OVERLAP * 2)
     body_with_vents = body_with_vents.cut(vent)
 
-# 天面の表示窓と軸穴。工具は押さえまで貫くが、押さえとの交差はエラーにする。
+# 天面の表示窓と軸穴。独立押さえが表示器・軸の下へ入らないことも検査する。
 window_x = DISPLAY_X - opening_gap
 window_y = DISPLAY_Y - opening_gap
 window_length = DISPLAY_LENGTH + OPENING_EXTRA
@@ -309,10 +350,10 @@ window_tool = box(window_x, window_y, retainer_bottom_z - BOOLEAN_OVERLAP,
 shaft_tool = Part.makeCylinder(radius, lid_top_z - retainer_bottom_z + 2 * BOOLEAN_OVERLAP,
                                App.Vector(ENCODER_X, ENCODER_Y, retainer_bottom_z - BOOLEAN_OVERLAP))
 require(window_tool.common(shaft_tool).Volume < VOLUME_TOLERANCE, "表示窓と軸穴が重なっています。")
-for retainer in retainers:
+for retainer in clamps:
     for tool in (window_tool, shaft_tool):
         require(retainer.common(tool).Volume < VOLUME_TOLERANCE, "天面開口と基板押さえが重なっています。")
-lid_with_window = lid_with_retainers.cut(window_tool)
+lid_with_window = lid_plate.cut(window_tool)
 lid_with_openings = lid_with_window.cut(shaft_tool)
 
 body_final = body_with_vents
@@ -379,6 +420,12 @@ for edge in body_with_rim_rounds.Edges:
 require(bool(port_edges), "配線開口の丸め対象が見つかりません。")
 body_final = body_with_rim_rounds.makeFillet(PORT_EDGE_RADIUS, port_edges).removeSplitter()
 lid_final = lid_with_rim_rounds.removeSplitter()
+for pocket, (x, y) in zip(clamp_pockets, clamp_screw_centers):
+    body_final = body_final.cut(pocket)
+    body_final = body_final.cut(Part.makeCylinder(
+        CLAMP_PILOT_DIAMETER/2, CLAMP_PILOT_DEPTH+BOOLEAN_OVERLAP,
+        App.Vector(x, y, retainer_bottom_z-CLAMP_PILOT_DEPTH)))
+body_final = body_final.removeSplitter()
 valid_solid(body_final, "CaseBody")
 valid_solid(lid_final, "CaseLid")
 require(body_final.common(lid_final).Volume < VOLUME_TOLERANCE, "本体と蓋が干渉しています。")
@@ -391,12 +438,54 @@ require(body_final.common(terminal_envelope).Volume < VOLUME_TOLERANCE
         and lid_final.common(terminal_envelope).Volume < VOLUME_TOLERANCE,
         "端子台の最大外形とケースが干渉しています。")
 
-# 検証成功後に新規ドキュメントを作成。表示オブジェクトは要求どおり2個のみ。
+clamp_validation = []
+for index, (clamp, pocket, (x, y)) in enumerate(zip(clamps, clamp_pockets, clamp_screw_centers)):
+    valid_solid(clamp, f"PCBClamp{index+1}")
+    for shape, label in ((body_final, '本体'), (lid_final, '蓋'),
+                         (pcb_envelope, '基板'), (terminal_envelope, '端子台')):
+        require(clamp.common(shape).Volume < VOLUME_TOLERANCE, f'基板押さえと{label}が干渉しています。')
+    head = Part.makeCylinder(CLAMP_HEAD_DIAMETER/2, CLAMP_HEAD_HEIGHT,
+                            App.Vector(x, y, retainer_bottom_z+CLAMP_THICKNESS))
+    driver = Part.makeCylinder(CLAMP_DRIVER_DIAMETER/2, lid_z-retainer_bottom_z-CLAMP_THICKNESS+1,
+                              App.Vector(x, y, retainer_bottom_z+CLAMP_THICKNESS))
+    require(head.common(body_final).Volume < VOLUME_TOLERANCE
+            and head.common(lid_final).Volume < VOLUME_TOLERANCE, '基板押さえのねじ頭がケースに干渉しています。')
+    require(driver.common(body_final).Volume < VOLUME_TOLERANCE,
+            '基板押さえのねじへドライバーが届きません。')
+    b = clamp.optimalBoundingBox(False)
+    insertion = box(b.XMin, b.YMin, b.ZMin, b.XLength, b.YLength, lid_top_z-b.ZMin+1)
+    require(insertion.common(body_final).Volume < VOLUME_TOLERANCE,
+            '独立押さえを真上から着脱できません。')
+    for sx, sy in screw_centers:
+        lid_pilot = Part.makeCylinder(SCREW_PILOT_DIAMETER/2, SCREW_PILOT_DEPTH,
+                                     App.Vector(sx, sy, lid_z-SCREW_PILOT_DEPTH))
+        require(pocket.common(lid_pilot).Volume < VOLUME_TOLERANCE, '押さえポケットと蓋用ねじ穴が干渉しています。')
+    # 押さえの下に着座面があること。基板ではなく側壁で締付けを受ける。
+    seat_probe = box(x-CLAMP_LUG_WIDTH/2, y-CLAMP_LUG_LENGTH/2, retainer_bottom_z-0.1,
+                     CLAMP_LUG_WIDTH, CLAMP_LUG_LENGTH, 0.1)
+    seat_area = seat_probe.common(body_final).Volume/0.1
+    require(seat_area > CLAMP_LUG_WIDTH*CLAMP_LUG_LENGTH*0.75, '押さえの着座面が不足しています。')
+    clamp_validation.append({'seat_area_mm2': seat_area, 'pcb_gap_mm': RETAINER_Z_GAP,
+                             'screw_engagement_mm': CLAMP_SCREW_LENGTH-CLAMP_THICKNESS,
+                             'driver_access': True})
+for i, clamp in enumerate(clamps):
+    for other in clamps[i+1:]:
+        require(clamp.common(other).Volume < VOLUME_TOLERANCE, '独立押さえ同士が干渉しています。')
+require(abs(lid_final.optimalBoundingBox(False).ZLength-LID_THICKNESS) < EDGE_TOLERANCE,
+        '蓋に長い押さえが残っています。')
+
+# 組立は本体・蓋・独立押さえ4個。STLは同形の押さえを1種類だけ出力する。
 doc = App.newDocument(DOCUMENT_NAME)
 case_body = doc.addObject("Part::Feature", "CaseBody")
 case_body.Shape = body_final
 case_lid = doc.addObject("Part::Feature", "CaseLid")
 case_lid.Shape = lid_final
+clamp_objects = []
+for index, shape in enumerate(clamps):
+    obj = doc.addObject('Part::Feature', 'PCBClamp' if index == 0 else f'PCBClamp{index+1}')
+    obj.Shape = shape
+    clamp_objects.append(obj)
+PRINT_PARTS = ('CaseBody', 'CaseLid', 'PCBClamp')
 for obj in (case_body, case_lid):
     obj.addProperty("App::PropertyString", "MeasurementStatus", "Design")
     obj.MeasurementStatus = "要採寸: 仮配置モデル。実物との適合は未検証"
@@ -405,6 +494,8 @@ if App.GuiUp:
     import FreeCADGui as Gui
     case_body.ViewObject.ShapeColor = (0.25, 0.32, 0.40)
     case_lid.ViewObject.ShapeColor = (0.78, 0.83, 0.89)
+    for obj in clamp_objects:
+        obj.ViewObject.ShapeColor = (0.90, 0.58, 0.17)
     Gui.activeDocument().activeView().viewAxonometric()
     Gui.activeDocument().activeView().fitAll()
 App.Console.PrintWarning("要採寸の仮配置モデルです。実物の部品・配線と支持部の干渉を確認してください。\n")
@@ -415,5 +506,5 @@ App.Console.PrintMessage("ケース外形: %.2f x %.2f x %.2f mm\n" %
 # import Mesh
 # Mesh.export([case_body], "/absolute/output/CaseBody.stl")
 # Mesh.export([case_lid], "/absolute/output/CaseLid.stl")
-# 本体: 底面を下。蓋: 天面を下に180度反転、押さえを上向きにする。
+# 本体: 底面を下。蓋: 天面を下。独立押さえ: 広い下面を下。
 # 任意で保存: doc.saveAs("/absolute/output/FanControllerCase.FCStd")

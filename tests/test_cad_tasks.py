@@ -85,12 +85,45 @@ class ProjectValidationTests(unittest.TestCase):
             self.check_project(1, 2)
 
     def test_wrong_material_is_rejected(self):
-        with self.assertRaisesRegex(ValueError, 'PLA'):
+        with self.assertRaisesRegex(ValueError, 'filament_type'):
             self.check_project(1, 1, filament_type=['ABS'])
 
     def test_wrong_plate_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'curr_bed_type'):
             self.check_project(1, 1, curr_bed_type='Cool Plate')
+
+
+class PurposeTests(unittest.TestCase):
+    def test_production_without_recipe_stops_before_build(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(cad, 'ROOT', Path(temporary)), patch.object(cad, 'build') as build:
+            with self.assertRaisesRegex(ValueError, '本番用.*未設定'):
+                cad.project('fan-controller', purpose='production')
+            build.assert_not_called()
+
+    def test_prototype_uses_pla_profile(self):
+        process, filament, expected = cad.print_settings('fan-controller', 'prototype', cad.settings())
+        self.assertEqual(process, cad.PROFILE)
+        self.assertIn('PLA', filament.name)
+        self.assertIsNone(expected)
+
+    def test_production_uses_explicit_recipe(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(cad, 'ROOT', Path(temporary)):
+            recipe = cad.ROOT / 'print-projects/profiles/production/fan-controller.json'
+            recipe.parent.mkdir(parents=True)
+            expected = {'printer_settings_id': 'Bambu Lab X1 Carbon 0.4 nozzle',
+                        'filament_type': ['ASA'], 'curr_bed_type': 'Textured PEI Plate',
+                        'layer_height': '0.2', 'wall_loops': '5'}
+            recipe.write_text(json.dumps({'process_profile': 'process.json', 'filament_profile': 'asa.json',
+                                          'expected_settings': expected}))
+            process, filament, checks = cad.print_settings('fan-controller', 'production', cad.settings())
+            self.assertEqual(process, (cad.ROOT / 'process.json').resolve())
+            self.assertEqual(filament, (cad.ROOT / 'asa.json').resolve())
+            self.assertEqual(checks, expected)
+            del expected['filament_type']
+            recipe.write_text(json.dumps({'process_profile': 'process.json', 'filament_profile': 'asa.json',
+                                          'expected_settings': expected}))
+            with self.assertRaisesRegex(ValueError, '検査値'):
+                cad.print_settings('fan-controller', 'production', cad.settings())
 
 
 if __name__ == '__main__':
