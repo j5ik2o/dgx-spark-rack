@@ -10,7 +10,7 @@ DGX Spark本体とACアダプターを置く、3Dプリント用ラックです�
 | ACアダプターラック | [source内のPythonコードと寸法定義](models/adapter-rack/source/) | [アダプターラック](models/adapter-rack/README.md) |
 | ファンコンケース | [source内のPythonコード（冒頭に寸法定義）](models/fan-controller/source/freecad_fan_controller.py) | [ファンコンケース](models/fan-controller/README.md) |
 
-3モデルともPythonを正本とし、FCMacroを実行入口にします。ファンコンケースの設計データは統合済みですが、ラックへの機械的な取り付けは未設計です。
+3モデルともPythonを正本とし、FCMacroを実行入口にします。ファンコンケースは[共通ドックで両ラックへ取り付ける設計](models/fan-controller/docs/ラックへの取り付け.md)です。実物の取付・強度は未検証です。
 
 ## フォルダは用途で分ける
 

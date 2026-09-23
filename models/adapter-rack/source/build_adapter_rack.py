@@ -27,6 +27,7 @@ SOURCES = [
     "models/adapter-rack/source/freecad_adapter_rack.py", "models/adapter-rack/source/adapter_rack_parameters.py",
     "models/adapter-rack/source/validate_adapter_rack.py", "tools/cad/freecad_features.py", "tools/cad/check_stl.py",
     "models/adapter-rack/reference/adapter_spec.json", "models/adapter-rack/reference/components.json",
+    "tools/cad/controller_mount.py",
 ]
 
 
@@ -42,11 +43,13 @@ def print_shape(obj):
     shape = obj.Shape.copy(True, False)
     if obj.Name == "SideL" or obj.Name.startswith("FitCoupon"):
         shape.rotate(App.Vector(), App.Vector(0, 1, 0), -90)
-    elif obj.Name in ("SideR", "StackStrap", "AccessoryPlate"):
+    elif obj.Name in ("SideR", "StackStrap"):
         shape.rotate(App.Vector(), App.Vector(0, 1, 0), 90)
+    elif obj.Name == 'AccessoryPlate':
+        shape.rotate(App.Vector(), App.Vector(0, 1, 0), -90)
     elif obj.Name == "FanPlate":
         shape.rotate(App.Vector(), App.Vector(1, 0, 0), 90)
-    box = shape.BoundBox
+    box = shape.optimalBoundingBox(False)
     shape.translate(App.Vector(-box.XMin, -box.YMin, -box.ZMin))
     if obj.Name in ("SideL", "SideR") or obj.Name.startswith("FitCoupon"):
         # 差込口が造形面側へ伏せられていないことを確かめる。
@@ -77,11 +80,12 @@ def bom(columns, rows):
         "printed": {"side_L": units, "side_R": units, "support_beam": 2*units,
                     "locking_pin": 4*units, "stack_pin": 4*joints, "stack_strap": 2*joints,
                     "join_bridge": 2*rows if columns == 2 else 0,
-                    "fan_plate": columns, "accessory_plate": 1},
+                    "fan_plate": columns, "accessory_plate": columns},
         "purchased": {"120mm_PWM_fan": columns, "120mm_guard": columns,
                       "fan_fixing_positions": 4*columns, "M4x25_rack_screws": 4*columns+4*joints,
-                      "M4x20_accessory_screws": 2,
-                      "M4_nuts_excluding_fan": 4*columns+4*joints+2},
+                      "M4x25_accessory_screws": 2*columns,
+                      "M3x12_countersunk_case_screws": 2*columns, "M3_case_nuts": 2*columns,
+                      "M4_nuts_excluding_fan": 4*columns+4*joints+2*columns},
     }
 
 
@@ -93,7 +97,7 @@ def build(output_dir=None, *, render_images=True):
     hashes = {name: digest(ROOT/name) for name in SOURCES}
     out.mkdir(parents=True)
     report = {"status": "running", "physical_fit_tested": False, "thermal_tested": False,
-              "controller_case_status": "ケースの設計データ未特定。取り付け面のみ生成"}
+              "controller_case_status": "共通ドック対応。1列のファンにつき1ケース、ケースは別生成"}
     doc = None
     try:
         doc = create()

@@ -1,5 +1,10 @@
 """ファンコンケースをPythonの正本から生成する入口。"""
 from pathlib import Path
 import runpy
+import sys
+import importlib
+
+if 'controller_mount' in sys.modules:
+    importlib.reload(sys.modules['controller_mount'])
 
 runpy.run_path(str(Path(__file__).resolve().with_name("build_fan_controller.py")), run_name="__main__")

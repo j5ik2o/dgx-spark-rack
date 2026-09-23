@@ -2,7 +2,7 @@
 
 - 現行モデルは `models/spark-rack/`、`models/adapter-rack/`、`models/fan-controller/`。正本は各モデルの `source/` に限定する。
 - 本体ラックの正本は `models/spark-rack/source/freecad_spark_rack.py` と `spark_rack_parameters.py`。旧FCStdは `archive/spark-rack-fcstd-v1/` に保全する。
-- ファンコンケースの正本は `models/fan-controller/source/freecad_fan_controller.py`（冒頭に寸法定義）。`FanControllerCase.FCMacro` は実行入口。取り込み前の原本は `archive/fan-controller-import/`。ラックへの取付は未設計。
+- ファンコンケースの正本は `models/fan-controller/source/freecad_fan_controller.py`（冒頭に寸法定義）。`FanControllerCase.FCMacro` は実行入口。取り込み前の原本は `archive/fan-controller-import/`。両ラックとの取付インターフェースは `tools/cad/controller_mount.py` に共通定義し、`tools/cad/check_controller_mounts.py` で検査する。実物取付は未検証。
 - アダプターラックの正本は `models/adapter-rack/source/freecad_adapter_rack.py` と `adapter_rack_parameters.py`。FCMacroは実行入口に限定する。
 - 生成FCStdだけを変更して完成扱いにしない。各モデルの採用変更はPythonへ戻して再生成・検査する。
 - 現行生成物は `build/<モデル名>/`、スライサー設定は `print-projects/<モデル名>/prototype/`（試作）と `production/`（本番）。本番条件が未設定なら生成を停止し、試作設定で代替しない。3MFは形状の正本ではない。

@@ -28,6 +28,8 @@ class Parameters:
     beam_width: float = 20
     beam_height: float = 8
     cassette_plate: float = 4
+    controller_y: float = 114
+    controller_z: float = 60
 
     @property
     def inner_x(self): return self.module_width / 2 - self.side_thickness

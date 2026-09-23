@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / 'tools/cad'))
 from check_stl import inspect
+from controller_mount import hardware_bom
 
 
 def save_json(path, value):
@@ -30,12 +31,14 @@ def build():
     out.mkdir(parents=True, exist_ok=False)
     sources = {str(p.relative_to(ROOT)): digest(p) for p in sorted(SOURCE.iterdir()) if p.is_file()}
     sources['tools/cad/check_stl.py'] = digest(ROOT / 'tools/cad/check_stl.py')
+    sources['tools/cad/controller_mount.py'] = digest(ROOT / 'tools/cad/controller_mount.py')
     try:
         model = runpy.run_path(str(SOURCE / 'freecad_fan_controller.py'))
         doc = model['doc']
         report = {'status': 'passed', 'physical_fit_verified': False, 'parts': {},
                   'clamp_checks': model['clamp_validation'],
                   'printed_bom': {'CaseBody': 1, 'CaseLid': 1, 'PCBClamp': 4},
+                  'rack_mount_hardware': hardware_bom(),
                   'fasteners': {'lid': {'count': 4, 'nominal_diameter_mm': 2, 'length_mm': model['SCREW_LENGTH']},
                                 'pcb_clamps': {'count': 4, 'nominal_diameter_mm': 2,
                                                'length_mm': model['CLAMP_SCREW_LENGTH'],

@@ -7,6 +7,7 @@ import Part
 
 from adapter_rack_parameters import CELLS
 from freecad_adapter_rack import PRINT_PARTS, LAYOUTS, show_layout
+from controller_mount import THICKNESS, RACK_PITCH, STANDOFF
 
 TOLERANCE = 0.001
 
@@ -60,7 +61,7 @@ def inspect(doc, columns, rows):
         shape = doc.getObject(name).Shape
         assert shape.isValid() and shape.isClosed() and len(shape.Solids) == 1, name
     links = visible_links(doc)
-    expected = columns*rows*9 + (columns if rows == 2 else 0)*6 + columns*2 + (2*rows if columns == 2 else 0) + 1
+    expected = columns*rows*9 + (columns if rows == 2 else 0)*6 + columns*2 + (2*rows if columns == 2 else 0) + columns
     assert len(links) == expected, (len(links), expected)
     collisions = []
     for index, (name, shape) in enumerate(links):
@@ -70,6 +71,7 @@ def inspect(doc, columns, rows):
                 collisions.append((name, other, volume))
     assert not collisions, collisions
     v = lambda name: value(doc, name)
+    assert v('AccessoryThickness') == THICKNESS+STANDOFF and v('AccessoryPitch') == RACK_PITCH
     # 連結穴・固定穴の中心と、部品間に設けた隙間を検査する。
     assert abs(v("JoinSpacing") - (v("ColumnPitch") - 2*v("PostX"))) < 1e-8
     assert v("ModuleHeight") - v("BaseHeight") - v("AdapterHeight") > 10

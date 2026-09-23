@@ -41,7 +41,7 @@ INPUTS = [
     ("FanMountLow", "16 mm", "保持板の下側ボルト高さ"),
     ("FanMountHigh", "60 mm", "保持板の上側ボルト高さ"),
     ("AccessoryPitch", "28 mm", "ファンコン取り付け面用M4穴間隔"),
-    ("AccessoryThickness", "4 mm", "着脱式取り付け面の厚さ"),
+    ("AccessoryThickness", "11 mm", "共通ケースドック8mm＋一体スペーサー3mm"),
     ("CableAllowance", "30 mm", "左右各端の配線用設計余白"),
 ]
 DERIVED = [
