@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
 
 import FreeCAD as App
 from controller_mount import dock, place, THICKNESS, RACK_PITCH, RACK_U
+from edge_finishing import chamfer_feature, extrema
 
 from adapter_rack_parameters import CELLS, INPUTS, DERIVED
 from freecad_features import Features
@@ -250,6 +251,24 @@ def create():
         accessory(doc)
         references(doc)
         coupons(doc)
+        for name in PRINT_PARTS:
+            obj=doc.getObject(name)
+            bounds=obj.Shape.optimalBoundingBox(False)
+            if name=='AccessoryPlate':continue  # 共通ドック側で処理済み
+            if name in ('LockPin','StackPin'):
+                chamfer_feature(doc,obj,size=0.2,pin=True)
+                continue
+            if name=='SideL': planes=[('X',bounds.XMin)]
+            elif name=='SideR': planes=[('X',bounds.XMax)]
+            elif name=='FanPlate': planes=extrema(obj.Shape,'Y')
+            elif name.startswith('FitCoupon'): planes=[('X',bounds.XMin)]  # 試験片の差込口は側枠と同条件
+            else: planes=extrema(obj.Shape,'YZ')
+            finish=chamfer_feature(doc,obj,planes)
+            if name=='FanPlate':
+                finish.setExpression('OpeningRadius','Parameters.FanOpening / 2')
+                doc.recompute()
+            elif name=='JoinBridge':
+                chamfer_feature(doc,obj,size=0.2,pin=True)
         assembly = doc.addObject("App::Part", "RackAssembly")
         assembly.Label = "アダプターラック_初期は縦2台"
         assembly.addProperty("App::PropertyString", "DesignStatus")

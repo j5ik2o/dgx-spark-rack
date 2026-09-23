@@ -28,6 +28,7 @@ SOURCES = [
     "models/adapter-rack/source/validate_adapter_rack.py", "tools/cad/freecad_features.py", "tools/cad/check_stl.py",
     "models/adapter-rack/reference/adapter_spec.json", "models/adapter-rack/reference/components.json",
     "tools/cad/controller_mount.py",
+    "tools/cad/edge_finishing.py",
 ]
 
 
@@ -52,11 +53,19 @@ def print_shape(obj):
     box = shape.optimalBoundingBox(False)
     shape.translate(App.Vector(-box.XMin, -box.YMin, -box.ZMin))
     if obj.Name in ("SideL", "SideR") or obj.Name.startswith("FitCoupon"):
-        # 差込口が造形面側へ伏せられていないことを確かめる。
-        height = shape.BoundBox.ZLength
-        bottom = sum(f.Area for f in shape.Faces if f.BoundBox.ZLength < 1e-6 and abs(f.CenterOfMass.z) < 1e-6)
-        top = sum(f.Area for f in shape.Faces if f.BoundBox.ZLength < 1e-6 and abs(f.CenterOfMass.z-height) < 1e-6)
-        assert bottom > top, (obj.Name, "差込口の向き", bottom, top)
+        # 面取り後は上下の平面面積だけでは向きを判定できない。
+        # 差込口の中点が上側で空洞、反対側が肉厚内であることを実形状で検査する。
+        v=lambda expression:obj.Document.Parameters.evalExpression(expression).Value
+        left=obj.Name != 'SideR'
+        y=0 if obj.Name.startswith('FitCoupon') else -v('BeamPitch')/2
+        z=v('BeamZ')+v('BeamHeight')/2
+        inside_x=v('FrameThickness')-1 if left else 1
+        outside_x=1 if left else v('FrameThickness')-1
+        rotation=App.Rotation(App.Vector(0,1,0),-90 if left else 90)
+        shift=App.Vector(-box.XMin,-box.YMin,-box.ZMin)
+        opening=rotation.multVec(App.Vector(inside_x,y,z))+shift
+        back=rotation.multVec(App.Vector(outside_x,y,z))+shift
+        assert opening.z > back.z and not shape.isInside(opening,1e-6,False) and shape.isInside(back,1e-6,False), (obj.Name,'差込口の向き')
     return shape
 
 

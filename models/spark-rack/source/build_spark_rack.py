@@ -22,7 +22,7 @@ from check_stl import inspect as inspect_stl
 
 SOURCES=["models/spark-rack/source/"+name for name in (
     "spark_rack_parameters.py","freecad_spark_rack.py","validate_spark_rack.py",
-    "build_spark_rack.py","run_spark_rack.FCMacro")]+["tools/cad/check_stl.py","tools/cad/controller_mount.py"]
+    "build_spark_rack.py","run_spark_rack.FCMacro")]+["tools/cad/check_stl.py","tools/cad/controller_mount.py","tools/cad/edge_finishing.py"]
 
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()

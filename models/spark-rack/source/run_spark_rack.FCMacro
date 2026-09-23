@@ -5,7 +5,7 @@ import importlib
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'tools/cad'))
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-for name in ('controller_mount','spark_rack_parameters','freecad_spark_rack','validate_spark_rack','check_stl','build_spark_rack'):
+for name in ('edge_finishing','controller_mount','spark_rack_parameters','freecad_spark_rack','validate_spark_rack','check_stl','build_spark_rack'):
     if name in sys.modules:importlib.reload(sys.modules[name])
 from build_spark_rack import build
 
