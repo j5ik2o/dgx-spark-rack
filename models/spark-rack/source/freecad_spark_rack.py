@@ -78,6 +78,18 @@ def cassette(p):
     zc, r = p.fan_center_z,p.rim
     shape = box(-r,0,zc-r,2*r,p.cassette_plate,2*r)
     shape = shape.cut(cylinder(0,-1,zc,p.fan_size/2-2,p.cassette_plate+2,"Y"))
+    # 前面の外周をラック幅へ揃え、側枠と同じ12mm幅の連続した輪郭にする。
+    rail=p.fascia_rail_width
+    fascia=box(-p.module_width/2,0,zc-r,p.module_width,p.cassette_plate,2*r)
+    fascia=fascia.cut(box(-p.module_width/2+rail,-1,zc-r+rail,
+                         p.module_width-2*rail,p.cassette_plate+2,2*r-2*rail))
+    shape=shape.fuse(fascia)
+    # 下側の腕（Z=18）と外周枠の間に残る小窓だけを閉じ、縦の主開口を残す。
+    lower_frame_top=zc-r+rail
+    side_gap=p.module_width/2-rail-r
+    if lower_frame_top < 18 and side_gap > 0:
+        for x in (-p.module_width/2+rail,r):
+            shape=shape.fuse(box(x,0,lower_frame_top,side_gap,p.cassette_plate,18-lower_frame_top))
     for x in (-p.fan_hole_pitch/2,p.fan_hole_pitch/2):
         for z in (zc-p.fan_hole_pitch/2,zc+p.fan_hole_pitch/2):
             shape = shape.fuse(cylinder(x,p.cassette_plate,z,5,4,"Y"))

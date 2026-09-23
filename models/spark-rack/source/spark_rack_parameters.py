@@ -28,6 +28,7 @@ class Parameters:
     beam_width: float = 20
     beam_height: float = 8
     cassette_plate: float = 4
+    fascia_rail_width: float = 12
     controller_y: float = 114
     controller_z: float = 60
 
@@ -66,3 +67,4 @@ class Parameters:
         assert self.frame_height > self.fan_size
         assert self.module_depth > self.support_rear_y+self.beam_width/2
         assert self.support_top > 30 and self.window_radius > 0
+        assert 0 < self.fascia_rail_width <= self.side_thickness
