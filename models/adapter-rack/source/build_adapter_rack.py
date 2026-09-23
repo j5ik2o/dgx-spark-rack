@@ -84,7 +84,7 @@ def bom(columns, rows):
         "purchased": {"120mm_PWM_fan": columns, "120mm_guard": columns,
                       "fan_fixing_positions": 4*columns, "M4x25_rack_screws": 4*columns+4*joints,
                       "M4x25_accessory_screws": 2*columns,
-                      "M3x12_case_screws": 2*columns, "M3_case_nuts": 2*columns,
+                      "M3x12_countersunk_case_screws": 2*columns, "M3_case_nuts": 2*columns,
                       "M4_nuts_excluding_fan": 4*columns+4*joints+2*columns},
     }
 

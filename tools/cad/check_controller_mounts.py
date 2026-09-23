@@ -23,7 +23,7 @@ def main():
     import Part
     from pivy import coin
     from PySide6.QtWidgets import QApplication
-    from controller_mount import dock,place,THICKNESS,RACK_PITCH,RACK_U,CASE_PITCH,STANDOFF,hardware_bom
+    from controller_mount import dock,place,THICKNESS,RACK_PITCH,RACK_U,CASE_PITCH,STANDOFF,hardware_bom,case_mount_bolt
     from spark_rack_parameters import Parameters
     from freecad_spark_rack import shapes,assembly_shapes,LAYOUTS
     from freecad_adapter_rack import create as create_adapter
@@ -76,7 +76,7 @@ def main():
                 bolts.append((f'rack_bolt{index}_{yy}',place(bolt,origin,u,v,w)))
                 bolts.append((f'rack_nut{index}_{yy}',place(nut(RACK_U,yy,-STANDOFF-12-3.2,7,3.2,2.1),origin,u,v,w)))
             for xx in (-CASE_PITCH/2,CASE_PITCH/2):
-                bolt=cylinder(xx,0,0,1.5,12).fuse(cylinder(xx,0,12,2.75,3))
+                bolt=case_mount_bolt(xx)
                 bolts.append((f'case_bolt{index}_{xx}',place(bolt,origin,u,v,w)))
                 bolts.append((f'case_nut{index}_{xx}',place(nut(xx,0,0.2,5.5,2.4,1.6),origin,u,v,w)))
             # 配線用の設計余白（プラグ実測値ではない）。筐体端から30mm。
@@ -97,7 +97,7 @@ def main():
                 if overlap(s,t)>0.001:failures.append((name,other))
         assert not failures,(rack_name,layout,failures)
         for name,zone in zones:
-            for other,s in rack_items:
+            for other,s in rack_items+bolts+cases:
                 assert overlap(zone,s)<0.001,(rack_name,layout,name,other,'配線余白')
         # ケースを外向きに30mm動かした範囲もラックや他ケースに干渉しない。
         for index,(origin,u,v,w) in enumerate(mounts):
@@ -110,7 +110,8 @@ def main():
                 assert overlap(sweep,s)<0.001,(rack_name,layout,'ケース取り外し',other)
         report['layouts'][rack_name+'_'+layout]={'controllers':len(mounts),'collisions':[],
                     'cable_zone_mm':[30,20,14],'outward_removal_mm':30,
-                    'rack_and_case_screw_paths':'passed'}
+                    'rack_and_case_screw_paths':'passed',
+                    'cable_clearance_includes':['rack','case','mounting_bolts','mounting_nuts']}
         return rack_items+cases+bolts
 
     try:

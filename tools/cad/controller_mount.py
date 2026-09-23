@@ -11,6 +11,8 @@ RACK_PITCH = 28.0
 RACK_U = -30.0
 CASE_PITCH = 92.0
 EAR_THICKNESS = 4.0
+CASE_COUNTERSINK_DEPTH = 1.5
+CASE_COUNTERSINK_RADIUS = 3.2
 OUTER_RADIUS = 4.0
 WINDOW_RADIUS = 4.0
 EAR_RADIUS = 3.0
@@ -68,7 +70,18 @@ def case_ears(shape, xmin, xmax, cy, bottom):
         ear=ear.makeFillet(EAR_RADIUS,edges)
         shape=shape.fuse(ear)
         shape=shape.cut(hole(cx+sign*CASE_PITCH/2,cy,bottom-1,1.7,EAR_THICKNESS+2))
+        shape=shape.cut(Part.makeCone(1.7,CASE_COUNTERSINK_RADIUS,CASE_COUNTERSINK_DEPTH,
+                          App.Vector(cx+sign*CASE_PITCH/2,cy,bottom+EAR_THICKNESS-CASE_COUNTERSINK_DEPTH)))
     return shape.removeSplitter()
+
+
+def case_mount_bolt(u):
+    """M3×12、90度皿頭の参照形状。長さ12mmは頭を含み、頭頂は0.2mm沈む。"""
+    top=THICKNESS+EAR_THICKNESS-0.2
+    head_height=1.5
+    shaft=hole(u,0,top-12,1.5,12-head_height)
+    head=Part.makeCone(1.5,3.0,head_height,App.Vector(u,0,top-head_height))
+    return shaft.fuse(head).removeSplitter()
 
 
 def place(shape, origin, u, v, w):
@@ -87,5 +100,6 @@ def place(shape, origin, u, v, w):
 
 def hardware_bom():
     return {'dock_per_controller':1,'M4x25_socket_screws':2,'M4_nuts':2,
-            'M3x12_screws':2,'M3_nuts':2,
+            'M3x12_90deg_countersunk_screws':2,'M3_nuts':2,
+            'case_screw_head_max_diameter_mm':6.0,'case_screw_length_includes_head':True,
             'rack_screw_head_max_diameter_mm':8.0,'rack_screw_head_max_height_mm':4.0}
