@@ -134,6 +134,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'tools/cad'))
 from controller_mount import case_ears
+from edge_finishing import chamfer
 
 
 def box(x, y, z, length, width, height):
@@ -254,6 +255,7 @@ for positions, y_min, y_max in support_groups:
         clamp = clamp.fuse(tongue).cut(Part.makeCylinder(
             CLAMP_CLEAR_DIAMETER/2, CLAMP_THICKNESS + 2*BOOLEAN_OVERLAP,
             App.Vector(0, 0, -BOOLEAN_OVERLAP))).removeSplitter()
+        clamp = chamfer(clamp,[('Z',CLAMP_THICKNESS)],size=0.2)
         if not front:
             clamp.rotate(App.Vector(), App.Vector(0, 0, 1), 180)
         clamp.translate(App.Vector(x, screw_y, retainer_bottom_z))

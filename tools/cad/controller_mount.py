@@ -2,6 +2,7 @@
 import math
 import FreeCAD as App
 import Part
+from edge_finishing import chamfer
 
 LENGTH = 100.0
 WIDTH = 43.4  # ケース幅39.4mmに対して左右2mmずつの見付け
@@ -54,7 +55,7 @@ def dock():
         r=5.8/math.sqrt(3)
         pts=[App.Vector(u+r*math.cos(i*math.pi/3),r*math.sin(i*math.pi/3),0) for i in range(7)]
         s=s.cut(Part.Face(Part.makePolygon(pts)).extrude(App.Vector(0,0,2.8)))
-    return s.removeSplitter()
+    return chamfer(s.removeSplitter(),[('Z',THICKNESS)])
 
 
 def case_ears(shape, xmin, xmax, cy, bottom):
@@ -68,6 +69,9 @@ def case_ears(shape, xmin, xmax, cy, bottom):
         edges=[e for e in vertical_edges(ear,EAR_THICKNESS)
                if abs(e.CenterOfMass.x-tip)<1e-7]
         ear=ear.makeFillet(EAR_RADIUS,edges)
+        top_edges=[e for e in ear.Edges if e.BoundBox.ZLength<1e-7
+                   and abs(e.BoundBox.ZMin-bottom-EAR_THICKNESS)<1e-7]
+        ear=ear.makeFillet(0.3,top_edges)
         shape=shape.fuse(ear)
         shape=shape.cut(hole(cx+sign*CASE_PITCH/2,cy,bottom-1,1.7,EAR_THICKNESS+2))
         shape=shape.cut(Part.makeCone(1.7,CASE_COUNTERSINK_RADIUS,CASE_COUNTERSINK_DEPTH,

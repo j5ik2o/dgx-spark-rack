@@ -4,7 +4,8 @@ import runpy
 import sys
 import importlib
 
-if 'controller_mount' in sys.modules:
-    importlib.reload(sys.modules['controller_mount'])
+for name in ('edge_finishing','controller_mount'):
+    if name in sys.modules:
+        importlib.reload(sys.modules[name])
 
 runpy.run_path(str(Path(__file__).resolve().with_name("build_fan_controller.py")), run_name="__main__")

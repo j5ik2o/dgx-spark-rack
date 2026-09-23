@@ -32,6 +32,7 @@ def build():
     sources = {str(p.relative_to(ROOT)): digest(p) for p in sorted(SOURCE.iterdir()) if p.is_file()}
     sources['tools/cad/check_stl.py'] = digest(ROOT / 'tools/cad/check_stl.py')
     sources['tools/cad/controller_mount.py'] = digest(ROOT / 'tools/cad/controller_mount.py')
+    sources['tools/cad/edge_finishing.py'] = digest(ROOT / 'tools/cad/edge_finishing.py')
     try:
         model = runpy.run_path(str(SOURCE / 'freecad_fan_controller.py'))
         doc = model['doc']

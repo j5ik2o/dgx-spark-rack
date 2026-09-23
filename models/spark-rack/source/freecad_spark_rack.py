@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'tools/cad'))
 from controller_mount import dock, place, RACK_PITCH, RACK_U, STANDOFF
+from edge_finishing import chamfer, extrema, round_pin_ends, round_opening
 
 import FreeCAD as App
 import Part
@@ -132,6 +133,22 @@ def shapes(p):
         hardware=hardware.cut(cylinder(x,12,-1,hole/2,10)).cut(hex_prism(x,12,4.3,af,4,"Z"))
         hardware=hardware.cut(cylinder(x,32,-1,locator_d/2,10))
     result["hardware_coupon"] = hardware.removeSplitter()
+    for name,shape in list(result.items()):
+        bounds=shape.optimalBoundingBox(False)
+        if name=='controller_dock':
+            continue  # 共通ドック生成時にフィレット・面取り済み
+        if name in ('locking_pin','stack_locator'):
+            result[name]=round_pin_ends(shape)
+            continue
+        if name=='side_L': planes=[('X',bounds.XMin)]
+        elif name=='side_R': planes=[('X',bounds.XMax)]
+        elif name=='fan_cassette': planes=extrema(shape,'Y')
+        elif name=='hardware_coupon': planes=extrema(shape,'XY')
+        elif name.startswith('fit_coupon'): planes=[('X',bounds.XMin)]  # 側枠と同じ外側面だけ処理
+        else: planes=extrema(shape,'YZ')
+        result[name]=chamfer(shape,planes)
+        if name=='fan_cassette':
+            result[name]=round_opening(result[name],'Y',bounds.YMin,p.fan_size/2-2)
     return result
 
 
