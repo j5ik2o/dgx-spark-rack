@@ -22,7 +22,7 @@ from check_stl import inspect as inspect_stl
 
 SOURCES=["models/spark-rack/source/"+name for name in (
     "spark_rack_parameters.py","freecad_spark_rack.py","validate_spark_rack.py",
-    "build_spark_rack.py","run_spark_rack.FCMacro")]+["tools/cad/check_stl.py"]
+    "build_spark_rack.py","run_spark_rack.FCMacro")]+["tools/cad/check_stl.py","tools/cad/controller_mount.py"]
 
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -37,9 +37,9 @@ def print_shape(name,shape):
     if name=='side_L' or name.startswith('fit_coupon_'):
         shape.rotate(App.Vector(),App.Vector(0,1,0),-90)
     elif name=='side_R':shape.rotate(App.Vector(),App.Vector(0,1,0),90)
-    elif name in ('locking_pin','bridge_clip'):shape.rotate(App.Vector(),App.Vector(1,0,0),180)
+    elif name in ('locking_pin','bridge_clip','controller_dock'):shape.rotate(App.Vector(),App.Vector(1,0,0),180)
     elif name=='fan_cassette':shape.rotate(App.Vector(),App.Vector(1,0,0),90)
-    b=shape.BoundBox
+    b=shape.optimalBoundingBox(False)
     shape.translate(App.Vector(-b.XMin,-b.YMin,-b.ZMin))
     return shape
 

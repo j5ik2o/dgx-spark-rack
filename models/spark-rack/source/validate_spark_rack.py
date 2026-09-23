@@ -4,6 +4,8 @@ from dataclasses import replace
 import Part
 
 from freecad_spark_rack import PRINT_PARTS, LAYOUTS, shapes, assembly_shapes
+import FreeCAD as App
+from controller_mount import RACK_PITCH
 
 
 def dimensions(shape):
@@ -27,6 +29,13 @@ def inspect_parts(parts):
 
 
 def inspect_assembly(p,parts,columns,rows):
+    # 取付穴が窓内へ逃げず、周囲半径6mmの着座面が側板に残ること。
+    for name,x in (('side_L',-p.module_width/2),('side_R',p.inner_x)):
+        for y in (p.controller_y-RACK_PITCH/2,p.controller_y+RACK_PITCH/2):
+            outer=Part.makeCylinder(6,p.side_thickness,App.Vector(x,y,p.controller_z),App.Vector(1,0,0))
+            inner=Part.makeCylinder(2.3,p.side_thickness,App.Vector(x,y,p.controller_z),App.Vector(1,0,0))
+            ring=outer.cut(inner)
+            assert abs(ring.common(parts[name]).Volume-ring.Volume)<0.001,'ファンコン取付穴の周囲が側板に収まりません'
     items=assembly_shapes(p,parts,columns,rows,include_visual=False)
     overlaps=[]
     for i,(name,a) in enumerate(items):
@@ -40,7 +49,7 @@ def inspect_assembly(p,parts,columns,rows):
             if v>0.001:overlaps.append((name,other,v))
     assert not overlaps,overlaps
     whole=Part.makeCompound([s for _,s in assembly_shapes(p,parts,columns,rows)])
-    assert len(whole.Solids)==29*columns*rows+4*columns*(rows-1)+2*(columns-1)*rows
+    assert len(whole.Solids)==30*columns*rows+4*columns*(rows-1)+2*(columns-1)*rows
     return {"solids":len(whole.Solids),"volume_mm3":whole.Volume,"dimensions_mm":dimensions(whole),
             "bounds_mm":bounds(whole),"overlaps":overlaps,
             "excluded_from_interference":"ファン内部とガードの簡略参照形状"}

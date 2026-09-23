@@ -130,6 +130,10 @@ DOCUMENT_NAME = "FanControllerCase"
 
 import FreeCAD as App
 import Part
+from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'tools/cad'))
+from controller_mount import case_ears
 
 
 def box(x, y, z, length, width, height):
@@ -426,6 +430,8 @@ for pocket, (x, y) in zip(clamp_pockets, clamp_screw_centers):
         CLAMP_PILOT_DIAMETER/2, CLAMP_PILOT_DEPTH+BOOLEAN_OVERLAP,
         App.Vector(x, y, retainer_bottom_z-CLAMP_PILOT_DEPTH)))
 body_final = body_final.removeSplitter()
+body_final = case_ears(body_final, envelope_x, outer_right,
+                       (envelope_y+envelope_back)/2, bottom_z)
 valid_solid(body_final, "CaseBody")
 valid_solid(lid_final, "CaseLid")
 require(body_final.common(lid_final).Volume < VOLUME_TOLERANCE, "本体と蓋が干渉しています。")
@@ -499,7 +505,7 @@ if App.GuiUp:
     Gui.activeDocument().activeView().viewAxonometric()
     Gui.activeDocument().activeView().fitAll()
 App.Console.PrintWarning("要採寸の仮配置モデルです。実物の部品・配線と支持部の干渉を確認してください。\n")
-App.Console.PrintMessage("ケース外形: %.2f x %.2f x %.2f mm\n" %
+App.Console.PrintMessage("ケース箱外形（取付耳を除く）: %.2f x %.2f x %.2f mm\n" %
                         (envelope_length, envelope_width, lid_top_z - bottom_z))
 
 # STLエクスポート例（組立座標。スライサーで各部品を個別に接地する）:

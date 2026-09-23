@@ -15,6 +15,8 @@
 
 [印刷設定](../../print-projects/README.md) と [移行前データ](../../archive/spark-rack-fcstd-v1/README.md) は別管理です。
 
+新版の側板にはファンコン用M4穴を追加しています。`controller_dock.stl` を介して、各ファンのケースをラック外側へ固定します。[取付位置と金具](../fan-controller/docs/ラックへの取り付け.md)を参照してください。旧側板を使用する場合は追加穴加工または新版への交換が必要です。
+
 ## ライセンス
 
 [Apache License 2.0](../../LICENSE)

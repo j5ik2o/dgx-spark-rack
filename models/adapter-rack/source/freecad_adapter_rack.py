@@ -6,6 +6,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
 
 import FreeCAD as App
+from controller_mount import dock, place, THICKNESS, RACK_PITCH, RACK_U
 
 from adapter_rack_parameters import CELLS, INPUTS, DERIVED
 from freecad_features import Features
@@ -145,17 +146,14 @@ def fan_plate(doc):
 
 
 def accessory(doc):
-    obj, f = body(doc, "AccessoryPlate", "ファンコンケース用取り付け面_ケース未確定")
-    s = f.sketch("AccessoryOutline", "YZ", "0 mm")
-    f.rectangle(s, "-PostY - 22 mm", "ModuleHeight / 2 - 24 mm", "44 mm", "48 mm", "Plate")
-    f.extrude("AccessoryPad", "着脱式取り付け面", s, "AccessoryThickness", cut=False)
-    s = f.sketch("AccessoryFixings", "YZ", "AccessoryThickness")
-    for tag, z in (("Low", "ModuleHeight / 2 - AccessoryPitch / 2"),
-                   ("High", "ModuleHeight / 2 + AccessoryPitch / 2")):
-        f.circle(s, "-PostY", z, "BoltHole", tag)
-    for tag, y in (("Front", "-PostY - 17 mm"), ("Rear", "-PostY + 13 mm")):
-        f.rectangle(s, y, "ModuleHeight / 2 - 9 mm", "4 mm", "18 mm", tag)
-    f.extrude("AccessoryCut", "M4穴とケース保持バンド用長穴", s, None, through=True)
+    obj, f = body(doc, "AccessoryPlate", "ファンコン共通ドック")
+    feature=doc.addObject('PartDesign::Feature','AccessoryDockShape')
+    obj.addObject(feature)
+    feature.Shape=place(dock(),(THICKNESS,0,0),(0,1,0),(0,0,-1),(-1,0,0))
+    feature.setExpression('Placement.Base.y',f.link(f'-PostY - {RACK_U} mm'))
+    feature.setExpression('Placement.Base.z',f.link('ModuleHeight / 2'))
+    obj.Tip=feature
+    doc.recompute()
     return obj
 
 
@@ -220,6 +218,7 @@ def show_layout(doc, columns=1, rows=2):
             doc.getObject(f"Unit{col}{row}").Visibility = col < columns and row < rows
         doc.getObject(f"Stack{col}").Visibility = col < columns and rows == 2
         doc.getObject(f"Cooling{col}").Visibility = col < columns
+        doc.getObject(f"AccessoryAssembly{col}").Visibility = col < columns
     for row in range(2):
         doc.getObject(f"Horizontal{row}").Visibility = columns == 2 and row < rows
     doc.recompute()
@@ -292,10 +291,16 @@ def create():
             for end, y in (("Front", "-JoinY"), ("Rear", "JoinY")):
                 link(doc, group, doc.JoinBridge, f"Bridge{end}{row}", x="ColumnPitch / 2", y=y,
                      z=f"{row} * ModuleHeight + BaseHeight + JoinThickness", inverted=True)
-        accessory_group = doc.addObject("App::Part", "AccessoryAssembly")
-        accessory_group.Label = "ファンコン用取り付け面_左前"
-        assembly.addObject(accessory_group)
-        link(doc, accessory_group, doc.AccessoryPlate, "ControllerDock", x="-ModuleWidth / 2 - AccessoryThickness")
+        for col in range(2):
+            accessory_group = doc.addObject("App::Part", f"AccessoryAssembly{col}")
+            accessory_group.Label = f"ファンコン共通ドック_{col+1}列"
+            assembly.addObject(accessory_group)
+            if col == 0:
+                link(doc, accessory_group, doc.AccessoryPlate, "ControllerDock0", x="-ModuleWidth / 2 - AccessoryThickness")
+            else:
+                obj=link(doc, accessory_group, doc.AccessoryPlate, 'ControllerDock1',
+                         x='ColumnPitch + ModuleWidth / 2 + AccessoryThickness',z='ModuleHeight')
+                obj.Placement.Rotation=App.Rotation(App.Vector(0,1,0),180)
         for obj in doc.PartLibrary.Group:
             color = (0.22, 0.24, 0.26)
             if obj.Name == "REFAdapter":

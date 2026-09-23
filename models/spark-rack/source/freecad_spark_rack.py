@@ -1,5 +1,9 @@
 """寸法と幾何演算から本体ラックを作る。FCStd・STEP・STLを入力にしない。"""
 import math
+from pathlib import Path
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'tools/cad'))
+from controller_mount import dock, place, RACK_PITCH, RACK_U, STANDOFF
 
 import FreeCAD as App
 import Part
@@ -7,7 +11,7 @@ import Part
 from spark_rack_parameters import Parameters
 
 PRINT_PARTS = ("side_L", "side_R", "crossbar", "locking_pin", "stack_locator", "bridge_clip",
-               "fan_cassette", "fit_coupon_020", "fit_coupon_030", "fit_coupon_040", "bar_coupon", "hardware_coupon")
+               "fan_cassette", "fit_coupon_020", "fit_coupon_030", "fit_coupon_040", "bar_coupon", "hardware_coupon", "controller_dock")
 LAYOUTS = {"single": (1, 1), "two_horizontal": (2, 1), "two_vertical": (1, 2), "four_units": (2, 2)}
 
 
@@ -57,6 +61,8 @@ def side(p, right=False):
     shape = shape.cut(box(sign*p.post_x-4-c,p.front_y,20-c,8+2*c,8+c,8+2*c))
     shape = shape.cut(cylinder(sign*p.post_x,p.front_y,p.cassette_upper_z,2.25,18,"Y"))
     shape = shape.cut(hex_prism(sign*p.post_x,p.front_y+12.4,p.cassette_upper_z,p.nut_af+0.5,8.1))
+    for y in (p.controller_y-RACK_PITCH/2,p.controller_y+RACK_PITCH/2):
+        shape = shape.cut(cylinder(x-1,y,p.controller_z,2.25,p.side_thickness+2,'X'))
     return shape.removeSplitter()
 
 
@@ -101,7 +107,7 @@ def shapes(p):
     opening = 2*p.side_thickness+p.column_gap+2*p.fit_clearance
     clip = box(-opening/2-4,0,0,opening+8,16,20).cut(box(-opening/2,-1,-1,opening,18,17.5)).removeSplitter()
     result = {"side_L":left,"side_R":right,"crossbar":bar,"locking_pin":pin,
-              "stack_locator":locator,"bridge_clip":clip,"fan_cassette":cassette(p)}
+              "stack_locator":locator,"bridge_clip":clip,"fan_cassette":cassette(p),"controller_dock":dock()}
     for name, c in (("020",0.2),("030",0.3),("040",0.4)):
         block = box(-p.module_width/2,p.support_front_y-15,p.support_top-12,p.side_thickness,30,24)
         block = block.cut(box(-p.inner_x-p.tenon_length-c,p.support_front_y-10-c,p.support_top-8-c,
@@ -168,6 +174,13 @@ def assembly_shapes(p, parts, columns, rows, include_visual=True):
             for y in (100,145):
                 items.append((f"clip_{col}_{row}_{y}",move(parts["bridge_clip"],(col-(columns-2)/2)*p.column_pitch,y,
                                                                       row*p.row_pitch+p.frame_height-16.5)))
+    for col in range(columns):
+        sign = -1 if col == 0 else 1
+        for row in range(rows):
+            origin=((col-(columns-1)/2)*p.column_pitch+sign*(p.module_width/2+STANDOFF),
+                    p.controller_y,row*p.row_pitch+p.controller_z-RACK_U)
+            items.append((f'controller_dock_{col}_{row}',place(parts['controller_dock'],origin,
+                         (0,0,1),(0,-sign,0),(sign,0,0))))
     return items
 
 
@@ -182,7 +195,7 @@ def create(parameters=None):
         for row,(name,value) in enumerate(p.values().items(),1):
             sheet.set(f"A{row}",name);sheet.set(f"B{row}",f"{value} mm")
         library=doc.addObject("App::Part","PartLibrary")
-        library.Label="印刷部品_12種類"
+        library.Label="印刷部品_13種類"
         for name,shape in parts.items():
             obj=doc.addObject("PartDesign::Feature","Print_"+name)
             obj.Label=name;obj.Shape=shape;library.addObject(obj)

@@ -78,10 +78,10 @@ def finish(fig):
 
 
 def setup(ax, zmax=30, elev=35, azim=-115):
-    ax.set_xlim(-9, 84)
+    ax.set_xlim(-20, 95)
     ax.set_ylim(-12, 38)
     ax.set_zlim(-9, zmax)
-    ax.set_box_aspect((93, 50, zmax+9))
+    ax.set_box_aspect((115, 50, zmax+9))
     ax.view_init(elev=elev, azim=azim)
     ax.set_axis_off()
     ax.set_facecolor('#f4f6f8')
