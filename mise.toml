@@ -26,6 +26,22 @@ run = "python3 tools/tasks/cad.py build fan-controller"
 description = "生成物の検査と再利用条件をテスト"
 run = "python3 -m unittest discover -s tests -v"
 
+[tasks."layout:spark-rack"]
+description = "4台専用ラックの仮配置・配線検討画面・参照CADを生成"
+run = "python3 models/spark-rack/source/build_four_node_layout.py"
+
+[tasks."structure:spark-rack"]
+description = "次案は凹凸の接合試験片だけを生成（136部品案は不採用）"
+run = "python3 models/spark-rack/source/build_spark_rack_joint_coupons.py"
+
+[tasks."joint:spark-rack"]
+description = "28mm角の段差・ほぞ・二股の短い接合試験片を生成"
+run = "python3 models/spark-rack/source/build_spark_rack_joint_coupons.py"
+
+[tasks."overview:spark-rack"]
+description = "凹凸でつなぐ4台ラックの全体構想図を生成（製造形状ではない）"
+run = "python3 models/spark-rack/source/build_rack_candidate_overview.py"
+
 [tasks."3mf:prototype"]
 description = "all のPLA試作用3MFを生成"
 run = "python3 tools/tasks/cad.py 3mf all --purpose prototype"

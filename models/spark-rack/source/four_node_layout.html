@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DGX Spark 4台ラック・手持ちファンと40cm／50cm配線の仮配置</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f7;color:#263343;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}main{max-width:1180px;margin:0 auto;padding:32px 24px}h1{font-size:26px;line-height:1.35;margin:6px 0 12px;font-weight:650}h2{font-size:16px;margin:0 0 16px}.eyebrow{font-size:12px;letter-spacing:.1em;color:#647084}.header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}.pill{display:inline-block;background:#fff1d8;color:#79561e;border:1px solid #e7cca0;border-radius:20px;padding:5px 12px;font-size:12px;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px}.card{background:#fff;border:1px solid #dce2e8;border-radius:14px;padding:20px}.stage{padding:0;overflow:hidden;align-self:start}.toolbar{padding:16px 20px;display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid #e6eaee}.views{display:flex;gap:5px;flex-wrap:wrap}button,select,input{font:inherit}button{border:1px solid #d6dee5;background:#fff;padding:6px 11px;border-radius:7px;cursor:pointer;color:#36465a}button[aria-pressed="true"]{background:#24384b;color:#fff;border-color:#24384b}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #73a1d3;outline-offset:2px}select{border:1px solid #ccd5de;border-radius:7px;padding:8px;width:100%;background:#fff;color:#263343}.drawing{width:100%;height:auto;display:block;background:#fafbfc}.footnote{padding:12px 20px;border-top:1px solid #e6eaee;color:#647084;font-size:12px}.controls label{display:block;margin:14px 0 4px;font-size:13px;color:#4b5b6c}.controls input[type="range"]{width:100%;accent-color:#4d7087}.fieldhead{display:flex;justify-content:space-between;gap:10px}.value{font-variant-numeric:tabular-nums;color:#253d50;font-weight:600}.metrics{display:flex;gap:30px;padding:15px 20px;border-top:1px solid #e6eaee;flex-wrap:wrap}.metric small{display:block;color:#677688;font-size:12px}.metric strong{font-size:19px;font-weight:600}.notice{margin:16px 0 0;padding:12px 14px;border-radius:8px;background:#fff5e3;color:#785728;font-size:13px}.notice.error{background:#fce8e5;color:#9a4039}.lower{margin-top:18px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;font-weight:500;color:#647084;background:#f7f9fa}td,th{padding:10px 8px;border-bottom:1px solid #edf0f3}td:not(:first-child),th:not(:first-child){text-align:right;white-space:nowrap}.swatch{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}.bad{color:#a23f35}.good{color:#366857}.muted{color:#647084}.subnote{font-size:12px;color:#647084;margin:12px 0 0}.worstrow{margin-bottom:12px}.worsthead{display:flex;justify-content:space-between;font-size:13px;gap:10px}.track{margin-top:5px;height:6px;background:#ecf0f3;border-radius:4px;overflow:hidden}.fill{height:100%;background:#5e8292}.fill.bad{background:#b86051}details{margin-top:18px;border-top:1px solid #e3e8ec;padding-top:14px}summary{font-size:13px;cursor:pointer;color:#496072}.numeric{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;margin-top:10px}.numeric input{width:76px;border:1px solid #cfd8e0;padding:4px;border-radius:5px}.portgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}.axisnote{font-size:12px;color:#627184}.drawing text{font-family:inherit;font-size:14px}.sources{margin:20px 0;font-size:12px;color:#647084}.sources a{color:#426782}.assumptions{margin-top:18px}.assumptions dl{display:grid;grid-template-columns:190px 1fr;gap:8px 14px;margin:0;font-size:13px}.assumptions dt{color:#647084}.assumptions dd{margin:0}@media(max-width:850px){.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.controls h2,.controls>label:first-of-type,.controls>select,.controls details,.controls .actions{grid-column:1/-1}.lower{grid-template-columns:1fr}.header{align-items:flex-start}.toolbar{flex-wrap:wrap}.metrics{gap:16px}.assumptions dl{grid-template-columns:1fr}.assumptions dd{margin-bottom:8px}}@media(max-width:500px){main{padding:20px 12px}h1{font-size:22px}.header{display:block}.header .pill{margin-top:5px}.card{padding:14px}.stage{padding:0}.controls{grid-template-columns:1fr}th,td{padding:8px 4px;font-size:12px}}
+</style>
+</head>
+<body>
+<main id="layout-app">
+  <div class="header"><div><div class="eyebrow">DGX SPARK / 4台専用ラック</div><h1>本体は140mm×4、2列×2段。</h1><div class="muted">120mm×2は別置きの電源用。背面で40cm／50cmを比較する配置案</div></div><span class="pill">次案の配置参考・製造穴未確定</span></div>
+  <div class="layout">
+    <section class="card stage" aria-label="ラックの仮配置">
+      <div class="toolbar"><strong id="mode-title">リング接続</strong><div class="views" role="group" aria-label="見る方向"><button data-view="iso" aria-pressed="true">立体</button><button data-view="front" aria-pressed="false">前面</button><button data-view="back" aria-pressed="false">背面</button><button data-view="side" aria-pressed="false">側面</button><button data-view="top" aria-pressed="false">上面</button></div></div>
+      <svg id="drawing" class="drawing" viewBox="0 0 900 500" role="img" aria-labelledby="diagram-title"><title id="diagram-title">4台とスイッチ、配線の配置</title></svg>
+      <div class="metrics"><div class="metric"><small>共通枠の仮収容範囲・幅×奥行×高さ</small><strong id="dimensions"></strong></div><div class="metric"><small>4経路で最長の必要長・仮定値</small><strong id="longest"></strong></div></div>
+      <div class="footnote">金色：Spark　薄茶：ファン　濃灰：コントローラー範囲　薄青：支持範囲<br>前面を選ぶとファン4個の配置を確認できます。画面の変更は保存済みモデルへ自動反映しません。</div>
+    </section>
+    <section class="card controls" aria-label="配置条件の調整"><h2>配置を調整</h2>
+      <label for="mode">接続方式・スイッチ</label><select id="mode"><option value="ring">リング接続・4本</option><option value="crs812">CRS812へ接続・4本</option><option value="crs804">CRS804へ接続・4本</option></select>
+      <div class="subnote">切替時の段間隔：リング160mm／スイッチ220mm。支持段を移動する仮案です。</div>
+      <label for="cable_length">ケーブルの公称長</label><select id="cable_length"><option value="400">手持ちの40cm</option><option value="500">当初案の50cm</option></select>
+      <label class="numeric"><span>本体用140mm×4とケース範囲</span><input id="include_fans" type="checkbox" checked></label>
+      <div><label for="column_pitch" class="fieldhead">左右の中心間隔<span class="value" id="column_pitch-value"></span></label><input id="column_pitch" type="range" min="150" max="400" step="5"></div>
+      <div><label for="row_pitch" class="fieldhead">上下の中心間隔<span class="value" id="row_pitch-value"></span></label><input id="row_pitch" type="range" min="120" max="260" step="5"></div>
+      <div><label for="switch_face_y" class="fieldhead">スイッチ端子面の前後差<span class="value" id="switch_face_y-value"></span></label><input id="switch_face_y" type="range" min="-60" max="60" step="5"></div>
+      <div><label for="straight_lead" class="fieldhead">端子から真っすぐ引き出す長さ<span class="value" id="straight_lead-value"></span></label><input id="straight_lead" type="range" min="10" max="80" step="5"></div>
+      <div><label for="bend_radius" class="fieldhead">ケーブル中心線の曲げ半径<span class="value" id="bend_radius-value"></span></label><input id="bend_radius" type="range" min="10" max="60" step="5"></div>
+      <details><summary>端子の仮位置と長さの余裕</summary>
+        <label class="numeric">Sparkの端子中心・本体中心から<input type="number" id="spark_port_offset" min="-55" max="55" step="1">mm</label>
+        <label class="numeric">Sparkの端子間隔<input type="number" id="spark_port_pitch" min="10" max="60" step="1">mm</label>
+        <label class="numeric">Sparkの端子高さ・本体底から<input type="number" id="spark_port_height" min="5" max="45" step="0.25">mm</label>
+        <label class="numeric">スイッチの横移動<input type="number" id="switch_x" min="-100" max="100" step="5">mm</label>
+        <label class="numeric">スイッチの上下移動<input type="number" id="switch_z_offset" min="-60" max="60" step="5">mm</label>
+        <label class="numeric">余長の予約<input type="number" id="service_slack" min="0" max="150" step="5">mm</label>
+        <label class="numeric">公称長の測定基準の差に予約<input type="number" id="length_basis_reserve" min="0" max="150" step="5">mm</label>
+        <div class="subnote">スイッチの各端子・筐体中心からの横位置（mm）</div><div class="portgrid" id="port-inputs"></div>
+      </details><div class="actions"><button id="reset">初期案へ戻す</button><button id="export">検討値を保存</button></div>
+    </section>
+  </div>
+  <div class="notice" id="notice">配線長は仮定条件での計算です。実物が届くことの確認には、端子位置と曲げ条件の実測が必要です。</div>
+  <div class="lower"><section class="card"><h2 id="cable-table-title">40cmに対する4経路の内訳</h2><table><thead><tr><th>経路</th><th>経路長</th><th>予約込み</th><th>残り</th></tr></thead><tbody id="cable-table"></tbody></table><p class="subnote" id="budget-note"></p></section>
+    <section class="card"><h2 id="worst-title">スイッチ移行時の厳しい条件</h2><div id="worst-cases"></div><p class="subnote">スイッチ端子の位置を筐体の左右端・上下端まで広げた条件。Sparkの端子位置は仮定のままです。</p></section></div>
+  <section class="card assumptions"><h2>この配置案の前提</h2><dl><dt>ファンの用途</dt><dd>Spark各台に140mmを1個、合計4個を用意するユーザー指定。防振パッド込み27mm。120mmの2個は電源用のまま維持する。</dd><dt>ファンコントローラー</dt><dd>4個と共通ドックを左右の側梁の外側へ配置。箱はつまみとドックを含む収容範囲。実形状、固定ねじ、端子配線の操作空間は未検証。</dd><dt>機器の向き</dt><dd>Sparkの背面とスイッチの接続端子を配線側へ向ける。ファンの風向と実機の吸排気は確認前。</dd><dt>スイッチ置き場</dt><dd>上下のSparkの間。リング接続中はスイッチと中央の支持範囲を外して表示。</dd><dt>共通枠・支持範囲</dt><dd>収容範囲の参考形状。板の通風穴、梁、金具、造形分割は未設計。</dd><dt>ケーブル</dt><dd>手持ちのQSFP112・40cmを初期条件にし、当初の50cmとも比較。ELSAの40cm製品TS000111が候補だが、型番の一致とスイッチでの動作は未確認。余長の収納とケーブル同士の干渉も未検証。</dd><dt>端子位置</dt><dd>Sparkとスイッチは仮の値。実測で置き換えて再計算する。スイッチの端子割当は4本の最長経路を短くする組合せを比較。</dd><dt>電源アダプター</dt><dd>既存の別置きラックで4個を2列×2段へ配置。各列の電源2個に120mmファン1個を使う。電源側の外形は上図の本体ラック寸法に含まない。</dd></dl></section>
+  <div class="sources">出典：<a href="https://docs.nvidia.com/dgx/dgx-spark/hardware.html" target="_blank" rel="noopener">DGX Spark</a> · <a href="https://mikrotik.com/product/crs812_ddq" target="_blank" rel="noopener">CRS812</a> · <a href="https://cdn.mikrotik.com/web-assets/product_files/CRS804_dimensionsR0_260152.pdf" target="_blank" rel="noopener">CRS804寸法図</a> · <a href="https://www.noctua.at/en/products/nf-a14x25-g2-pwm/specifications" target="_blank" rel="noopener">140mmファン</a> · <a href="https://www.noctua.at/en/products/nf-a12x25-g2-pwm-sx2-pp/specifications" target="_blank" rel="noopener">120mmファン</a> · <a href="https://www.elsa-jp.co.jp/products/detail/nvidia-dgx-spark-cable/" target="_blank" rel="noopener">ELSAの40cm製品</a>　／　2026年10月9日の仮配置</div>
+</main>
+<script id="layout-data" type="application/json">__LAYOUT_DATA__</script>
+<script>
+(() => {
+  const baseline = JSON.parse(document.getElementById('layout-data').textContent);
+  const initial = {...baseline.ring.parameters};
+  const colors = ['#2e7e6a','#4574b0','#be8541','#875ca4'];
+  const names = ['upper_left','upper_right','lower_right','lower_left'];
+  const labels = ['左上のSpark','右上のSpark','右下のSpark','左下のSpark'];
+  let mode = 'ring', view = 'iso', params = {...initial}, portOverrides = null;
+  const byId = id => document.getElementById(id);
+  const number = n => n == null ? '別経路' : `${n.toFixed(1)}mm`;
+  const permutations = values => values.length === 0 ? [[]] : values.flatMap((v,i) => permutations(values.filter((_,j) => j !== i)).map(t => [v,...t]));
+  const assignments = permutations([0,1,2,3]);
+  function route(a,b,p) {
+    const d = Math.hypot(b[0]-a[0],b[2]-a[2]), r = p.bend_radius;
+    if(d < 2*r) return {screening:'needs_reroute',points:[],route_length_mm:null,required_length_mm:null,margin_mm:null};
+    const ux=(b[0]-a[0])/d, uz=(b[2]-a[2])/d, h=Math.max(a[1],b[1])+p.straight_lead+r;
+    const points=[a,[a[0],h-r,a[2]]];
+    for(let i=1;i<=16;i++){const angle=Math.PI-i*Math.PI/32;points.push([a[0]+r*ux+r*ux*Math.cos(angle),h-r+r*Math.sin(angle),a[2]+r*uz+r*uz*Math.cos(angle)]);}
+    points.push([b[0]-r*ux,h,b[2]-r*uz]);
+    for(let i=1;i<=16;i++){const angle=Math.PI/2-i*Math.PI/32;points.push([b[0]-r*ux+r*ux*Math.cos(angle),h-r+r*Math.sin(angle),b[2]-r*uz+r*uz*Math.cos(angle)]);}
+    points.push(b);
+    const length=d-2*r+Math.PI*r+2*p.straight_lead+Math.abs(b[1]-a[1]);
+    const required=length+p.service_slack+p.length_basis_reserve;
+    return {screening:required<=p.cable_length?'within_assumed_budget':'over_budget',points,route_length_mm:length,required_length_mm:required,margin_mm:p.cable_length-required,rear_extent_mm:h};
+  }
+  const box=(name,label,origin,size,kind)=>({name,label,origin,size,kind});
+  const overlaps=(a,b)=>[0,1,2].every(i=>Math.min(a.origin[i]+a.size[i],b.origin[i]+b.size[i])-Math.max(a.origin[i],b.origin[i])>1e-6);
+  function evaluate(p,key) {
+    const spec=baseline[key].switch_spec;
+    const nodes=names.map((name,i)=>{
+      const col=[-1,1,1,-1][i],row=[1,1,0,0][i],x=col*p.column_pitch/2+p.spark_pair_offset,z=p.lower_base+row*p.row_pitch;
+      return {...box(name,labels[i],[x-75,-150,z],[150,150,50.5],'spark'),ports:[-1,1].map(side=>[x+p.spark_port_offset+side*p.spark_port_pitch/2,0,z+p.spark_port_height])};
+    });
+    const cz=p.lower_base+p.spark_port_height+p.row_pitch/2+p.switch_z_offset;
+    const sw={...box('switch',spec.label,[p.switch_x-spec.width/2,p.switch_face_y-spec.depth,cz-22],[spec.width,spec.depth,44],'switch'),ports:(portOverrides||spec.port_fractions.map(f=>f*spec.width)).map(x=>[p.switch_x+x,p.switch_face_y,cz])};
+    const edges=[['上段の横配線',0,1,1,0],['右側の縦配線',1,1,2,1],['下段の横配線',2,0,3,1],['左側の縦配線',3,0,0,0]];
+    const ring=edges.map(([label,a,ap,b,bp])=>({label,start:nodes[a].ports[ap],end:nodes[b].ports[bp],...route(nodes[a].ports[ap],nodes[b].ports[bp],p)}));
+    const choices=assignments.map(assignment=>nodes.map((n,i)=>{
+      const candidates=n.ports.map(a=>({label:n.label+' → '+spec.label,start:a,end:sw.ports[assignment[i]],switch_port:assignment[i],...route(a,sw.ports[assignment[i]],p)})).filter(c=>c.required_length_mm!=null);
+      return candidates.sort((a,b)=>a.required_length_mm-b.required_length_mm)[0];
+    })).filter(cs=>cs.every(Boolean));
+    const rounded=n=>Math.round(n*1e8);
+    choices.sort((a,b)=>rounded(Math.max(...a.map(c=>c.required_length_mm)))-rounded(Math.max(...b.map(c=>c.required_length_mm)))||rounded(a.reduce((s,c)=>s+c.required_length_mm,0))-rounded(b.reduce((s,c)=>s+c.required_length_mm,0))||a.reduce((difference,c,i)=>difference||c.switch_port-b[i].switch_port,0));
+    const worst=nodes.map(n=>{
+      const candidates=n.ports.flatMap(a=>[-1,1].flatMap(s=>[-1,1].map(v=>route(a,[p.switch_x+s*spec.width/2,p.switch_face_y,cz+v*22],p)))).filter(c=>c.required_length_mm!=null);
+      return {label:n.label,...candidates.sort((a,b)=>b.required_length_mm-a.required_length_mm)[0]};
+    });
+    const shelves=[box('lower_shelf','下段の支持範囲',[-230,-150,p.lower_base-p.shelf_thickness],[460,150,p.shelf_thickness],'shelf'),box('switch_shelf','交換するスイッチ支持範囲',[-230,-387,cz-22-p.shelf_thickness],[460,387,p.shelf_thickness],'shelf'),box('upper_shelf','上段の支持範囲',[-230,-150,p.lower_base+p.row_pitch-p.shelf_thickness],[460,150,p.shelf_thickness],'shelf')];
+    const fans=[],holders=[],guards=[],controllers=[];
+    if(p.include_fans)nodes.forEach((n,i)=>{const size=140,x=n.origin[0]+75,z=n.origin[2]+25.25,front=-150-p.fan_front_gap-27;fans.push({...box(n.name+'_fan',size+'mm・'+n.label,[x-size/2,front,z-size/2],[size,27,size],'fan'),size_mm:size});holders.push(box(n.name+'_fan_holder',n.label+'の保持板範囲',[x-size/2-6,front-4,z-size/2-6],[size+12,4,size+12],'fan_holder'));guards.push(box(n.name+'_guard',n.label+'のガード範囲',[x-size/2,front-8,z-size/2],[size,4,size],'guard'));const reference=baseline[key].controllers[i];controllers.push(box(n.name+'_controller',n.label+'のファンコントローラー範囲',[reference.origin[0],reference.origin[1],z-50],reference.size,'controller')); });
+    const envelope=box('rack_envelope','共通枠の仮収容範囲',[-p.rack_width/2,p.rack_front_y,0],[p.rack_width,p.rear_space-p.rack_front_y,p.rack_height],'envelope');
+    const visibleShelves=shelves.filter(s=>mode!=='ring'||s.name!=='switch_shelf');
+    const items=[...nodes,...(mode==='ring'?[]:[sw]),...visibleShelves,...fans,...holders,...guards,...controllers],errors=[];
+    for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++)if(overlaps(items[i],items[j]))errors.push(items[i].label+'と'+items[j].label+'が重なる');
+    for(const b of items)if(b.kind!=='controller'&&[0,1,2].some(i=>b.origin[i]<envelope.origin[i]||b.origin[i]+b.size[i]>envelope.origin[i]+envelope.size[i]))errors.push(b.label+'が収容範囲の外');
+    if(mode!=='ring'&&sw.ports.some(a=>Math.abs(a[0]-p.switch_x)>spec.width/2))errors.push('仮のスイッチ端子が筐体の外');
+    return {nodes,switch:sw,shelves,envelope,fans,fan_holders:holders,fan_guards:guards,controllers,ring_cables:ring,switch_cables:choices[0]||[],switch_worst_cases:worst,errors,parameters:p,switch_key:key};
+  }
+  function projectPoint(point) {
+    const [x,y,z]=point;
+    if(view==='back')return [x,-z];
+    if(view==='front')return [-x,-z];
+    if(view==='side')return [-y,-z];
+    if(view==='top')return [x,-y];
+    return [0.83*x+0.55*y,0.30*x-0.45*y-0.90*z];
+  }
+  const corners = b => [[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]].map(c=>c.map((v,i)=>b.origin[i]+v*b.size[i]));
+  function draw(report,cables){
+    const displayWidth=byId('drawing').clientWidth||900;
+    const fontScale=Math.max(1,900/displayWidth),compact=displayWidth<500;
+    const bounds=corners(report.envelope).map(projectPoint),xs=bounds.map(c=>c[0]),ys=bounds.map(c=>c[1]);
+    const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys),scale=Math.min(750/(maxX-minX),385/(maxY-minY));
+    const project = p => {const q=projectPoint(p);return [450+(q[0]-(minX+maxX)/2)*scale,250+(q[1]-(minY+maxY)/2)*scale];};
+    const fmt = points => points.map(p=>project(p).map(v=>v.toFixed(2)).join(',')).join(' ');
+    const e=corners(report.envelope),edges=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    let markup='<title id="diagram-title">'+(mode==='ring'?'リング接続':report.switch.label+'接続')+'の仮配置・'+({iso:'立体',front:'前面',back:'背面',side:'側面',top:'上面'}[view])+'</title>';
+    markup+=edges.map(([a,b])=>'<polyline points="'+fmt([e[a],e[b]])+'" fill="none" stroke="#b4c0ca" stroke-width="1" stroke-dasharray="4 4"/>').join('');
+    const shelves=report.shelves.filter(s=>mode!=='ring'||s.name!=='switch_shelf');
+    const boxes=[...shelves,...report.nodes,...(mode==='ring'?[]:[report.switch]),...report.controllers,...report.fan_holders,...report.fans,...report.fan_guards];
+    boxes.sort((a,b)=>projectPoint(a.origin)[1]-projectPoint(b.origin)[1]);
+    const faces=view==='iso'?[[4,5,6,7],[0,1,5,4],[1,2,6,5],[3,2,6,7]]:view==='back'?[[3,2,6,7]]:view==='front'?[[0,1,5,4]]:view==='side'?[[1,2,6,5]]:[[4,5,6,7]];
+    const fills={spark:'#ccae66',switch:'#859da9',shelf:'#c6dce9',controller:'#5d7280',fan_holder:'#707b81',fan:'#d2bc92',guard:'#d3d9de'};
+    for(const b of boxes){const c=corners(b),fill=fills[b.kind];
+      markup+=faces.map(f=>'<polygon points="'+fmt(f.map(i=>c[i]))+'" fill="'+fill+'" fill-opacity="'+(b.kind==='shelf'||b.kind==='guard'?'.30':'.70')+'" stroke="'+(b.kind==='shelf'?'#95b1c0':'#627b8b')+'" stroke-width="1"><title>'+b.label+'</title></polygon>').join('');
+    }
+    if(view==='front'||view==='iso')for(const fan of report.fans){const [x,y,z]=fan.origin,s=fan.size_mm,r=(s-12)/2,outline=[];for(let i=0;i<=40;i++){const t=i*Math.PI/20;outline.push([x+s/2+r*Math.cos(t),y-4,z+s/2+r*Math.sin(t)]);}markup+='<polyline points="'+fmt(outline)+'" fill="#ae9170" fill-opacity=".30" stroke="#795f45" stroke-width="2"><title>'+fan.label+'</title></polyline>';const xy=project([x+s/2,y-4,z+s/2]);markup+='<text x="'+xy[0]+'" y="'+xy[1]+'" style="font-size:'+12*fontScale+'px" text-anchor="middle" fill="#483f32" paint-order="stroke" stroke="#fff" stroke-width="3">'+s+'mm</text>';}
+    if(view!=='front')cables.forEach((c,i)=>{if(c.points.length)markup+='<polyline points="'+fmt(c.points)+'" fill="none" stroke="'+colors[i]+'" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><title>'+c.label+'・必要長 '+number(c.required_length_mm)+'</title></polyline>';});
+    for(const b of [...report.nodes,...(mode==='ring'?[]:[report.switch])]){
+      if(view!=='front')for(const p of b.ports){const xy=project(p);markup+='<circle cx="'+xy[0]+'" cy="'+xy[1]+'" r="4" fill="#fff" stroke="#466278" stroke-width="2"><title>'+b.label+'の仮端子</title></circle>';}
+      if(view==='iso'||view==='back'||view==='front'){const pos=project([b.origin[0]+b.size[0]/2,b.origin[1]+b.size[1],b.origin[2]+b.size[2]/2]);markup+='<text x="'+pos[0]+'" y="'+(pos[1]-18*fontScale)+'" style="font-size:'+12*fontScale+'px" text-anchor="middle" fill="#263e50" paint-order="stroke" stroke="#fff" stroke-width="4" stroke-linejoin="round">'+(compact?b.label.replace('のSpark',''):b.label)+'</text>';}
+    }
+    markup+='<text x="32" y="465" style="font-size:'+11*fontScale+'px" fill="#647084">'+({iso:'背面・配線側から見る',front:'前面から見る：各Sparkの前にファンを1個',back:'背面から見る：横方向 × 高さ',side:'側面から見る：奥行 × 高さ',top:'上から見る：横方向 × 奥行'}[view])+'</text>';
+    byId('drawing').innerHTML=markup;
+  }
+  function render(){
+    const key=mode==='crs804'?'crs804':'crs812',report=evaluate(params,key),cables=mode==='ring'?report.ring_cables:report.switch_cables;
+    for(const [name,value] of Object.entries(params)){const output=byId(name+'-value');if(output)output.textContent=value+'mm';}
+    const label=mode==='ring'?'リング接続・スイッチなし':report.switch.label+'接続・スイッチは中央段';
+    byId('mode-title').textContent=label;
+    byId('dimensions').textContent=report.envelope.size.join(' × ')+'mm';
+    byId('longest').textContent=cables.length===4&&cables.every(c=>c.required_length_mm!=null)?number(Math.max(...cables.map(c=>c.required_length_mm))):'別経路の検討が必要';
+    draw(report,cables);
+    byId('cable-table-title').textContent=params.cable_length/10+'cmに対する4経路の内訳';
+    byId('cable-table').innerHTML=cables.map((c,i)=>'<tr><td><span class="swatch" style="background:'+colors[i]+'"></span>'+c.label+'</td><td>'+number(c.route_length_mm)+'</td><td>'+number(c.required_length_mm)+'</td><td class="'+(c.margin_mm!=null&&c.margin_mm>=0?'good':'bad')+'">'+number(c.margin_mm)+'</td></tr>').join('')||'<tr><td colspan="4">指定の曲げ半径で4本を割り当てられません。別経路を検討してください。</td></tr>';
+    byId('budget-note').textContent='予約込み = 経路長 + 余長 '+params.service_slack+'mm + 公称長の基準差 '+params.length_basis_reserve+'mm。余長の実際の収納は未検証。';
+    const futureReport=mode==='ring'?evaluate({...params,row_pitch:baseline[key].parameters.row_pitch},key):report;
+    byId('worst-title').textContent=report.switch.label+'端子位置の厳しい条件'+(mode==='ring'?'・段間220mmへ移行時':'');
+    byId('worst-cases').innerHTML=futureReport.switch_worst_cases.map(c=>'<div class="worstrow"><div class="worsthead"><span>'+c.label+'</span><span class="'+(c.margin_mm>=0?'':'bad')+'">'+number(c.required_length_mm)+' / '+params.cable_length+'mm</span></div><div class="track"><div class="fill '+(c.margin_mm<0?'bad':'')+'" style="width:'+Math.min(100,100*(c.required_length_mm||params.cable_length)/params.cable_length)+'%"></div></div></div>').join('');
+    const problems=[...report.errors];
+    for(const c of cables){if(c.required_length_mm==null)problems.push(c.label+'は指定の曲げ半径で経路を作れない');else if(c.margin_mm<0)problems.push(c.label+'は'+params.cable_length/10+'cmを超える');if(c.rear_extent_mm>params.rear_space)problems.push(c.label+'が背面の配線空間を超える');}
+    if(mode==='ring')problems.splice(0,problems.length,...problems.filter(s=>!s.includes('CRS')&&!s.includes('スイッチ')));
+    byId('notice').className='notice'+(problems.length?' error':'');
+    byId('notice').textContent=problems.length?[...new Set(problems)].join('。')+'。':'仮端子の4経路は'+params.cable_length/10+'cm内です。端子を筐体の端まで広げた条件は下欄で別判定。実物の到達・電気的適合は未検証です。';
+    window.layoutState={mode,view,report,cables};
+  }
+  const inputIds=['column_pitch','row_pitch','switch_face_y','straight_lead','bend_radius','spark_port_offset','spark_port_pitch','spark_port_height','switch_x','switch_z_offset','service_slack','length_basis_reserve'];
+  function setControls(){inputIds.forEach(id=>byId(id).value=params[id]);byId('include_fans').checked=params.include_fans;byId('cable_length').value=String(params.cable_length);updatePorts();}
+  function updatePorts(){const key=mode==='crs804'?'crs804':'crs812',spec=baseline[key].switch_spec;const values=portOverrides||spec.port_fractions.map(f=>f*spec.width);byId('port-inputs').innerHTML=values.map((v,i)=>'<label class="numeric">端子'+(i+1)+'<input type="number" data-port="'+i+'" value="'+v.toFixed(2)+'" step="1" aria-label="スイッチ端子'+(i+1)+'の横位置"></label>').join('');}
+  inputIds.forEach(id=>byId(id).addEventListener('input',()=>{const v=Number(byId(id).value);if(Number.isFinite(v)&&byId(id).value!==''&&byId(id).checkValidity()){params[id]=v;render();}}));
+  byId('port-inputs').addEventListener('input',e=>{const i=e.target.dataset.port;if(i==null||e.target.value==='')return;const key=mode==='crs804'?'crs804':'crs812',spec=baseline[key].switch_spec;portOverrides=portOverrides||spec.port_fractions.map(f=>f*spec.width);const v=Number(e.target.value);if(Number.isFinite(v)){portOverrides[Number(i)]=v;render();}});
+  byId('mode').addEventListener('change',()=>{mode=byId('mode').value;params.row_pitch=baseline[mode].parameters.row_pitch;portOverrides=null;setControls();render();});
+  byId('include_fans').addEventListener('change',()=>{params.include_fans=byId('include_fans').checked;render();});
+  byId('cable_length').addEventListener('change',()=>{params.cable_length=Number(byId('cable_length').value);render();});
+  document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{view=button.dataset.view;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));render();}));
+  byId('reset').addEventListener('click',()=>{params={...baseline[mode].parameters};portOverrides=null;setControls();render();});
+  byId('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(window.layoutState,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='four-node-layout-review.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+  window.addEventListener('resize',render);
+  setControls();render();
+})();
+</script>
+</body>
+</html>

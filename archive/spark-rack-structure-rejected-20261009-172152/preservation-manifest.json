@@ -1,0 +1,316 @@
+{
+  "design_status": "not_adopted",
+  "review_target": "build/spark-rack/four-node-structure/20261009-172152-7b36234b",
+  "package": "four-node-structure-20261009-172152-not-adopted.zip",
+  "package_sha256": "f326497275b7706d55b2c426af21be7f22207407749465ea16b18b31466ac516",
+  "files": [
+    {
+      "path": "generated/assembly-validation.json",
+      "sha256": "97ea43459525ca06f72a9cb7ddc49ce5f4ce1f512ae77f9a92d05a647851dbbc"
+    },
+    {
+      "path": "generated/crs804-assembly.png",
+      "sha256": "9d0e8895b0adcfbb04c99a9ec43675a0dfcef034a8ebabdc2474afe2144682af"
+    },
+    {
+      "path": "generated/crs804-frame.png",
+      "sha256": "6181435dbb818c3c4050d383a9468e60af74cdff0b5bac18337d2e168f707d48"
+    },
+    {
+      "path": "generated/crs812-assembly.png",
+      "sha256": "f1fd0ce43460751f9293641b7be13ff1587bf5957d82f9c88737b8a4e4ca8197"
+    },
+    {
+      "path": "generated/crs812-frame.png",
+      "sha256": "9c19314f9cc8836347f7de1ab83a0f522b4e284d8569a389dfc637c776ada596"
+    },
+    {
+      "path": "generated/fan_carrier-detail.png",
+      "sha256": "bb3743c8b06f2c7003c3f84aeca198ecf1e1435d214efde5ff8487cd3711ac1a"
+    },
+    {
+      "path": "generated/four-node-structure-crs804.FCStd",
+      "sha256": "adcf79d6428e70dab0b90606f851fa6a200ae68366ffe43519bb7e284f508f77"
+    },
+    {
+      "path": "generated/four-node-structure-crs804.step",
+      "sha256": "c49a540d637e8573aa88d975f951f87b6f797144c2168d281ec23fee1f822deb"
+    },
+    {
+      "path": "generated/four-node-structure-crs812.FCStd",
+      "sha256": "4ef353c0a6921ec36d1ca52029170f787583897a3b3e679a3d182824b84b15da"
+    },
+    {
+      "path": "generated/four-node-structure-crs812.step",
+      "sha256": "798e8cca086c434863d83c91071ac35df16c0ace419c03e13fc8a2cbc754bc42"
+    },
+    {
+      "path": "generated/four-node-structure-ring.FCStd",
+      "sha256": "29c557f1a78919dad53af2163988dcc2725b22c5f98acc9895ff54e8d33bb29a"
+    },
+    {
+      "path": "generated/four-node-structure-ring.step",
+      "sha256": "79c284d171df01e1fbd610e962ea7c3bc638f2d858620d917afd1c12e03285ba"
+    },
+    {
+      "path": "generated/four-node-structure.html",
+      "sha256": "64ffeb07537b21221ff12016e2c965d54c9f4cd93db24660a7b081993f7f6c96"
+    },
+    {
+      "path": "generated/freecad-version.json",
+      "sha256": "595a5ad5c8aafa6c62cd9eff4effe6c372b5f6e2511989b9cdf4d038f1204122"
+    },
+    {
+      "path": "generated/freecad.log",
+      "sha256": "89cd723544293c429056283fbfd090aa1289c94b37c7d5147e821167df70ca0e"
+    },
+    {
+      "path": "generated/generation-progress.json",
+      "sha256": "03160ecf0de70842ec4aef6321c75491bee5036e75fea25c471d8e9c835ee6c9"
+    },
+    {
+      "path": "generated/manifest.json",
+      "sha256": "6cb5f1ff82bf4271496ad6b30557dca63575b9371947c94996f2a2513104846f"
+    },
+    {
+      "path": "generated/parts/column_1.step",
+      "sha256": "adb028ead6a5c446b84c3a9e7470b73d1766a9e96283c4cbb8e18175a11524a7"
+    },
+    {
+      "path": "generated/parts/column_2.step",
+      "sha256": "90d17ad70e9b8dc1fc532986807b6c7da0f9982791c53db1932b252c4b575453"
+    },
+    {
+      "path": "generated/parts/column_3.step",
+      "sha256": "6f1419735ea523ba9f2d0ab649e396a81fd06d332f69c2f5aad91ef82fdf0352"
+    },
+    {
+      "path": "generated/parts/controller_dock.step",
+      "sha256": "7d9ab7f326e06e1ddd3b316a4620ea745ec28a60dc7488dd8030521d78021de6"
+    },
+    {
+      "path": "generated/parts/controller_support.step",
+      "sha256": "2e9f7a190b8d9e93f466645a4906d81c45a0306600647f2cd03d9ebc8acf86ec"
+    },
+    {
+      "path": "generated/parts/corner_double.step",
+      "sha256": "864338cdee6d222cf80a179c1f1b96fbe404cc3ff764171f353e60cf1794d1af"
+    },
+    {
+      "path": "generated/parts/corner_single.step",
+      "sha256": "ad3f5c3a9427f0fe99eed53cb83f2b910f1d7422396fa39b8e7e62d241edab2c"
+    },
+    {
+      "path": "generated/parts/cross_1.step",
+      "sha256": "71f809bf4820098480bd8460f657a934db2fcdb950b5b6b3d195227222d1aa77"
+    },
+    {
+      "path": "generated/parts/cross_2.step",
+      "sha256": "39cb7ca3117a896cc0954b414b40ee35d37872661f51f1ab99eed471a06abe33"
+    },
+    {
+      "path": "generated/parts/end_shoe_left.step",
+      "sha256": "d020b9b7aefeb2d0d803cf70e7a9260b3a9a589cae9883b8a6f7c6e2f3252ffc"
+    },
+    {
+      "path": "generated/parts/end_shoe_right.step",
+      "sha256": "ba04912d006f194d050b528e317c3de2e30e935717f111fd973716808bf32aad"
+    },
+    {
+      "path": "generated/parts/fan_carrier.step",
+      "sha256": "d9fcd7c22638dd90b48a0dff4dd7ab83458dc6d5eb10e53e382c71f24b202bda"
+    },
+    {
+      "path": "generated/parts/foot.step",
+      "sha256": "046848a69f34ed91dd8fd2dad54a7f92f7b15b97f80ff7dfa3dc05bc365a8054"
+    },
+    {
+      "path": "generated/parts/joint_fit_stub.step",
+      "sha256": "9cd637f830ee553ea2527e5061f77f1d887df70393488da1ff77c6e88a5ddfcd"
+    },
+    {
+      "path": "generated/parts/side_1.step",
+      "sha256": "3d9d1c1044b5d1ac3cd884be285ab024c77090cdd12588847c68a82319e6d9a5"
+    },
+    {
+      "path": "generated/parts/side_2.step",
+      "sha256": "90e3e8dfd59b5d9a82859a67d3d5d437f7cb2a8f1f0361e58735ccd4c587e396"
+    },
+    {
+      "path": "generated/parts/side_3.step",
+      "sha256": "1d9b1f8a7f693299becf3c12f40210e6a490bc5d7b8c36520733b9a9f0d0de47"
+    },
+    {
+      "path": "generated/parts/splice.step",
+      "sha256": "142bbdcc9f75b39661a7ac9a82f779db77e4fd74a838acd79d144622851c3d73"
+    },
+    {
+      "path": "generated/parts/tray.step",
+      "sha256": "115665d448d37566ac483f00ff8a9927ca9b4f1be718aff6c0446f5127482bfe"
+    },
+    {
+      "path": "generated/ring-assembly.png",
+      "sha256": "42d31a6fceb7a378d25a058406919559520dfa868cfddf5f878a050a733a7297"
+    },
+    {
+      "path": "generated/ring-frame.png",
+      "sha256": "b9952896655086aa79215f5ee590361123219a8a111cc91717b3327280265891"
+    },
+    {
+      "path": "generated/splice-detail.png",
+      "sha256": "51d52c98e7ea52afeb0e47a55f053ec955d5cc88f31c2bf97f08b5a58be55f62"
+    },
+    {
+      "path": "generated/stl/column_1.stl",
+      "sha256": "8a93d25501ee5e681336fee900587cb9799f6b6104a2ee0501f571715ed8c33e"
+    },
+    {
+      "path": "generated/stl/column_2.stl",
+      "sha256": "c4854f0ca14bf0e7718a465227d94bb7953c764e03655064a78e0af08d76af73"
+    },
+    {
+      "path": "generated/stl/column_3.stl",
+      "sha256": "a8d13ce35db6207e08ac01de0ee6b765598adfd73ee59fb34d403f5303fbda80"
+    },
+    {
+      "path": "generated/stl/controller_dock.stl",
+      "sha256": "f1b1378754f72e48a85d9e3ae13d3a409297fbdc6173d0fb6271dc583089cac9"
+    },
+    {
+      "path": "generated/stl/controller_support.stl",
+      "sha256": "e839b740acc7bfff203a7aee81a8439daacc55a520ea22aaae526c5561a3bd80"
+    },
+    {
+      "path": "generated/stl/corner_double.stl",
+      "sha256": "d2533f69ddb3be4fad269aeadf63d1f1ecdd3e7db04818ee45e00f6c18b14de3"
+    },
+    {
+      "path": "generated/stl/corner_single.stl",
+      "sha256": "3f72ebaa956d353e83a3b6e3c3760e15ef1131807b4e99e5a90bb31ededf49e3"
+    },
+    {
+      "path": "generated/stl/cross_1.stl",
+      "sha256": "87b1fd15f3abde44ba6817410bf3dd43aebdfe601398f2087ed93233b4326c09"
+    },
+    {
+      "path": "generated/stl/cross_2.stl",
+      "sha256": "eec234efe50dea7589b3def6b6aa7b207adcbe19d637195f9e85b5b2dfb9f3e4"
+    },
+    {
+      "path": "generated/stl/end_shoe_left.stl",
+      "sha256": "8a68bf7f3a9fa41b6e6f3fe3a7d0e20cb7344af808aa8f34748f707b04427d92"
+    },
+    {
+      "path": "generated/stl/end_shoe_right.stl",
+      "sha256": "f65cee5351a9c194fe91eda2dc041a1953f49fc5f366cfef1e94fb7dfde34003"
+    },
+    {
+      "path": "generated/stl/fan_carrier.stl",
+      "sha256": "4baa4b76232d8ea3d3a7da3f269d299954900136ace9a498ea10ee8f6f00ba80"
+    },
+    {
+      "path": "generated/stl/foot.stl",
+      "sha256": "823f839f6534f2b429ce1bfa2e7339f5f649e7ca0e11fe1505cc47f6fa122e79"
+    },
+    {
+      "path": "generated/stl/joint_fit_stub.stl",
+      "sha256": "7d7a6261b06bda840894fa614eb51a29ca8da10088a01d2ea9529aaa94682138"
+    },
+    {
+      "path": "generated/stl/side_1.stl",
+      "sha256": "5099955555a972664bf3b6850a04866bf7809a781ef033e12f8f374986285a2a"
+    },
+    {
+      "path": "generated/stl/side_2.stl",
+      "sha256": "a8910d3f4bd7bda2f8509260d2cbf813c246bdfdc797f3aabd4decdae3518aad"
+    },
+    {
+      "path": "generated/stl/side_3.stl",
+      "sha256": "dc234abb1eeeef63b43d1360fbc5841544b54794d0b4e28ee5a64396547a46eb"
+    },
+    {
+      "path": "generated/stl/splice.stl",
+      "sha256": "5a25393f53f36ae867bc75a3ace3f3c848fa77aa3fefd8aa70f8e8c03c680626"
+    },
+    {
+      "path": "generated/stl/tray.stl",
+      "sha256": "0596d13c53127c8b98123179ca3fe78b7e6021be9823a23c847952daa81e5ce3"
+    },
+    {
+      "path": "generated/stl-validation.json",
+      "sha256": "4645fa09280b8d6d892f0e0e017e13bd123d47a1a7025b6178caced26b93a83e"
+    },
+    {
+      "path": "generated/structure-report.json",
+      "sha256": "7f0caabf09e1cc2c3d875d416dbddb20903003860b49c8eec2b35899eed253de"
+    },
+    {
+      "path": "generated/tray-detail.png",
+      "sha256": "cce340a33aa420edd1b500ad705c7a21174e42106051a2451a340f904705e5b7"
+    },
+    {
+      "path": "generated/validation.json",
+      "sha256": "adeb6914553d65cfa2faa1aace8d906734d1fc578d39c873b7b4bdff2ad93cf5"
+    },
+    {
+      "path": "working-source-at-rejection/build_four_node_layout.py",
+      "sha256": "adc605e3c4e496cd6d48e3940a85ea211adef42062199124774a034c5def133a"
+    },
+    {
+      "path": "working-source-at-rejection/build_four_node_structure.py",
+      "sha256": "18b375eab88bee6da1d184ed3442f30ba7768bc55bec0321f4861142342c1144"
+    },
+    {
+      "path": "working-source-at-rejection/four_node_layout.html",
+      "sha256": "cd3ee54c358e0de23ebb13bed597a340a33353adf79fb0195aa0de36aa39b4ed"
+    },
+    {
+      "path": "working-source-at-rejection/four_node_layout.py",
+      "sha256": "c553e14974f269aa1d9ab2f417d8de953ebf643df77985b2c8fc0af7632deeea"
+    },
+    {
+      "path": "working-source-at-rejection/four_node_structure.html",
+      "sha256": "1c93904b72823127ed2f52e679208a3308b34b43fa26e2d4e7695d1f68633a9a"
+    },
+    {
+      "path": "working-source-at-rejection/four_node_structure_parameters.py",
+      "sha256": "3036f5de7fd366c9ef0c3b8d17cf0efc75fc9ebf1ad22eabdf36b8026d37fd04"
+    },
+    {
+      "path": "working-source-at-rejection/freecad_four_node_layout.py",
+      "sha256": "a0c86bb5d5ec4dd341318f9a1588849272b84c482689d4b79a675dc635b449aa"
+    },
+    {
+      "path": "working-source-at-rejection/freecad_four_node_structure.py",
+      "sha256": "6acf29da5dab0e03ab966fec8cead5000f7626269759f42ad86f6b19abd8a219"
+    },
+    {
+      "path": "working-source-at-rejection/render_four_node_structure.py",
+      "sha256": "60b6f0982dccbddce43c29d07945c69e7157a567637b236065aedf7eeabc19e5"
+    },
+    {
+      "path": "working-source-at-rejection/run_four_node_structure.FCMacro",
+      "sha256": "6a23ac0b1fcf26e4bda7022083b75fd94a0c187ca0747004165e1e514aa689ab"
+    },
+    {
+      "path": "working-source-at-rejection/validate_four_node_structure.py",
+      "sha256": "4d86fdd583c2a64999a3b927b64ae8424408db2701dd6ab0378ad42293f07029"
+    }
+  ],
+  "original_source_hashes_matching_current_files": [
+    "models/spark-rack/source/four_node_structure_parameters.py",
+    "models/spark-rack/source/freecad_four_node_structure.py",
+    "models/spark-rack/source/validate_four_node_structure.py",
+    "models/spark-rack/source/four_node_layout.py",
+    "models/spark-rack/source/four_node_structure.html",
+    "models/spark-rack/source/run_four_node_structure.FCMacro",
+    "tools/cad/check_stl.py",
+    "tools/cad/controller_mount.py",
+    "models/spark-rack/reference/prepared-fans-and-cable.json"
+  ],
+  "original_source_versions_not_saved_here": [
+    "models/spark-rack/source/build_four_node_structure.py"
+  ],
+  "note": "generated/は指定実行の生成物そのもの。working-source-at-rejection/はレビュー受領時の作業コードで、指定実行の入力と一致するとは限らない。既存生成物と元manifestは変更していない。",
+  "validation_scope": "圧縮ファイルと指定生成物の内容一致。設計の採用や実物の性能を示さない。"
+}

@@ -4,6 +4,9 @@
 
 | 場所 | 保管するもの |
 |---|---|
+| [spark-rack-overview-20261009-200723](spark-rack-overview-20261009-200723/README.md) | 電源を内蔵する前の全体構想。現行画面での比較用データ |
+| [spark-rack-structure-rejected-20261009-172152](spark-rack-structure-rejected-20261009-172152/README.md) | 不採用の136部品案。指定実行の生成物とレビュー受領時の作業コードを区別して保全 |
+| [spark-rack-modular-20261009](spark-rack-modular-20261009/README.md) | 4台専用ラックへの再設計前のリポジトリ一式。日付付き保存パッケージと内容照合の記録 |
 | [adapter-stand-v1](adapter-stand-v1/README.md) | 横連結のみの旧スタンド。コード・資料・生成物を一式で保全 |
 | [print-projects](print-projects/README.md) | 採用しなくなった印刷配置とバックアップ |
 | [fan-controller-import](fan-controller-import/README.md) | 別worktreeから取り込んだケースの原マクロ・画像・検査記録 |

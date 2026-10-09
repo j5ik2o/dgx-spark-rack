@@ -1,0 +1,41 @@
+{
+  "status": "generated",
+  "purpose": "凹凸の接合試験片のみ。全体の印刷は保留。",
+  "sources_sha256": {
+    "models/spark-rack/source/freecad_spark_rack_joint_coupons.py": "27e0bd0d8116d12f092084b8684f12028315b43ac131049909525285309e4a9a",
+    "models/spark-rack/source/validate_spark_rack_joint_coupons.py": "fc248c841156661e33e00a9fe959d9e4645d18436d3b539a2661c745f11ed0db",
+    "models/spark-rack/source/build_spark_rack_joint_coupons.py": "f0743c6c34a8049b632453e718b22584f25d2ed03290d4f92edcab7968b500c6",
+    "models/spark-rack/source/rack_candidate_datums.py": "a25d5b6cde0657c2f8b5463c5d50e40bd95a0eaa46fe104b26c3106226be3cd7",
+    "models/spark-rack/source/joint_coupons.html": "6130ec9d4687fc79eddfb71ef3c007238429a5274ee41c38c784df21f75dcb51",
+    "models/spark-rack/source/run_spark_rack_joint_coupons.FCMacro": "0d5150aa2cb89f690f7521a1a0790312689bd3e550bf6564cfc100e7b44030f3",
+    "tools/cad/check_stl.py": "77478896e3ad8975dc821bece95700a3b148275e0867568865feaee52929009f",
+    "tools/cad/render_mesh_scene.py": "dd57160d56a824cb5ca8aea45c0a2f5606a56942a5876ebfeeac9cd350529886",
+    "models/spark-rack/reference/pending-mount-measurements.json": "cf80cca20db665f1b480cf9beae652531284cf999cc1e5b89f3c1d26e8677a23"
+  },
+  "outputs_sha256": {
+    "air-guide-preview-scene.json": "6718f1b15750ffd39c0e22e22bfa4a0cdc03cba8097b0628eca9d401887c7fc3",
+    "air-guide-preview.FCStd": "6a0ddcfda3724b1bcaee11596aaa68a1d8de8d2435c10f07981adb8218e099ef",
+    "air-guide-preview.png": "76d92ad7e5af81ce79fd4a4b191a87aa32ac570a241f4f34edb11eab288ea42f",
+    "corner-assembled-scene.json": "4fca1e474a30cb6ca8ca9c65d294206c337e45a5ca404df5ddcc774fc3be9426",
+    "corner-assembled.png": "c9e79a08cac4085a39f48a46dc4b7ce233cd90f94ac462e957d78f14752b8f5a",
+    "corner-coupons.step": "d04668d22c265d001fb4a85025d0f1b4a706ce9f000ece3c2b2ef2d9b6ec2d6b",
+    "corner-insertion-order-scene.json": "376d792ddb2807b8871825ca68062d34719c9bd74b7d0cb79143d54e1018c8fa",
+    "corner-insertion-order.png": "393ff57dd6ec26e64b34daaa25907cadab1057eac5c8fb51c778b56c903f189f",
+    "coupon-report.json": "0612d5d007a5276332dc7d2fc4dab6337208d732263b6bef59bbc59b4ce5b9c7",
+    "freecad-version.json": "595a5ad5c8aafa6c62cd9eff4effe6c372b5f6e2511989b9cdf4d038f1204122",
+    "freecad.log": "eb2b578b5a3c35935a7d3ec7b839fb1062d52874d6523dd2da59991e9abe7ca7",
+    "joint-coupons.FCStd": "4612e0f91990602d34bf299f9d79a04eb327cd378109053527f935d75aca1f0e",
+    "joint-coupons.html": "6130ec9d4687fc79eddfb71ef3c007238429a5274ee41c38c784df21f75dcb51",
+    "render.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stl/beam_drop_blade.stl": "dc613bdd94a7ecd7cd866b8faac636c83dbb1930e2a97f05bcc9b823b5f4ff66",
+    "stl/beam_fork.stl": "1995f91d8cf504228e1093aff4ac62a72f2cf88fe99cb0d1bca1789740c2b01f",
+    "stl/beam_lower_tenon.stl": "93ef6a07547de0e1265890b2ec64cd6a9df3f7b803d913f73ee0934b1583f1b2",
+    "stl/beam_upper_tenon.stl": "76b1ddc457fc9d99d8a2956b64c512c548e574165751607032c9bcf1e08237c6",
+    "stl/column_socket.stl": "833b8166f745d8190e0173b4d664d2278b9515080a3877f66e6831a6513d0b73",
+    "stl-validation.json": "6b064dabf2ea807d4fb3b2172f6cc57938fbfba7f4e7d1315c8b14e8dd65828d",
+    "straight-assembled-scene.json": "e4f82ab71d348e44cfd4c3daa18706bc5533b329a4f0c96a1961dde9d7242472",
+    "straight-assembled.png": "8d32f2d4616a8e37817a8c3be6af04fb65948d282ab88f71ac67acd50ad94340",
+    "straight-coupons.step": "b45f7bae1bb105bbf9f1273417c584625f2915c67b6431400ea545d03d8a226e",
+    "validation.json": "3aef0fcc19eb9d9be5a6489030068c22cbeb5ff0d0be380c3bb274ddf42e7a95"
+  }
+}

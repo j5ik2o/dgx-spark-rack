@@ -1,6 +1,8 @@
 # DGX Spark Rack
 
-DGX Spark本体とACアダプターを置く、3Dプリント用ラックです。**現行モデルは3つです。編集する正本は `models/` にあります。**
+DGX Spark本体とACアダプターを置く、3Dプリント用ラックです。**4台専用ラックへの再設計を始めています。** 2列×2段とラック内の交換可能なスイッチ置き場を前提に、リング接続・スイッチ接続の配線は手持ち40cmと当初案の50cmを比較します。[新設計の条件](models/spark-rack/docs/4台専用ラックの設計条件.md)と[従来データの保全](archive/spark-rack-modular-20261009/README.md)を参照してください。
+
+136部品案は不採用です。現在は`mise run overview:spark-rack`で[枠を小型化し、電源4個も内蔵する全体構想](models/spark-rack/docs/凹凸の接合試験片と次案.md)を確認できます。試験片の印刷は後回しです。`mise run joint:spark-rack`は短い接合試験片だけを生成します。梁の取付穴とスイッチ支持板は実測後に設計します。`mise run layout:spark-rack`は[配置の参考](models/spark-rack/docs/仮配置の確認.md)、`mise run build`は従来の3モデル用です。正本は引き続き各モデルの`source/`です。
 
 ## 何を編集するか
 

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>4台ラック・設計変更後の全体像</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#283b4c;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}main{max-width:1360px;margin:auto;padding:28px 24px}h1{margin:6px 0;font-size:28px}h2{margin:0 0 10px;font-size:17px}p{margin:8px 0}.tag{display:inline-block;font-size:12px;padding:4px 12px;border-radius:16px;background:#fff1d7;color:#795824}.muted{color:#687c8e}.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0}select,button{font:inherit;padding:7px 12px;background:white;border:1px solid #ccd9e1;border-radius:7px;color:inherit}button{cursor:pointer}button[aria-pressed=true]{background:#284f68;color:white;border-color:#284f68}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px}.card{background:#fff;border:1px solid #dbe3e9;border-radius:13px;padding:18px}.stage{padding:0;overflow:hidden}.stage svg{width:100%;display:block;touch-action:none;cursor:grab;background:linear-gradient(160deg,#fff,#f7fafc)}.stage:active svg{cursor:grabbing}.caption{padding:13px 18px;border-top:1px solid #e6edf2;font-size:13px}.legend{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;font-size:12px}.swatch{width:10px;height:10px;display:inline-block;margin-right:5px;border-radius:2px}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.facts strong{display:block;font-size:20px}.facts small{color:#687c8e}.note{background:#fff2dc;color:#77572d;padding:12px 16px;border-radius:8px;font-size:13px;margin-top:16px}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}.details img{width:100%;height:220px;object-fit:contain}.details p,.side p{font-size:13px}.step{border-left:3px solid #aac4d5;padding:5px 0 5px 13px;margin:12px 0}.step strong{font-size:14px}.step small{display:block;color:#687c8e}.links{display:flex;gap:18px;margin-top:16px;font-size:13px}a{color:#3c6988}.side .card{margin-bottom:16px}.side label{display:block;margin:7px 0;font-size:13px}input{accent-color:#284f68}svg text{font-family:inherit}.callout{font-size:13px;fill:#284f68;paint-order:stroke;stroke:white;stroke-width:4px;stroke-linejoin:round}@media(max-width:900px){.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;gap:16px}.details{grid-template-columns:1fr}.details img{height:240px}}@media(max-width:550px){main{padding:18px 12px}h1{font-size:23px}.side{grid-template-columns:1fr}.facts{grid-template-columns:1fr 1fr}.toolbar{gap:6px}.toolbar button{font-size:13px;padding:6px 9px}.legend{gap:10px}}
+</style></head><body><main>
+<span class="tag">枠を小型化・電源4個も内蔵する構想</span><h1>本体も電源も、一つの枠へ。</h1><p class="muted">両スイッチの収容を検討しながら余白を詰め、電源4個・120mmファン2個・制御ケース6個を枠内へ配置します。</p>
+<div class="toolbar"><label>案 <select id="revision"><option value="current">小型化＋電源を内蔵</option><option value="previous">前の構想と比較</option></select></label><label>配置 <select id="mode"><option value="ring">当面：リング接続</option><option value="crs812">将来：CRS812</option><option value="crs804">将来：CRS804</option></select></label><button data-view="iso" aria-pressed="true">斜めから</button><button data-view="front" aria-pressed="false">前面</button><button data-view="back" aria-pressed="false">背面・配線</button><button data-view="side" aria-pressed="false">側面</button><button data-view="top" aria-pressed="false">上面</button></div>
+<div class="layout"><div><section class="card stage" id="stage"><svg id="drawing" viewBox="0 0 940 640" role="img" aria-label="4台ラックの全体構想図"></svg><div class="caption" id="caption"></div></section>
+<div class="legend"><span><i class="swatch" style="background:#54748a"></i>28mm角の柱・梁</span><span><i class="swatch" style="background:#c7a663"></i>DGX Spark</span><span><i class="swatch" style="background:#847363"></i>140mmファン</span><span><i class="swatch" style="background:#72b7c9"></i>導風の参考外形</span><span><i class="swatch" style="background:#55616b"></i>電源4個</span><span><i class="swatch" style="background:#a390b7"></i>将来のスイッチ収容範囲</span></div>
+<div class="facts"><div><small>共通枠の外形・脚を除く</small><strong id="frame-fact">512 × 520 × 420mm</strong></div><div><small>制御ケースまで含む幅</small><strong id="width-fact">512mm</strong></div><div><small>下段の本体底面</small><strong>高さ72mm</strong></div></div></div>
+<aside class="side"><section class="card"><h2>表示を調整</h2><label><input id="equipment" type="checkbox" checked> 本体・140mmファン・制御ケース</label><label><input id="adapters" type="checkbox" checked> 電源4個・120mmファン・支持範囲</label><label><input id="ducts" type="checkbox" checked> 導風の参考外形</label><label><input id="cables" type="checkbox" checked> 40cmケーブルの仮経路</label><label><input id="labels" type="checkbox" checked> 部品の説明</label><p class="muted">斜め表示はドラッグで回転。枠の細い線は造形分割の候補です。線をまたぐ外板や別部品の継ぎ手は置きません。</p><p id="comparison-note"></p><p id="mode-note"></p><p id="cable-note"></p></section>
+<section class="card"><h2>組立順の考え方</h2><div class="step"><strong>下側の柱と受けを用意</strong><small>梁の段差を載せる水平面を確保。</small></div><div class="step"><strong>低いほぞの梁を先に入れる</strong><small>続いて高いほぞの梁を上から入れる。</small></div><div class="step"><strong>上側の柱を後から載せる</strong><small>上から入れる接合を、柱で塞ぐ前に組む。</small></div><p class="muted">これは角の接合から展開する順序の候補です。全体の分割位置と、最後の梁まで入る経路はこれから詰めます。</p></section></aside></div>
+<div class="note">全体は外形の構想図です。端の凹凸を全長部材へ統合した製造形状ではありません。梁の取付穴、スイッチ支持板、止めねじは未確定。外形箱と仮配線の干渉を確認しました。全長部材の凹凸、実端子、組立経路、強度・冷却は未検証です。</div>
+<div class="details"><section class="card"><h2>角は、柱の穴と梁のほぞ</h2><img src="corner-assembled.png" alt="検査済みの短い形状：柱の受けへ梁2本を入れた状態"><p>荷重は根元の段差で受け、奥のほぞで位置を決めます。28mm角の外形に収め、角の固定板をなくします。</p></section><section class="card"><h2>差す方向を、上からにそろえる</h2><img src="corner-insertion-order.png" alt="低いほぞを先に、高いほぞを後に上から入れる順序"><p>角の短い形状では、低いほぞ→高いほぞの順で挿入できます。全体の順序はこの条件を守って検討します。</p></section><section class="card"><h2>直線の途中は、二股と差し込み</h2><img src="straight-assembled.png" alt="二股の溝へ差し込みを上から入れた短い形状"><p>部材の分割線は残ります。外へかぶせる継ぎ手をなくし、二股の底面で相手を受けます。</p></section></div>
+<p class="muted" style="font-size:13px">本体枠の72個は前の案の数量目標です。電源の支持部、120mmファンの保持部、追加ドック、仕切りを統合した部品数は未確定です。スイッチ支持板は寸法確定後に設計し、試験片の印刷は後回しのままです。</p>
+<div class="links"><a href="comparison.json">寸法の比較</a><a href="overview-report.json">構想図の寸法データ</a><a href="validation.json">確認範囲</a><a href="manifest.json">生成元と保存記録</a></div>
+</main><script>
+const overview=__OVERVIEW_DATA__;
+let revision='current';
+let mode='ring',view='iso',yaw=-0.72,tilt=0.34;
+const el=id=>document.getElementById(id);
+const colors={adapter:'#55616b',adapter_mount:'#88a0af',separator:'#72b7c9',cable_space:'#d6b888',frame:'#54748a',spark:'#c7a663',fan:'#847363',holder:'#6e7d87',controller:'#435b6b',tray:'#a7c6d7',foot:'#435b6b',switch:'#a390b7'};
+const corners=b=>[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]].map(c=>c.map((v,i)=>b.origin[i]+v*b.size[i]));
+function camera(p){const[x,y,z]=p;if(view==='front')return[x,-z,-y];if(view==='back')return[-x,-z,y];if(view==='side')return[y,-z,x];if(view==='top')return[x,y,z];const a=x*Math.cos(yaw)+y*Math.sin(yaw),b=-x*Math.sin(yaw)+y*Math.cos(yaw);return[a,-b*Math.sin(tilt)-z*Math.cos(tilt),-b*Math.cos(tilt)+z*Math.sin(tilt)];}
+function draw(){
+ const s=overview[revision][mode],visiblePower=el('adapters').checked&&revision==='current',visibleEquipment=el('equipment').checked,showDuct=visibleEquipment&&el('ducts').checked;
+ const isPower=b=>b.kind==='adapter'||b.name.startsWith('adapter_');
+ const activeEquipment=s.equipment.filter(b=>!isPower(b)||visiblePower);
+ const activeHolders=s.holders.filter(b=>!isPower(b)||visiblePower);
+ const all=[...s.members,...s.feet,...(visibleEquipment?[...s.trays,...activeEquipment,...(visiblePower?[...s.adapter_layout.mounts,s.adapter_layout.separator]:[])]:[])];
+ const bounds=[[-325,-450,-8],[325,120,430]].flatMap((a,i)=>i===0?[[a[0],a[1],a[2]],[325,a[1],a[2]],[-325,120,a[2]],[325,120,a[2]]]:[[a[0],a[1],a[2]],[-325,a[1],a[2]],[325,-450,a[2]],[-325,-450,a[2]]]).map(camera);
+ const min=[Math.min(...bounds.map(p=>p[0])),Math.min(...bounds.map(p=>p[1]))],max=[Math.max(...bounds.map(p=>p[0])),Math.max(...bounds.map(p=>p[1]))];
+ const scale=Math.min(770/(max[0]-min[0]),485/(max[1]-min[1]));
+ const project=p=>{const q=camera(p);return[470+(q[0]-(max[0]+min[0])/2)*scale,315+(q[1]-(max[1]+min[1])/2)*scale]};
+ const points=ps=>ps.map(p=>project(p).map(n=>n.toFixed(2)).join(',')).join(' ');
+ const shapes=[];
+ function polygon(ps,color,opacity,stroke,label){const depth=ps.reduce((a,p)=>a+camera(p)[2],0)/ps.length;shapes.push({depth,markup:`<polygon points="${points(ps)}" fill="${color}" fill-opacity="${opacity}" stroke="${stroke}" stroke-width=".8"><title>${label}</title></polygon>`});}
+ const faces=[[0,3,2,1],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]];
+ for(const b of all){const c=corners(b);for(const f of faces){const ps=f.map(i=>c[i]),q=ps.map(camera);const area=(q[1][0]-q[0][0])*(q[2][1]-q[0][1])-(q[1][1]-q[0][1])*(q[2][0]-q[0][0]);if(area>=0)continue;polygon(ps,colors[b.kind],b.kind==='switch'?.28:b.kind==='separator'?.25:b.kind==='tray'?.65:1,b.kind==='switch'?'#88799a':'#eef3f5',b.label);}}
+ if(showDuct)for(const d of s.ducts)for(let i=0;i<32;i++){const j=(i+1)%32;polygon([d.inlet[i],d.inlet[j],d.outlet[j],d.outlet[i]],'#72b7c9',.32,'#8ac2d0',d.label);}
+ // 保持板の円形開口。120mmファンは側面に向ける。
+ if(visibleEquipment)for(const h of activeHolders){
+  const sideways=h.axis==='x',u=sideways?1:0,v=2,w=sideways?0:1;
+  const center=h.origin.map((n,i)=>n+h.size[i]/2),halfU=h.size[u]/2,halfV=h.size[v]/2;
+  for(const plane of [h.origin[w],h.origin[w]+h.size[w]])for(let i=0;i<48;i++){
+   const ps=[];
+   for(const [index,outer] of [[i,true],[i+1,true],[i+1,false],[i,false]]){
+    const t=index*Math.PI/24,co=Math.cos(t),si=Math.sin(t);
+    const r=outer?Math.min(halfU/Math.max(Math.abs(co),1e-12),halfV/Math.max(Math.abs(si),1e-12)):(h.opening_mm||132)/2;
+    const q=[...center];q[w]=plane;q[u]+=r*co;q[v]+=r*si;ps.push(q);
+   }
+   polygon(ps,colors.holder,1,'#6e7d87',h.label);
+  }
+ }
+ // ファンの円形開口と羽根を、枠と同じ描画順へ入れる。
+ if(visibleEquipment)for(const f of activeEquipment.filter(b=>b.kind==='fan')){
+  const sideways=f.axis==='x',size=f.size_mm||140,u=sideways?1:0,w=sideways?0:1;
+  const center=f.origin.map((n,i)=>n+f.size[i]/2);
+  center[w]=sideways?f.face_coordinate:f.origin[1]-.7;
+  const normal=sideways?[f.outward,0,0]:[0,-1,0];
+  if(camera(normal)[2]<=0)continue;
+  const circlePoint=(r,t)=>{const p=[...center];p[u]+=r*Math.cos(t);p[2]+=r*Math.sin(t);return p};
+  const circle=Array.from({length:48},(_,i)=>circlePoint(size/2-6,i*Math.PI/24));
+  const depth=camera(center)[2]+.01;let markup=`<polygon points="${points(circle)}" fill="#e5d8c7" stroke="#5a5045" stroke-width="1.2"/>`;
+  for(let i=0;i<7;i++){const t=i*Math.PI*2/7;markup+=`<polygon points="${points([center,circlePoint(size*.386,t),circlePoint(size*.357,t+.5)])}" fill="#8e7e6b"/>`;}
+  markup+=`<polygon points="${points(Array.from({length:24},(_,i)=>circlePoint(12,i*Math.PI/12)))}" fill="#665b4d"/>`;shapes.push({depth,markup});
+ }
+ shapes.sort((a,b)=>a.depth-b.depth);
+ let markup='<title>設計変更後の4台ラック：'+mode+'</title>'+shapes.map(s=>s.markup).join('');
+ if(el('cables').checked&&visibleEquipment&&(view==='back'||view==='top'||view==='iso'))s.cables.forEach((c,i)=>{markup+=`<polyline points="${points(c.points)}" fill="none" stroke="${['#bc7541','#4f92a8','#9c798f','#7b9952'][i]}" stroke-width="2.6"><title>${c.label}：端子位置は未測定</title></polyline>`;});
+ function label(text,p,dx,dy){const[a,b]=project(p);markup+=`<path d="M${a},${b}L${a+dx},${b+dy}" stroke="#597c92" fill="none"/><circle cx="${a}" cy="${b}" r="2.5" fill="#597c92"/><text class="callout" x="${a+dx}" y="${b+dy-6}" text-anchor="${dx<0?'end':'start'}">${text}</text>`;}
+ if(el('labels').checked){
+  const current=revision==='current';
+  if(view==='front'){
+   label('140mmファン × 4',[0,-203,s.lower_base_mm+25.25],0,95);
+   if(current&&visiblePower)label('電源4個は手前の下側',[0,-313,132],-100,55);
+  }else if(view==='iso'){
+   label('別部品の継ぎ手をなくす',current?[242,78,392]:[246,96,392],30,-30);
+   if(current&&visiblePower){label('電源4個・左右へ排気',[-224,-319,94],-25,85);label('制御ケースも内側へ',[-205,-216,317.25],-5,-38);}
+   else label('本体の前にファンと導風',[90,-190,97.25],38,72);
+   if(mode!=='ring')label('スイッチ：支持板は未設計',[0,-220,207.25],-30,-20);
+  }else if(view==='back'){
+   label('40cmの仮経路',[0,50,177.25],0,-25);
+   label('28mm角の共通枠',current?[242,78,392]:[246,96,392],-35,-20);
+  }
+ }
+ markup+='<text x="24" y="36" fill="#687c8e" font-size="14">'+({iso:'前面側から見る・ドラッグで回転',front:'前面：ファンと本体は同じ中心に仮配置',back:'背面：端子位置とケーブルの曲げ条件は仮定',side:'側面：電源と120mmファンは手前下側、本体と配線は後側',top:'上面：左右2列と、四隅の共通柱'}[view])+'</text>';
+ el('drawing').innerHTML=markup;
+ el('caption').textContent=mode==='ring'?'リング接続：段間隔160mm。4台は左右対称に仮配置。スイッチはまだ載せません。':'スイッチ配置：段間隔220mmへ変更し、上下の本体の間に収容範囲を確保します。';
+ el('frame-fact').textContent=s.frame_outer_mm.join(' × ')+'mm';
+ el('width-fact').textContent=s.controller_width_mm+'mm';
+ el('comparison-note').textContent=revision==='current'?'枠は幅8mm・奥行10mmを短縮。ケースの外への張り出しをなくし、設置幅は618→512mm。電源4個も枠内へ。':'前の構想：520×530×420mm。制御ケースは外側へ張り出し、設置幅618mm。電源は別置き。';
+ el('mode-note').textContent=mode==='ring'?(revision==='current'?'140mmファン4個は本体用、120mmファン2個は電源用。電源の温風を左右へ排気し、参考仕切りで本体の吸気と分ける案です。':'140mmファン4個は本体用。電源と120mmファン2個は別置き。'):s.switch_note+' 筐体を下から支持し、取付耳を外す構想です。耳・支持板・実端子の寸法は未確定。';
+ const required=Math.max(...s.cables.map(c=>c.required_length_mm));
+ el('cable-note').textContent='仮端子による最長の予約込み経路：'+required.toFixed(1)+'mm / 400mm。実物に届くことや、奥の梁との干渉は未確認です。';
+ window.overviewState={mode,view,revision,scene:s,shownEquipment:visibleEquipment,shownPower:visiblePower};
+}
+el('revision').addEventListener('change',()=>{revision=el('revision').value;draw()});
+el('mode').addEventListener('change',()=>{mode=el('mode').value;draw()});
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;yaw=-.72;tilt=.34;document.querySelectorAll('[data-view]').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));draw()}));
+for(const id of ['equipment','adapters','ducts','cables','labels'])el(id).addEventListener('change',draw);
+let drag=null;el('drawing').addEventListener('pointerdown',e=>{if(view!=='iso')return;drag=[e.clientX,e.clientY,yaw,tilt];el('drawing').setPointerCapture(e.pointerId)});
+el('drawing').addEventListener('pointermove',e=>{if(!drag)return;yaw=drag[2]+(e.clientX-drag[0])*.005;tilt=Math.max(.08,Math.min(1.3,drag[3]+(e.clientY-drag[1])*.004));draw()});
+el('drawing').addEventListener('pointerup',()=>drag=null);el('drawing').addEventListener('pointercancel',()=>drag=null);draw();
+</script></body></html>

@@ -1,0 +1,9 @@
+"""短い接合試験片だけを生成して開く。"""
+from pathlib import Path
+import sys
+import FreeCAD as App
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_spark_rack_joint_coupons import build
+output = build()
+App.openDocument(str(output / 'joint-coupons.FCStd'))

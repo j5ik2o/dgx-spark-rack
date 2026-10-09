@@ -1,0 +1,71 @@
+{
+  "recorded_on": "2026-10-09",
+  "inventory_basis": "最新のユーザー指定：120mmは電源アダプター用、140mmはDGX Spark用に合計4個を用意予定。120mmの個数2は既存図面に基づく。",
+  "fans": [
+    {
+      "model": "Noctua NF-A14x25 G2 PWM",
+      "quantity": 4,
+      "envelope_mm": [
+        140,
+        140,
+        27
+      ],
+      "mounting_pitch_mm": 124.5,
+      "reference": "models/spark-rack/docs/試作ガイド.md",
+      "source": "https://www.noctua.at/en/products/nf-a14x25-g2-pwm/specifications",
+      "provisional_assignment": "Spark4台へ各1個。上下段とも140mm。",
+      "quantity_status": "用意予定。全4個が現在手元にあるという確認ではない。"
+    },
+    {
+      "model": "Noctua NF-A12x25 G2 PWM PPA/PPB",
+      "quantity": 2,
+      "envelope_mm": [
+        120,
+        120,
+        27
+      ],
+      "mounting_pitch_mm": 105,
+      "reference": "models/adapter-rack/reference/components.json",
+      "source": "https://www.noctua.at/en/products/nf-a12x25-g2-pwm-sx2-pp/specifications",
+      "provisional_assignment": "共通枠内の手前側。電源4個を2列×2段にし、左右の120mmファン各1個で側面へ排気する候補。既存の別置きラックも保持。"
+    }
+  ],
+  "controllers": {
+    "quantity": 6,
+    "reference": "models/fan-controller/docs/ラックへの取り付け.md",
+    "original_source": "models/fan-controller/source/freecad_fan_controller.py",
+    "dock_source": "tools/cad/controller_mount.py",
+    "provisional_envelope_mm": [
+      43,
+      44,
+      100
+    ],
+    "dimension_basis": "取付耳込み長さ100mm・幅39.4mm・つまみ込み厚さ29.5mmと共通ドック11mmを切り上げた収容範囲。実形状・ねじ・端子の操作空間は未検証。",
+    "quantity_basis": "ファン1個をコントローラー1個で個別制御する既存方針に基づく必要数。本体4組と電源2組。所有数の再確認ではない。",
+    "spark_required_quantity": 4,
+    "adapter_required_quantity": 2
+  },
+  "cable": {
+    "user_report": "QSFP112ダイレクトアタッチケーブル40cmを4本所有。メーカーはELSA製と思われるが型番不明。当初の50cm条件も比較用に残す。",
+    "candidate_model": "TS000111",
+    "candidate_product": "QSFP112 400G DAC CABLE 40cm",
+    "source": "https://www.elsa-jp.co.jp/products/detail/nvidia-dgx-spark-cable/",
+    "manufacturer_report": "ELSAの40cm製品ページはDGX Spark同士の接続を案内。CRS804/812での当該型番の動作確認は見つからない。",
+    "nominal_length_mm": 400,
+    "ownership_match": "未確認。公開製品の候補であり、手元のケーブルの型番を確定したものではない。",
+    "minimum_bend_radius_mm": null,
+    "connector_dimensions_mm": null,
+    "length_measurement_basis": "公開ページに記載なし。経路検討の仮定は維持する。",
+    "quantity": 4,
+    "comparison_50cm": {
+      "model": "IN000200",
+      "source": "https://www.elsa-jp.co.jp/products/detail/qsfp56-200g-dac-cable-50cm_h/",
+      "manufacturer_report": "DGX Spark同士とMikroTik 804/812との接続確認を記載。手元40cmの製品とは区別する。"
+    },
+    "switch_link_mode": {
+      "source": "https://help.mikrotik.com/docs/spaces/ROS/pages/220233794/MikroTik%20wired%20interface%20compatibility",
+      "mode": "200G-baseCR4",
+      "scope": "スイッチの対応するリンク方式。当該40cmケーブルの認識や安定動作を確認したものではない。"
+    }
+  }
+}

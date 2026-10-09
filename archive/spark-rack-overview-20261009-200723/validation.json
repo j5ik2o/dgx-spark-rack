@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "scope": "構想図の数量と共通座標の確認のみ",
+  "checks": {
+    "ring": {
+      "frame_members": 52,
+      "sparks": 4,
+      "fans_140mm": 4,
+      "controllers": 4
+    },
+    "crs812": {
+      "frame_members": 52,
+      "sparks": 4,
+      "fans_140mm": 4,
+      "controllers": 4
+    },
+    "crs804": {
+      "frame_members": 52,
+      "sparks": 4,
+      "fans_140mm": 4,
+      "controllers": 4
+    }
+  },
+  "whole_assembly_and_interference": "未検証。外形図を接合済みの製造形状として扱わない",
+  "physical_fit_strength_cooling": "未検証。試験片の印刷は後回し"
+}

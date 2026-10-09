@@ -7,7 +7,7 @@ from pathlib import Path
 import struct
 
 
-def inspect(path):
+def inspect(path, *, max_dimension=230):
     data=path.read_bytes()
     count=struct.unpack_from("<I",data,80)[0]
     assert len(data)==84+count*50,(path,"STLの長さ")
@@ -51,7 +51,7 @@ def inspect(path):
             "dimensions_mm":[b-a for a,b in zip(minimum,maximum)]}
     assert report["non_manifold_edges"]==0,(path,report)
     assert degenerate==0 and components==1 and volume>0,(path,report)
-    assert max(report["dimensions_mm"])<=230.001,(path,report)
+    assert max(report["dimensions_mm"])<=max_dimension+0.001,(path,report)
     assert max(abs(n) for n in minimum)<0.00001,(path,report)
     return report
 
