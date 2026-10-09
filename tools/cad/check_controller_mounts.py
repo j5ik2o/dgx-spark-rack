@@ -31,7 +31,7 @@ def main():
 
     out=ROOT/'build/fan-controller'/('mount-check-'+datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8])
     out.mkdir(parents=True,exist_ok=False)
-    sources=[ROOT/'tools/cad/controller_mount.py',Path(__file__),ROOT/'tools/cad/freecad_features.py']
+    sources=[ROOT/'tools/cad/controller_mount.py',Path(__file__),ROOT/'tools/cad/freecad_features.py',ROOT/'tools/cad/edge_finishing.py']
     for model in ('spark-rack','adapter-rack','fan-controller'):
         sources.extend((ROOT/'models'/model/'source').glob('*.py'))
     hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}

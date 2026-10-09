@@ -4,6 +4,7 @@
 
 - `cad/freecad_features.py`：拘束付きスケッチと加工の共通処理。
 - `cad/check_stl.py`：バイナリSTLの閉じた形状、接続成分、体積、造形寸法を検査。
+- `cad/edge_finishing.py`：対象面の凸稜線を選択し、面取り・開口フィレット・寸法変更時の再計算を実施。
 - `cad/freecad_mcp.py`：FreeCAD MCPへPythonコードを渡す補助ツール。
 
 - `tasks/cad.py`：miseから呼ぶCAD・3MF生成タスク。

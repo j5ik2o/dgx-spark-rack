@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools/cad"))
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-for name in ("controller_mount", "adapter_rack_parameters", "freecad_features", "freecad_adapter_rack",
+for name in ("edge_finishing", "controller_mount", "adapter_rack_parameters", "freecad_features", "freecad_adapter_rack",
              "check_stl", "validate_adapter_rack", "build_adapter_rack"):
     if name in sys.modules:
         importlib.reload(sys.modules[name])
