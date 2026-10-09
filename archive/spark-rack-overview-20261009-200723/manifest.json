@@ -1,0 +1,12 @@
+{
+  "status": "preserved",
+  "preserved_on": "2026-10-10",
+  "original_run": "build/spark-rack/candidate-overview/20261009-200723-325a50e7",
+  "scope": "参照図・比較データだけを保全。製造形状の正本ではない。",
+  "outputs_sha256": {
+    "README.md": "82be57edfbda41aab43609105ec3a29b01f1c47ab73765b8b18e70b467a58a25",
+    "original-generation-manifest.json": "c5fe09633401e1254c1bd1c3806d67a891dddf7c28aeb2f9878420cd5dbabd2c",
+    "overview-report.json": "d6d5892f62f0f4761038c706d593f2b612d2096520bbc418f549b3eedc22336a",
+    "validation.json": "2b6c231030bd7eb6e0c166a7bd64f5f0e35ab49ccbb8c2c2dd912ba80fbe5aaa"
+  }
+}

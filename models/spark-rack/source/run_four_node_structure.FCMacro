@@ -1,0 +1,10 @@
+"""現在の入口は接合試験片のみ。不採用の136部品案は生成しない。"""
+from pathlib import Path
+import sys
+import FreeCAD as App
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_spark_rack_joint_coupons import build
+
+output = build()
+App.openDocument(str(output / 'joint-coupons.FCStd'))

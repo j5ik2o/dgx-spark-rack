@@ -1,0 +1,14 @@
+{
+  "status": "preserved",
+  "preserved_on": "2026-10-10",
+  "original_run": "build/spark-rack/joint-coupons/20261009-185706-90c5c1c2",
+  "scope": "参照図・比較データだけを保全。製造形状の正本ではない。",
+  "outputs_sha256": {
+    "README.md": "fd234e2dd21931c2a09aa1daefcb57760a7698ae2f26203d97f0ab75f8cd78b0",
+    "corner-assembled.png": "c9e79a08cac4085a39f48a46dc4b7ce233cd90f94ac462e957d78f14752b8f5a",
+    "corner-insertion-order.png": "393ff57dd6ec26e64b34daaa25907cadab1057eac5c8fb51c778b56c903f189f",
+    "original-generation-manifest.json": "33f1bc61bb6f641dc83eb6bd85233d2760db4cf88f429135f0916f33ed3f5d9c",
+    "straight-assembled.png": "8d32f2d4616a8e37817a8c3be6af04fb65948d282ab88f71ac67acd50ad94340",
+    "validation.json": "3aef0fcc19eb9d9be5a6489030068c22cbeb5ff0d0be380c3bb274ddf42e7a95"
+  }
+}

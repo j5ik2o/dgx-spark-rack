@@ -1,0 +1,44 @@
+{
+  "recorded_on": "2026-10-09",
+  "units": "mm",
+  "purpose": "4台専用ラックの仮配置。実端子位置の確定資料ではない。",
+  "spark": {
+    "body": [
+      150,
+      150,
+      50.5
+    ],
+    "source": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+    "ports": "横位置の中心を本体中心から+30mm、ピッチ24mm、高さ25.25mmと仮定。実測未確認。"
+  },
+  "crs812": {
+    "body_envelope": [
+      443,
+      268,
+      44
+    ],
+    "source": "https://cdn.mikrotik.com/web-assets/product_files/CRS812-8DS-2DQ-2DDQ-RM_251055.pdf",
+    "conflicting_source": "https://help.mikrotik.com/docs/spaces/UM/pages/340492410/CRS812-8DS-2DQ-2DDQ-RM",
+    "note": "奥行268mmと156mmの記載が不一致。268mmを仮採用。",
+    "ports": "4端子の横位置を幅に対する-0.32,-0.23,-0.14,-0.05、高さを中央と仮定。接続規格の確認も別途必要。"
+  },
+  "crs804": {
+    "body_envelope": [
+      218,
+      387,
+      44
+    ],
+    "source": "https://cdn.mikrotik.com/web-assets/product_files/CRS804_dimensionsR0_260152.pdf",
+    "note": "2026年10月9日に公式寸法図を画像で再確認。筐体奥行360mm、後部の突出を含む全体奥行387mm、幅218mm、高さ44mm。仮配置の収容奥行387mmは維持。実コネクターとケーブル操作空間は別。",
+    "ports": "4端子の横位置を幅に対する-0.34,-0.13,+0.08,+0.29、高さを中央と仮定。接続規格の確認も別途必要。"
+  },
+  "cables": {
+    "nominal_length": 400,
+    "source": "ユーザー所有のQSFP112ダイレクトアタッチケーブル40cm×4本。50cmを比較条件として残す。",
+    "assumed_straight_lead": 30,
+    "assumed_bend_radius": 20,
+    "assumed_service_slack": 30,
+    "assumed_length_basis_reserve": 40,
+    "note": "引き出し、曲げ半径、余長、公称長の測定基準は実測未確認。数値を満たしても実物の到達を検証済みとは扱わない。"
+  }
+}

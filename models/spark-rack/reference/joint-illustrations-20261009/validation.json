@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "bearing_contact": {
+    "lower_shoulder_mm2": 190.3254437251523,
+    "upper_shoulder_mm2": 190.3254437251522,
+    "straight_bearing_mm2": 287.99999999999994
+  },
+  "insertion_direction": "全試験片とも上から",
+  "insertion_order": "柱へ下ほぞの梁、次に上ほぞの梁。上側の柱は最後に付ける構想。",
+  "checked_insertion_samples": 93,
+  "tenon_bottom_clearances_mm": [
+    2,
+    12
+  ],
+  "reverse_order_blocked_samples": 6,
+  "hidden_lock_screw": "未設計。止める場合は内側か下面から1本。金具の長さと保持力は試作後に決める。",
+  "scope": "接合試験片の形状・受け面・離散的な挿入経路。全体の組立順序と荷重、実物のガタや強度は未検証。",
+  "reopened": true,
+  "airflow_preview": "形状検討のみ。保持部との一体化、通気口、風向、冷却効果は未検証。造形データには出力していない。"
+}

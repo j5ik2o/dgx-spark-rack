@@ -1,0 +1,43 @@
+{
+  "recorded_on": "2026-10-09",
+  "purpose": "実測前の梁穴とスイッチ支持板の生成を止めるための未確定値の記録",
+  "spark": {
+    "port_centers_from_left_and_bottom_mm": null,
+    "feet_contact_areas_mm": null,
+    "adopted_pair_offset_mm": null,
+    "front_vent_region_mm": null
+  },
+  "cable": {
+    "minimum_bend_radius_mm": null,
+    "connector_envelopes_mm": null,
+    "nominal_length_basis": null
+  },
+  "switches": {
+    "crs812": {
+      "overall_width_with_ears_mm": null,
+      "adopted_depth_mm": null,
+      "mass_kg": null,
+      "support_interface": null,
+      "reference_body_width_mm": 443,
+      "conflicting_depths_mm": [
+        268,
+        156
+      ],
+      "note": "小型化案の内のりは456mm。取付耳が482.6mmまで伸びる場合は収まらない。筐体を下から支え、耳を外す構想だが、耳と奥行が確定するまで支持板は生成しない。旧163.25mmの予約穴は使わない。"
+    },
+    "crs804": {
+      "overall_width_with_ears_mm": null,
+      "adopted_depth_mm": null,
+      "mass_kg": null,
+      "support_interface": null,
+      "note": "耳と突出部を含む収容寸法、支持方法を確認してから支持板を設計する。"
+    }
+  },
+  "adapter": {
+    "body_mm": null,
+    "connector_envelopes_mm": null,
+    "cable_bend_space_mm": null,
+    "mount_interface": null,
+    "note": "候補図では既存の正本寸法99.05×98.99×35.17mmと端子側30mmの設計予約を使用。実物の適合と冷却は未検証。"
+  }
+}

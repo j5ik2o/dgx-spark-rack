@@ -1,0 +1,39 @@
+{
+  "status": "generated",
+  "purpose": "設計変更後の全体構想図",
+  "sources_sha256": {
+    "models/spark-rack/source/build_rack_candidate_overview.py": "5561e47bde8d5530e32e55d7607de05bc2e96689416db240b39ece914089f5f2",
+    "models/spark-rack/source/rack_candidate_overview.html": "639604ca1defda9d890390f307dfb91a890241a0267edf15d0095abb83a820f7",
+    "models/spark-rack/source/four_node_layout.py": "2a32c19bfd2b6207ded07c21199dde1aa648338fd45b5c835adf73a4ab0fc1f5",
+    "models/spark-rack/source/rack_candidate_datums.py": "a25d5b6cde0657c2f8b5463c5d50e40bd95a0eaa46fe104b26c3106226be3cd7",
+    "models/spark-rack/reference/pending-mount-measurements.json": "cf80cca20db665f1b480cf9beae652531284cf999cc1e5b89f3c1d26e8677a23",
+    "tests/check_rack_candidate_overview.cjs": "43014c288408ac85450862d4ed0da773d7ee3a422afcb2c1567248e1173c4e74",
+    "build/spark-rack/joint-coupons/20261009-185706-90c5c1c2/corner-assembled.png": "c9e79a08cac4085a39f48a46dc4b7ce233cd90f94ac462e957d78f14752b8f5a",
+    "build/spark-rack/joint-coupons/20261009-185706-90c5c1c2/corner-insertion-order.png": "393ff57dd6ec26e64b34daaa25907cadab1057eac5c8fb51c778b56c903f189f",
+    "build/spark-rack/joint-coupons/20261009-185706-90c5c1c2/straight-assembled.png": "8d32f2d4616a8e37817a8c3be6af04fb65948d282ab88f71ac67acd50ad94340",
+    "build/spark-rack/joint-coupons/20261009-185706-90c5c1c2/manifest.json": "33f1bc61bb6f641dc83eb6bd85233d2760db4cf88f429135f0916f33ed3f5d9c",
+    "build/spark-rack/joint-coupons/20261009-185706-90c5c1c2/validation.json": "3aef0fcc19eb9d9be5a6489030068c22cbeb5ff0d0be380c3bb274ddf42e7a95"
+  },
+  "outputs_sha256": {
+    "corner-assembled.png": "c9e79a08cac4085a39f48a46dc4b7ce233cd90f94ac462e957d78f14752b8f5a",
+    "corner-insertion-order.png": "393ff57dd6ec26e64b34daaa25907cadab1057eac5c8fb51c778b56c903f189f",
+    "overview-report.json": "d6d5892f62f0f4761038c706d593f2b612d2096520bbc418f549b3eedc22336a",
+    "rack-candidate-overview.html": "5978bc16f1c9837585a0c6e6022383a3778bc6d08b8615c42215eff3174e7790",
+    "straight-assembled.png": "8d32f2d4616a8e37817a8c3be6af04fb65948d282ab88f71ac67acd50ad94340",
+    "validation.json": "2b6c231030bd7eb6e0c166a7bd64f5f0e35ab49ccbb8c2c2dd912ba80fbe5aaa",
+    "browser-validation.json": "ee3b8d49123f0b25dd6bc243cb64e69b5f3904b033c9a3d8114ae0f4eb4c12e5",
+    "crs804-back.png": "f5f5d9cd5b5aa63f6bf867e4ebb85a07c7612487c4e8ed57c5d7e0c45ecd1669",
+    "crs804-front.png": "64fd1ca2795ac3b518f0b03f6cde230cf39f619243c074a93aedfcb62e68acaa",
+    "crs804-iso.png": "f37f09b2df4703519820451105ceb4d7f5d4d974caf791955bd00c8ca6552e0c",
+    "crs812-back.png": "52713d6f46a882bff6b2976e8b79d2baf74fb5c0ce4f65dabb5111fd3f221609",
+    "crs812-front.png": "e803d589520cd97ad55dc5296c72bcb062effc4aec8dd20392071c46d4d84cff",
+    "crs812-iso.png": "6af12a8a6054980cf5f15198cc8a20f35371f9c96ff54bda69abf2a3448e299f",
+    "overview-desktop.png": "77438c409717f30192462f6852cc6c5a71d7acccaebec0039d53810bf0e36445",
+    "overview-mobile.png": "523b1ed49276094035833bde0052940767cddb6f8cc75f70bc6cac24d864a425",
+    "ring-back.png": "55da2d24c012a2b4c163c7339b631ba9aff60d1019593095ef33f75d0631a999",
+    "ring-frame-only.png": "3b53f517385b39a8649adbff500e7198264305925b5c74f3db2d2c1104c6c6a5",
+    "ring-front.png": "11ba737b284763f78f57e67207f94ba67a13bef2bec74d5a6453d61ca9188583",
+    "ring-iso.png": "910dadc17a254192a3cf0bfc4edaf2e0a5b950119083ed6302c51edb034ea562"
+  },
+  "manufacturing_geometry": false
+}
