@@ -35,7 +35,7 @@ def worker(folder):
     p = CouponParameters()
     shapes = parts(p)
     corner = corner_assembly(shapes)
-    validation = verify(shapes, corner)
+    validation = verify(shapes, corner, fork_floor=p.fork_floor)
     (folder / 'stl').mkdir()
     meshes = {}
     for name, shape in shapes.items():

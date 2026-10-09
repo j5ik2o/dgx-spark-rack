@@ -5,6 +5,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'models/spark-rack/source'))
+sys.path.insert(0, str(ROOT / 'archive/spark-rack-structure-rejected-20261009-172152/source'))
 from rack_candidate_datums import DATUMS, controller_box, require_spark_mount_measurements, require_switch_measurements
 from build_four_node_structure import build as rejected_build
 from four_node_layout import LayoutParameters, evaluate

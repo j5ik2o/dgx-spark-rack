@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Path(__file__).parent
+sys.path.append(str(ROOT / 'models/spark-rack/source'))
 
 
 def digest(path):
@@ -147,10 +148,13 @@ def build(*, historical=False):
     folder = ROOT / 'archive/build-history/four-node-structure-not-adopted' / stamp
     folder.mkdir(parents=True, exist_ok=False)
     names = ['four_node_structure_parameters.py', 'freecad_four_node_structure.py',
-             'validate_four_node_structure.py', 'build_four_node_structure.py', 'four_node_layout.py',
+             'validate_four_node_structure.py', 'build_four_node_structure.py',
              'four_node_structure.html', 'run_four_node_structure.FCMacro', 'render_four_node_structure.py']
     paths = [SOURCE / name for name in names]
-    paths += [ROOT / 'tools/cad/check_stl.py', ROOT / 'tools/cad/controller_mount.py',
+    paths += [ROOT / 'models/spark-rack/source/four_node_layout.py',
+              ROOT / 'models/spark-rack/source/rack_candidate_datums.py',
+              ROOT / 'tools/cad/edge_finishing.py',
+              ROOT / 'tools/cad/check_stl.py', ROOT / 'tools/cad/controller_mount.py',
               ROOT / 'models/spark-rack/reference/prepared-fans-and-cable.json']
     hashes = {str(path.relative_to(ROOT)): digest(path) for path in paths}
     manifest = {'status': 'running', 'purpose': '4台共通枠の部品検討案。量産採用前。', 'sources_sha256': hashes}

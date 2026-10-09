@@ -9,9 +9,6 @@ import Part
 class CouponParameters:
     section: float = 28
     clearance: float = 0.3
-    root_depth: float = 8
-    tenon_depth: float = 12
-    tenon_width: float = 12
     stub_length: float = 40
     fork_engagement: float = 24
     fork_floor: float = 4.3
@@ -63,10 +60,10 @@ def parts(p=None):
     upper_local = [(y - 14, -(x + 14)) for x, y in upper_cut]
     upper = upper.cut(prism(upper_local, -1, 30))
     # 直線部の二股は上へ開き、差し込み側も上から入る。
-    fork = box(-40, -14, 0, 40, 28, 28)
+    fork = box(-p.stub_length, -14, 0, p.stub_length, 28, 28)
     fork = fork.cut(box(-p.fork_engagement - c, -6 - c, p.fork_floor,
                         p.fork_engagement + c + 1, 12 + 2 * c, 28))
-    blade = box(0, -14, 0, 40, 28, 28).fuse(box(-p.fork_engagement, -6, p.fork_floor,
+    blade = box(0, -14, 0, p.stub_length, 28, 28).fuse(box(-p.fork_engagement, -6, p.fork_floor,
                                                p.fork_engagement, 12, 28 - p.fork_floor - c))
     return {'column_socket': receiver.removeSplitter(), 'beam_lower_tenon': lower.removeSplitter(),
             'beam_upper_tenon': upper.removeSplitter(), 'beam_fork': fork.removeSplitter(),

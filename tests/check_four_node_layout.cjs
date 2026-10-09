@@ -75,5 +75,15 @@ let activeBrowser;
   fs.writeFileSync(path.join(folder, 'browser-validation.json'), JSON.stringify({status: 'passed',
     checked: ['3方式の計算値がPythonと一致', '5方向表示', 'ファン4個とケース範囲', 'ファン表示切替', '段間隔の変更でファン干渉を表示', '曲げ条件変更で超過を表示',
               '収容範囲外を表示', '端子位置の編集', '初期化', '390px表示', '実行時エラーなし']}, null, 2) + '\n');
+  const crypto = require('node:crypto');
+  const manifestPath = path.join(folder, 'manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath));
+  for (const name of fs.readdirSync(folder)) {
+    const file = path.join(folder, name);
+    if (name !== 'manifest.json' && fs.statSync(file).isFile()) {
+      manifest.outputs_sha256[name] = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+    }
+  }
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
   console.log('調整画面の計算・主要操作・狭い画面の検査: 合格');
 })().catch(async error => {console.error(error); if (activeBrowser) await activeBrowser.close(); process.exitCode = 1;});

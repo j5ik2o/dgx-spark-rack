@@ -24,9 +24,9 @@ function camera(p){const[x,y,z]=p;if(view==='front')return[x,-z,-y];if(view==='b
 function draw(){
  const s=overview[revision][mode],visiblePower=el('adapters').checked&&revision==='current',visibleEquipment=el('equipment').checked,showDuct=visibleEquipment&&el('ducts').checked;
  const isPower=b=>b.kind==='adapter'||b.name.startsWith('adapter_');
- const activeEquipment=s.equipment.filter(b=>!isPower(b)||visiblePower);
- const activeHolders=s.holders.filter(b=>!isPower(b)||visiblePower);
- const all=[...s.members,...s.feet,...(visibleEquipment?[...s.trays,...activeEquipment,...(visiblePower?[...s.adapter_layout.mounts,s.adapter_layout.separator]:[])]:[])];
+ const activeEquipment=s.equipment.filter(b=>isPower(b)?visiblePower:visibleEquipment);
+ const activeHolders=s.holders.filter(b=>isPower(b)?visiblePower:visibleEquipment);
+ const all=[...s.members,...s.feet,...(visibleEquipment?s.trays:[]),...activeEquipment,...(visiblePower?[...s.adapter_layout.mounts,s.adapter_layout.separator]:[])];
  const bounds=[[-325,-450,-8],[325,120,430]].flatMap((a,i)=>i===0?[[a[0],a[1],a[2]],[325,a[1],a[2]],[-325,120,a[2]],[325,120,a[2]]]:[[a[0],a[1],a[2]],[-325,a[1],a[2]],[325,-450,a[2]],[-325,-450,a[2]]]).map(camera);
  const min=[Math.min(...bounds.map(p=>p[0])),Math.min(...bounds.map(p=>p[1]))],max=[Math.max(...bounds.map(p=>p[0])),Math.max(...bounds.map(p=>p[1]))];
  const scale=Math.min(770/(max[0]-min[0]),485/(max[1]-min[1]));
@@ -38,7 +38,7 @@ function draw(){
  for(const b of all){const c=corners(b);for(const f of faces){const ps=f.map(i=>c[i]),q=ps.map(camera);const area=(q[1][0]-q[0][0])*(q[2][1]-q[0][1])-(q[1][1]-q[0][1])*(q[2][0]-q[0][0]);if(area>=0)continue;polygon(ps,colors[b.kind],b.kind==='switch'?.28:b.kind==='separator'?.25:b.kind==='tray'?.65:1,b.kind==='switch'?'#88799a':'#eef3f5',b.label);}}
  if(showDuct)for(const d of s.ducts)for(let i=0;i<32;i++){const j=(i+1)%32;polygon([d.inlet[i],d.inlet[j],d.outlet[j],d.outlet[i]],'#72b7c9',.32,'#8ac2d0',d.label);}
  // 保持板の円形開口。120mmファンは側面に向ける。
- if(visibleEquipment)for(const h of activeHolders){
+ for(const h of activeHolders){
   const sideways=h.axis==='x',u=sideways?1:0,v=2,w=sideways?0:1;
   const center=h.origin.map((n,i)=>n+h.size[i]/2),halfU=h.size[u]/2,halfV=h.size[v]/2;
   for(const plane of [h.origin[w],h.origin[w]+h.size[w]])for(let i=0;i<48;i++){
@@ -52,7 +52,7 @@ function draw(){
   }
  }
  // ファンの円形開口と羽根を、枠と同じ描画順へ入れる。
- if(visibleEquipment)for(const f of activeEquipment.filter(b=>b.kind==='fan')){
+ for(const f of activeEquipment.filter(b=>b.kind==='fan')){
   const sideways=f.axis==='x',size=f.size_mm||140,u=sideways?1:0,w=sideways?0:1;
   const center=f.origin.map((n,i)=>n+f.size[i]/2);
   center[w]=sideways?f.face_coordinate:f.origin[1]-.7;
@@ -71,15 +71,15 @@ function draw(){
  if(el('labels').checked){
   const current=revision==='current';
   if(view==='front'){
-   label('140mmファン × 4',[0,-203,s.lower_base_mm+25.25],0,95);
+   if(visibleEquipment)label('140mmファン × 4',[0,-203,s.lower_base_mm+25.25],0,95);
    if(current&&visiblePower)label('電源4個は手前の下側',[0,-313,132],-100,55);
   }else if(view==='iso'){
    label('別部品の継ぎ手をなくす',current?[242,78,392]:[246,96,392],30,-30);
-   if(current&&visiblePower){label('電源4個・左右へ排気',[-224,-319,94],-25,85);label('制御ケースも内側へ',[-205,-216,317.25],-5,-38);}
-   else label('本体の前にファンと導風',[90,-190,97.25],38,72);
-   if(mode!=='ring')label('スイッチ：支持板は未設計',[0,-220,207.25],-30,-20);
+   if(current&&visiblePower){label('電源4個・左右へ排気',[-224,-319,94],-25,85);if(visibleEquipment)label('制御ケースも内側へ',[-205,-216,317.25],-5,-38);}
+   else if(visibleEquipment)label('本体の前にファンと導風',[90,-190,97.25],38,72);
+   if(mode!=='ring'&&visibleEquipment)label('スイッチ：支持板は未設計',[0,-220,207.25],-30,-20);
   }else if(view==='back'){
-   label('40cmの仮経路',[0,50,177.25],0,-25);
+   if(visibleEquipment&&el('cables').checked)label('40cmの仮経路',[0,50,177.25],0,-25);
    label('28mm角の共通枠',current?[242,78,392]:[246,96,392],-35,-20);
   }
  }
@@ -92,7 +92,7 @@ function draw(){
  el('mode-note').textContent=mode==='ring'?(revision==='current'?'140mmファン4個は本体用、120mmファン2個は電源用。電源の温風を左右へ排気し、参考仕切りで本体の吸気と分ける案です。':'140mmファン4個は本体用。電源と120mmファン2個は別置き。'):s.switch_note+' 筐体を下から支持し、取付耳を外す構想です。耳・支持板・実端子の寸法は未確定。';
  const required=Math.max(...s.cables.map(c=>c.required_length_mm));
  el('cable-note').textContent='仮端子による最長の予約込み経路：'+required.toFixed(1)+'mm / 400mm。実物に届くことや、奥の梁との干渉は未確認です。';
- window.overviewState={mode,view,revision,scene:s,shownEquipment:visibleEquipment,shownPower:visiblePower};
+ window.overviewState={mode,view,revision,scene:s,shownEquipment:visibleEquipment,shownPower:visiblePower,shownEquipmentNames:activeEquipment.map(b=>b.name)};
 }
 el('revision').addEventListener('change',()=>{revision=el('revision').value;draw()});
 el('mode').addEventListener('change',()=>{mode=el('mode').value;draw()});

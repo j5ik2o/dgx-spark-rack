@@ -25,7 +25,7 @@ PREVIOUS = ROOT / 'archive/spark-rack-overview-20261009-200723'
 def adapter_layout():
     dimensions = {name: float(value.split()[0]) for name, value, _ in ADAPTER_INPUTS}
     adapters, fans, holders, controllers, mounts, cable_spaces = [], [], [], [], [], []
-    width, depth, height = (dimensions[n] for n in ('AdapterLength', 'AdapterWidth', 'AdapterHeight'))
+    width, depth, height = (dimensions[n] for n in ('AdapterWidth', 'AdapterLength', 'AdapterHeight'))
     # ACとUSB-Cの出口はY方向へ向け、左右のファンから外へ排気する構想。
     for column, x in enumerate((-90, 90)):
         for row, z in enumerate((39, 115)):
@@ -170,8 +170,11 @@ def check_scene(value):
     cable_conflicts = []
     radius = 5  # 仮のケーブル外径10mm。実物のコネクターを表す値ではない。
     for cable in value['cables']:
-        for point in cable['points']:
-            probe = box('cable_probe', 'ケーブルの仮外径', [v-radius for v in point], [radius*2]*3, 'probe')
+        for start, end in zip(cable['points'], cable['points'][1:]):
+            low = [min(a, b) - radius for a, b in zip(start, end)]
+            size = [abs(a - b) + 2 * radius for a, b in zip(start, end)]
+            # 線分全体を仮外径で拡張した箱。斜めの線分では保守的な検査になる。
+            probe = box('cable_probe', '線分全体を囲む仮の配線外形', low, size, 'probe')
             for other in boxes:
                 if other['name'] in (cable['from'], cable['to']):
                     continue
@@ -200,52 +203,61 @@ def build():
     stamp = datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8]
     out = ROOT / 'build/spark-rack/candidate-overview' / stamp
     out.mkdir(parents=True, exist_ok=False)
-    # 実際に検査済みの短い接合図を使う。以前の全体案の形状は読み込まない。
-    coupon = ROOT / 'models/spark-rack/reference/joint-illustrations-20261009'
-    pictures = ('corner-assembled.png', 'corner-insertion-order.png', 'straight-assembled.png')
-    paths = [SOURCE / name for name in ('build_rack_candidate_overview.py', 'rack_candidate_overview.html',
-                                       'four_node_layout.py', 'rack_candidate_datums.py')]
-    paths += [ROOT / 'models/spark-rack/reference/pending-mount-measurements.json',
-              ROOT / 'models/spark-rack/reference/four-node-layout-assumptions.json',
-              ROOT / 'models/spark-rack/reference/prepared-fans-and-cable.json',
-              ROOT / 'models/adapter-rack/source/adapter_rack_parameters.py',
-              ROOT / 'tests/check_rack_candidate_overview.cjs',
-              PREVIOUS / 'overview-report.json', PREVIOUS / 'manifest.json']
-    paths += [coupon / name for name in (*pictures, 'manifest.json', 'validation.json')]
-    hashes = {str(p.relative_to(ROOT)): digest(p) for p in paths}
-    data = {mode: scene(mode) for mode in ('ring', 'crs812', 'crs804')}
-    checks = {mode: check_scene(value) for mode, value in data.items()}
-    previous = json.loads((PREVIOUS / 'overview-report.json').read_text())
-    comparison = {'previous_frame_mm': [520, 530, 420], 'current_frame_mm': [512, 520, 420],
-                  'previous_installation_width_mm': 618, 'current_installation_width_mm': 512,
-                  'frame_floor_area_reduction_percent': (1 - (512*520)/(520*530))*100,
-                  'installation_rectangle_reduction_percent': (1 - (512*520)/(618*530))*100,
-                  'note': '設置長方形の比較。線材・突出した実コネクター・取付耳は未確定。'}
-    write_json(out / 'overview-report.json', data)
-    write_json(out / 'comparison.json', comparison)
-    shutil.copyfile(PREVIOUS / 'overview-report.json', out / 'previous-overview-report.json')
-    template = (SOURCE / 'rack_candidate_overview.html').read_text(encoding='utf-8')
-    assert template.count('__OVERVIEW_DATA__') == 1
-    (out / 'rack-candidate-overview.html').write_text(
-        template.replace('__OVERVIEW_DATA__', json.dumps({'current': data, 'previous': previous,
-                                                         'comparison': comparison}, ensure_ascii=False).replace('<', '\\u003c')),
-        encoding='utf-8')
-    for name in pictures:
-        shutil.copyfile(coupon / name, out / name)
-    write_json(out / 'validation.json', {'status': 'passed', 'scope': '構想図の外形箱、共通座標、仮の配線経路',
-        'checks': {mode: {'frame_members': len(value['members']),
-                          'sparks': sum(i['kind'] == 'spark' for i in value['equipment']),
-                          'fans_140mm': sum(i['kind'] == 'fan' and i['size_mm'] == 140 for i in value['equipment']),
-                          'fans_120mm': sum(i['kind'] == 'fan' and i['size_mm'] == 120 for i in value['equipment']),
-                          'controllers': sum(i['kind'] == 'controller' for i in value['equipment'])}
-                   for mode, value in data.items()},
-        'outer_geometry_checks': checks,
-        'whole_assembly_and_joined_geometry': '未検証。外形図を接合済みの製造形状として扱わない',
-        'physical_fit_strength_cooling': '未検証。試験片の印刷は後回し'})
-    assert hashes == {str(p.relative_to(ROOT)): digest(p) for p in paths}
-    write_json(out / 'manifest.json', {'status': 'generated', 'purpose': '設計変更後の全体構想図',
-        'sources_sha256': hashes, 'outputs_sha256': {p.name: digest(p) for p in sorted(out.iterdir())},
-        'manufacturing_geometry': False})
+    manifest = {'status': 'running', 'purpose': '設計変更後の全体構想図', 'manufacturing_geometry': False}
+    try:
+        # 実際に検査済みの短い接合図を使う。以前の全体案の形状は読み込まない。
+        coupon = ROOT / 'models/spark-rack/reference/joint-illustrations-20261009'
+        pictures = ('corner-assembled.png', 'corner-insertion-order.png', 'straight-assembled.png')
+        paths = [SOURCE / name for name in ('build_rack_candidate_overview.py', 'rack_candidate_overview.html',
+                                           'four_node_layout.py', 'rack_candidate_datums.py')]
+        paths += [ROOT / 'models/spark-rack/reference/pending-mount-measurements.json',
+                  ROOT / 'models/spark-rack/reference/four-node-layout-assumptions.json',
+                  ROOT / 'models/spark-rack/reference/prepared-fans-and-cable.json',
+                  ROOT / 'models/adapter-rack/source/adapter_rack_parameters.py',
+                  ROOT / 'tests/check_rack_candidate_overview.cjs',
+                  PREVIOUS / 'overview-report.json', PREVIOUS / 'manifest.json']
+        paths += [coupon / name for name in (*pictures, 'manifest.json', 'validation.json')]
+        hashes = {str(p.relative_to(ROOT)): digest(p) for p in paths}
+        manifest['sources_sha256'] = hashes
+        data = {mode: scene(mode) for mode in ('ring', 'crs812', 'crs804')}
+        checks = {mode: check_scene(value) for mode, value in data.items()}
+        previous = json.loads((PREVIOUS / 'overview-report.json').read_text())
+        comparison = {'previous_frame_mm': [520, 530, 420], 'current_frame_mm': [512, 520, 420],
+                      'previous_installation_width_mm': 618, 'current_installation_width_mm': 512,
+                      'frame_floor_area_reduction_percent': (1 - (512*520)/(520*530))*100,
+                      'installation_rectangle_reduction_percent': (1 - (512*520)/(618*530))*100,
+                      'note': '設置長方形の比較。線材・突出した実コネクター・取付耳は未確定。'}
+        write_json(out / 'overview-report.json', data)
+        write_json(out / 'comparison.json', comparison)
+        shutil.copyfile(PREVIOUS / 'overview-report.json', out / 'previous-overview-report.json')
+        template = (SOURCE / 'rack_candidate_overview.html').read_text(encoding='utf-8')
+        assert template.count('__OVERVIEW_DATA__') == 1
+        (out / 'rack-candidate-overview.html').write_text(
+            template.replace('__OVERVIEW_DATA__', json.dumps({'current': data, 'previous': previous,
+                                                             'comparison': comparison}, ensure_ascii=False).replace('<', '\\u003c')),
+            encoding='utf-8')
+        for name in pictures:
+            shutil.copyfile(coupon / name, out / name)
+        write_json(out / 'validation.json', {'status': 'passed', 'scope': '構想図の外形箱、共通座標、仮の配線経路',
+            'checks': {mode: {'frame_members': len(value['members']),
+                              'sparks': sum(i['kind'] == 'spark' for i in value['equipment']),
+                              'fans_140mm': sum(i['kind'] == 'fan' and i['size_mm'] == 140 for i in value['equipment']),
+                              'fans_120mm': sum(i['kind'] == 'fan' and i['size_mm'] == 120 for i in value['equipment']),
+                              'controllers': sum(i['kind'] == 'controller' for i in value['equipment'])}
+                       for mode, value in data.items()},
+            'outer_geometry_checks': checks,
+            'whole_assembly_and_joined_geometry': '未検証。外形図を接合済みの製造形状として扱わない',
+            'physical_fit_strength_cooling': '未検証。試験片の印刷は後回し'})
+        if hashes != {str(p.relative_to(ROOT)): digest(p) for p in paths}:
+            raise ValueError('生成中に入力ファイルが変更されました')
+        manifest.update({'status': 'generated', 'purpose': '設計変更後の全体構想図',
+            'sources_sha256': hashes, 'outputs_sha256': {p.name: digest(p) for p in sorted(out.iterdir())},
+            'manufacturing_geometry': False})
+    except Exception as error:
+        manifest.update(status='failed', error=str(error))
+        raise
+    finally:
+        write_json(out / 'manifest.json', manifest)
     return out
 
 

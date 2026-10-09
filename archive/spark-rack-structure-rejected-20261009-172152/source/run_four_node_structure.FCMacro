@@ -1,0 +1,9 @@
+# 不採用案の履歴確認だけに使う入口。印刷しない。
+from pathlib import Path
+import sys
+import FreeCAD as App
+source = Path(__file__).resolve().parent
+sys.path.insert(0, str(source))
+from build_four_node_structure import build
+folder = build(historical=True)
+App.openDocument(str(folder / 'four-node-structure-ring.FCStd'))

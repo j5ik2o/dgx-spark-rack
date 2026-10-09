@@ -8,6 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'models/spark-rack/source'))
+sys.path.insert(0, str(ROOT / 'archive/spark-rack-structure-rejected-20261009-172152/source'))
 sys.path.insert(0, str(ROOT / 'tools/cad'))
 from four_node_structure_parameters import StructureParameters, instances
 from check_stl import inspect
