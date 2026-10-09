@@ -37,6 +37,15 @@ class CompactOverviewTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'outside_frame_volume'):
             check_scene(data)
 
+    def test_obstacle_between_cable_points_is_rejected(self):
+        data = deepcopy(scene('ring'))
+        data['cables'] = [{'label': '途中に障害物がある配線', 'from': 'test_source', 'to': 'test_target',
+                           'points': [[-50, 50, 200], [50, 50, 200]]}]
+        data['feet'].append({'name': 'midpoint_obstacle', 'label': '線分途中の障害物',
+                             'origin': [-2, 48, 198], 'size': [4, 4, 4], 'kind': 'foot'})
+        with self.assertRaisesRegex(ValueError, 'cable_reference_tube_collisions'):
+            check_scene(data)
+
 
 if __name__ == '__main__':
     unittest.main()

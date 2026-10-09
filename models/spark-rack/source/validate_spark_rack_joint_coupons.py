@@ -9,7 +9,7 @@ def contact_area(a, b, height):
     return sum(left.common(right).Area for left in faces(a) for right in faces(b))
 
 
-def verify(shapes, corner):
+def verify(shapes, corner, *, fork_floor):
     for name, shape in shapes.items():
         if not shape.isValid() or not shape.isClosed() or len(shape.Solids) != 1:
             raise ValueError('試験片が閉じた単一部品になっていません: ' + name)
@@ -21,7 +21,7 @@ def verify(shapes, corner):
             raise ValueError('接合部に干渉があります: ' + label)
     areas = {'lower_shoulder_mm2': contact_area(receiver, lower, 0),
              'upper_shoulder_mm2': contact_area(receiver, upper, 0),
-             'straight_bearing_mm2': contact_area(shapes['beam_fork'], shapes['beam_drop_blade'], 4.3)}
+             'straight_bearing_mm2': contact_area(shapes['beam_fork'], shapes['beam_drop_blade'], fork_floor)}
     if min(areas.values()) < 150:
         raise ValueError('荷重を受ける面を確認できません')
     samples = 0
