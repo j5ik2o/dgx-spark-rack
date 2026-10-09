@@ -1,0 +1,629 @@
+{
+  "status": "preserved",
+  "preserved_on": "2026-10-09",
+  "timezone": "Asia/Tokyo",
+  "baseline_commit": "cbc80a22d12da52cf377d7335a7172e93465060a",
+  "package": "dgx-spark-modular-rack-repository-20261009.zip",
+  "package_sha256": "d533a7be6c010da132fa39fb9af09cc559f988e0d53d7df45c20e5a2a16c6156",
+  "scope": "4台専用ラックへの再設計前のGit管理ファイル一式。人間専用のAGENTS.mdは複製対象外。",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 32,
+      "sha256": "e459b3cc592e36cfb5a9687a4558942090d7dea3422a6b34c83dcacde8f23ad5"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 162,
+      "sha256": "171ea3ec75fa483b0cc60c859a916142270135b2f3c4440b0867b7e98accebf1"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 44,
+      "sha256": "17be27e7f2549b4ccac38b317476b7d7aee0464747ef14b62d4d95f10320e8bf"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3399,
+      "sha256": "7ab7f4383f90a1c839ce9ad65440e12d7d3360162aa2940703a4810eb0a3ee4d"
+    },
+    {
+      "path": "archive/README.md",
+      "bytes": 920,
+      "sha256": "f3b545a11f6a9f3d97f689bb7caa2f1d6db039960e9ee515eb280dff86e7be29"
+    },
+    {
+      "path": "archive/adapter-stand-v1/README.md",
+      "bytes": 742,
+      "sha256": "2a3dd290ceb2a5eef166b6c83feed832a2cbcead768ce11ec7fd91185fc8f12a"
+    },
+    {
+      "path": "archive/adapter-stand-v1/docs/設計と組立.md",
+      "bytes": 8012,
+      "sha256": "86bd9fe7ffe811a46254a7185625598b4cf88ff6e178eb2df29b8adf96b7a88e"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/DGX-SPARK-ADAPTER-STAND-v1.FCStd",
+      "bytes": 208352,
+      "sha256": "e5276daaf07301d87d40711b348c5cb64deb28a10e41c1ce0c57fec89bde74c6"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/adapter_spec.json",
+      "bytes": 1219,
+      "sha256": "4a46ef2995775250f94f6a6cf7ec2c1a852758cdad6a329f72bd9c1c9b21cd6d"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/four_units.png",
+      "bytes": 20494,
+      "sha256": "c1f3d1ffeae69ede8b1b08893f6a6e9812b70fc76e0100cf1a658c3f9046077c"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/stand_only.png",
+      "bytes": 27131,
+      "sha256": "db8e39c6171100f2ca27c13ddf6e7d0a94e6afda57354271bf68a62353679815"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/stl/join_clip.stl",
+      "bytes": 34284,
+      "sha256": "9ffa9c0879c8d4f4dc9d657589f9473e1c4d4e8713b7d1abce82efa07be6e928"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/stl/locking_pin.stl",
+      "bytes": 33484,
+      "sha256": "7166c2a1deb2d4e9efb44d26d0553d82cab5c06887f50257b4ee028b8e44dcc2"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/stl/rail.stl",
+      "bytes": 77084,
+      "sha256": "6e126cee8243e1bd3f0f2136e9028abca7695d1bdfc3db533b8b49f371279835"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/stl/saddle.stl",
+      "bytes": 37884,
+      "sha256": "9da632aa5256624337810a25b5ff0fd6a32f73e22d4ccc00c92094bed7d2ca36"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/stl_validation.json",
+      "bytes": 1397,
+      "sha256": "66619895551be5be032a588c445a75699b47260dba849ca821c515c5cf02f618"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/two_units.png",
+      "bytes": 20538,
+      "sha256": "78c9cc0c9ccb4afd6e71a6d8d1ec9a1a9cb0403742bd523b4113e69d6dc45d4c"
+    },
+    {
+      "path": "archive/adapter-stand-v1/generated/validation.json",
+      "bytes": 9894,
+      "sha256": "d2d92621c1096d07999a3a3891c7758dc00453786f52b78318dd6898ae4d0a5e"
+    },
+    {
+      "path": "archive/adapter-stand-v1/reference/adapter_spec.json",
+      "bytes": 1219,
+      "sha256": "4a46ef2995775250f94f6a6cf7ec2c1a852758cdad6a329f72bd9c1c9b21cd6d"
+    },
+    {
+      "path": "archive/adapter-stand-v1/source/adapter_stand_parameters.py",
+      "bytes": 2809,
+      "sha256": "a2034b4883eacd18ee073e2af50eb351ded60b9a250f10fb2eec59135e6deaba"
+    },
+    {
+      "path": "archive/adapter-stand-v1/source/build_adapter_stand.py",
+      "bytes": 2800,
+      "sha256": "c85ae60c4d0aed2bfc444b07e17c7f200e4874c84195b65872e79653ad4c905c"
+    },
+    {
+      "path": "archive/adapter-stand-v1/source/export_adapter_stand.py",
+      "bytes": 8834,
+      "sha256": "1fb131b5a708c1d87075672f282265207b9ee4cd318dfb1273f1033d5fb4f8c1"
+    },
+    {
+      "path": "archive/adapter-stand-v1/source/freecad_adapter_stand.py",
+      "bytes": 10009,
+      "sha256": "a806e946ea0fd60b9f097fe46adb51b30862598b2c768ff29823d429b207d493"
+    },
+    {
+      "path": "archive/adapter-stand-v1/source/run_adapter_stand.FCMacro",
+      "bytes": 632,
+      "sha256": "7d51e5ac2b1215787274b85e2eb0daae35414b8f17521ba64eadd117f4f8b384"
+    },
+    {
+      "path": "archive/fan-controller-import/FanControllerCase.FCMacro",
+      "bytes": 24449,
+      "sha256": "8115449ec76b29dc5dfef36f35d97dd0112edd8db197d443db904a0621cd3a17"
+    },
+    {
+      "path": "archive/fan-controller-import/README.md",
+      "bytes": 513,
+      "sha256": "bcd419ba11ce4e63e1cf8ef700069c798e30e6c053c47679a3dcb42e4069912b"
+    },
+    {
+      "path": "archive/fan-controller-import/import-manifest.json",
+      "bytes": 671,
+      "sha256": "44bcb7fffae7e81ba70f469f2ac0fb5a3cc8412e09c973a2cf3782b7ccbffb15"
+    },
+    {
+      "path": "archive/fan-controller-import/preview/assembly.png",
+      "bytes": 156585,
+      "sha256": "50bea979d1c219627038087a4f55a1626f7f93036ecdcac1cbc11c2d8098c8d5"
+    },
+    {
+      "path": "archive/fan-controller-import/preview/details.png",
+      "bytes": 129386,
+      "sha256": "37ba8c0fc26081d07c870ebc131b40d1b3b1fb8e3e7488956378e6d9fedbe15b"
+    },
+    {
+      "path": "archive/fan-controller-import/render_preview.py",
+      "bytes": 5448,
+      "sha256": "21326908b205f66d067fcff1e1c16db69a847b74c70c39cc9a7f7773b6b6a82b"
+    },
+    {
+      "path": "archive/fan-controller-import/validation.json",
+      "bytes": 2440,
+      "sha256": "410063ed06bcf61f3d92b6df1e67e0b3cdfc27f6b42ee343eb5ff2b4d25723e3"
+    },
+    {
+      "path": "archive/layout-history/設計コードと生成物の管理-整理前.md",
+      "bytes": 6668,
+      "sha256": "4bdb49b8156946fb32e2396acd9883e0a892c1953c3655bf6d70ce775bb4b4f8"
+    },
+    {
+      "path": "archive/print-projects/README.md",
+      "bytes": 600,
+      "sha256": "2ecfd7e50c73b6412ec74d16cb831c578775e91785db602b3f1c55afb3a394af"
+    },
+    {
+      "path": "archive/print-projects/spark-rack/pla-frame-one-unit.3mf",
+      "bytes": 93521,
+      "sha256": "7f7ab10719a6e629b11ff69f6782873f94e3e388a1ad90d029e8f64290a0489b"
+    },
+    {
+      "path": "archive/print-projects/spark-rack/rack-layout-before-pla-20260921.3mf",
+      "bytes": 149423,
+      "sha256": "a19514e3656cc076ce3c95936ed62c496c9daadd862eca51b81d5a9dfae9bd0e"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/README.md",
+      "bytes": 340,
+      "sha256": "f69bb4b7066c8b80ac5d5e4c01ac7c095b302ae59a713f1351082421c98f4b66"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/docs/FreeCAD版の操作.md",
+      "bytes": 3452,
+      "sha256": "296f9d9132d4050a364ae10664eb48386f05c53688996de4255cb4c3e8418876"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/docs/試作ガイド.md",
+      "bytes": 10615,
+      "sha256": "854a6c684fafcc5cd6f42fe5558bfb392c572d0228f036c18ee1ac50600d1516"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/DGX-SPARK-RACK-v1.step",
+      "bytes": 442536,
+      "sha256": "154ff160eda5e5e9a4a2d476f0b6a1f72f0cc1cb802edf9cdbd55294a97ff602"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/four_units.png",
+      "bytes": 161386,
+      "sha256": "242af2230504e6c3c44090def2738e1ff28ae32109f7bd47b6d82400a6464386"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/manifest.json",
+      "bytes": 5099,
+      "sha256": "3537c0e8174ec162324e453f41bffd62cc072f67b3b378167580af6c84f90fc4"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/bar_coupon.step",
+      "bytes": 10709,
+      "sha256": "eb9e0b68a5e289b7d4d24a1f419615c909a45795269c0e6780ca35b299a1294f"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/bridge_clip.step",
+      "bytes": 13898,
+      "sha256": "8014db93a25b96a34e9a78f82b43ea0648a07f4814624e503f7a50fcd8ec3199"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/crossbar.step",
+      "bytes": 12192,
+      "sha256": "2186cd322d54eaac0954c381cd361a30b436e226666e6bf2ee000c684b1c9807"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/fan_cassette.step",
+      "bytes": 76359,
+      "sha256": "4bea6c8f0f67b3384358204d9a2f268326267f8e8157b285cfb3873f3bcaacd6"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/fit_coupon_020.step",
+      "bytes": 17464,
+      "sha256": "3baf606cf80f3bf8fc5a72019f8da47a0247bfaa00380f9e5aa963c4a275fcb3"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/fit_coupon_030.step",
+      "bytes": 17364,
+      "sha256": "39c54bd5fac7a6119b89f7fa0b27bf902cf5b49a238063be20f2679e6ca19210"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/fit_coupon_040.step",
+      "bytes": 17360,
+      "sha256": "e7a1aeaef630e2c08303970f867c79ee757b2e9436335e51222aa8e0a0772951"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/hardware_coupon.step",
+      "bytes": 43649,
+      "sha256": "6e9068a80ece4c82c5c32ac77b8ef06c84b68ece22f1380358bfe8636419891d"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/locking_pin.step",
+      "bytes": 7625,
+      "sha256": "fd8539601d5335e77ca9fac3b65eaddb9bfadcb4a11072b6f5158e6adf9dfd41"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/side_L.step",
+      "bytes": 78971,
+      "sha256": "95d03c97bacfd3107e6fc90df0a85eaee71461558d4eb33cf7d6dcd06faab275"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/side_R.step",
+      "bytes": 78561,
+      "sha256": "92f88ff514fde6705f34cefe6ecd89467ce39b2c790b632a1bed6ec2fca8edb9"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/parts/stack_locator.step",
+      "bytes": 9355,
+      "sha256": "e369f2767d946168a301e773425a2f3eba868d111197c3e7c5dbaa87a26feb1c"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/single.png",
+      "bytes": 587633,
+      "sha256": "1a73718fa7a3e7ac3a75043f51ec5b9024616a4cc99544b30f9eaebbbdbf62c4"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/bar_coupon.stl",
+      "bytes": 5684,
+      "sha256": "d6e5bf7639673c81c809e8f275b493c9afd4b91174d8aef54547166827aab1c6"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/bridge_clip.stl",
+      "bytes": 1484,
+      "sha256": "78ccf3a34d34a6a38af6d33529d8e9de552f31e4dec0500387c4c47693c7f1e1"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/crossbar.stl",
+      "bytes": 10684,
+      "sha256": "bd1a52a23ac415076eff96dd817a551461c3b1815dbd91e5fbf18ec224819f59"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/fan_cassette.stl",
+      "bytes": 93684,
+      "sha256": "0751b385692b6ce59031b27cf95299e2c4751db244ddad3744a6140aca876865"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/fit_coupon_020.stl",
+      "bytes": 11484,
+      "sha256": "cd3fb97c8ca0ee807176fd29cee39c6b6af43afd21bbb6f52bddf08ea83931f8"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/fit_coupon_030.stl",
+      "bytes": 11484,
+      "sha256": "1b6d4ab566fa3ac8bdf0504bc5e8820487ddbca4ae2dc0a42ad6a8421062ce00"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/fit_coupon_040.stl",
+      "bytes": 11884,
+      "sha256": "dddcb418c311cc3c21ab13d2548f23fc7cef422e6c946463d78eede70939f059"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/hardware_coupon.stl",
+      "bytes": 37484,
+      "sha256": "097a2f18c0e864b2428caf36fdf7aa560078cb780c89c6986618c9775798cdba"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/locking_pin.stl",
+      "bytes": 10884,
+      "sha256": "c6cb4b8906c90a659e64f1c32a23f74028c1fbb1f54f4f7b5b423ae171e48cc8"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/side_L.stl",
+      "bytes": 76484,
+      "sha256": "64177a38a32840dfd84ef319fb225cc40d9de17fa92bc3a64e5e55b875a1ec5c"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/side_R.stl",
+      "bytes": 76484,
+      "sha256": "4a5d88d1782043de8f07cde168e42ec62e3a8f51e7e35b8c51e217fa547b0ef0"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl/stack_locator.stl",
+      "bytes": 18284,
+      "sha256": "688b623c20516c58da4f0b34b2b8377c81074e99c2ce2827fb0c2e7159a11520"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl_manifest.json",
+      "bytes": 1902,
+      "sha256": "bedc6b2b4361e81c0c340fcfa294f90348881ee19f45d55c6a9889d4f5aaf314"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/stl_validation.json",
+      "bytes": 4164,
+      "sha256": "ec7c201c735a0d5232b3d39b0fe752c753f7b7a7fd2cf5fd8ad5787841214ef8"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/two_horizontal.png",
+      "bytes": 711599,
+      "sha256": "a7f468e486178439ee79c61d3e3a92d500b057f9ef1be5fd93e901ebb17a2831"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/generated/two_vertical.png",
+      "bytes": 545039,
+      "sha256": "227403998fa9002b9dadd48655b4b0f8464d25debb4926ba3cbd8f1d204e44d1"
+    },
+    {
+      "path": "archive/spark-rack-fcstd-v1/source/DGX-SPARK-RACK-FREECAD-v1.FCStd",
+      "bytes": 383800,
+      "sha256": "8ec379675d1181fb2723165496166333b969322b4547c7708ec8b61729eecd58"
+    },
+    {
+      "path": "docs/タスクランナー.md",
+      "bytes": 6215,
+      "sha256": "e4d6206512b222fc477e41ab435528d0dab9a1ad2d0101ed50831ea556bbce58"
+    },
+    {
+      "path": "docs/設計コードと生成物の管理.md",
+      "bytes": 5545,
+      "sha256": "e985710b7ea0862ab094d52bc326af7f3888778580f1148a2733b505c56852c3"
+    },
+    {
+      "path": "mise.toml",
+      "bytes": 2149,
+      "sha256": "987d800a61b80b04282d51740836375837f362456e9c193ffb813100f8ee2feb"
+    },
+    {
+      "path": "models/adapter-rack/README.md",
+      "bytes": 1796,
+      "sha256": "efb9617704906ca7b858e1a77d24f35a8f7de359f4406ddbd6a7408c836d9233"
+    },
+    {
+      "path": "models/adapter-rack/docs/設計と組立.md",
+      "bytes": 11180,
+      "sha256": "f73992b98799a3facc1d34da4e62db8755552c2fbfa8951083a225e5583ff814"
+    },
+    {
+      "path": "models/adapter-rack/reference/adapter_spec.json",
+      "bytes": 1219,
+      "sha256": "4a46ef2995775250f94f6a6cf7ec2c1a852758cdad6a329f72bd9c1c9b21cd6d"
+    },
+    {
+      "path": "models/adapter-rack/reference/components.json",
+      "bytes": 1162,
+      "sha256": "1a804d9a4714c60f005156dd0ee1bc682d4f29aeeceaba62a3b6f7b7b26b6967"
+    },
+    {
+      "path": "models/adapter-rack/source/adapter_rack_parameters.py",
+      "bytes": 3853,
+      "sha256": "1aa8840b28d40432c5e5b1ea3a5cd25f5315ac9fdf53c519803cdb4c53b77b2e"
+    },
+    {
+      "path": "models/adapter-rack/source/build_adapter_rack.py",
+      "bytes": 7012,
+      "sha256": "4559e35337ba7f8746a9f28107131af7023f74cd780a3819dd4ead319ebd78f4"
+    },
+    {
+      "path": "models/adapter-rack/source/freecad_adapter_rack.py",
+      "bytes": 17531,
+      "sha256": "dfb400cbba77ddc992a6b569010a5a53d37d4875c4497246dc5d437fb39d0010"
+    },
+    {
+      "path": "models/adapter-rack/source/run_adapter_rack.FCMacro",
+      "bytes": 576,
+      "sha256": "d00db7b1846072acfa84a53b493091b2bd99e1cefeafb5f0654219cea6b548fc"
+    },
+    {
+      "path": "models/adapter-rack/source/validate_adapter_rack.py",
+      "bytes": 7466,
+      "sha256": "8ae3f84c7ad435664e77727e7bbed06294dadc4973189cdb577954340b7adeae"
+    },
+    {
+      "path": "models/fan-controller/README.md",
+      "bytes": 4081,
+      "sha256": "3169faf289b461d7319482c59770aefc0d5802d68593fda80cea082b7b80ed40"
+    },
+    {
+      "path": "models/fan-controller/docs/ラックへの取り付け.md",
+      "bytes": 6621,
+      "sha256": "b5d66a25603be142e0a802c2bf3c98282464ba330246bbf37a0b4b706b99da9c"
+    },
+    {
+      "path": "models/fan-controller/source/FanControllerCase.FCMacro",
+      "bytes": 340,
+      "sha256": "7d753d93c496c79e0e6031e0562cf9e5ae7c9f6f4ddb5af28a528f211c6577a9"
+    },
+    {
+      "path": "models/fan-controller/source/build_fan_controller.py",
+      "bytes": 4483,
+      "sha256": "fa9cf6f4735afb846d008c89ec5d6a4b3bbfd14ba1bba6ee2653939c88d082fa"
+    },
+    {
+      "path": "models/fan-controller/source/draw_three_views.py",
+      "bytes": 10354,
+      "sha256": "fde32cefa2f1117c4643789f3b15dddca72806dff5af5cfe4216b912c2233d0d"
+    },
+    {
+      "path": "models/fan-controller/source/freecad_fan_controller.py",
+      "bytes": 30691,
+      "sha256": "bbf75b3cf3a09b7ba0e2d9edc4c1b46dbb69f988ac61e124ebbf50a113121c62"
+    },
+    {
+      "path": "models/fan-controller/source/render_preview.py",
+      "bytes": 5844,
+      "sha256": "e964e477ab8a4a56a651263085224465496a1053a492cee33b094784848eca05"
+    },
+    {
+      "path": "models/spark-rack/README.md",
+      "bytes": 1921,
+      "sha256": "878df92d70eb69377d7c6aa70abde5dbe39d6bb357fdfd728fa0992fd69aa628"
+    },
+    {
+      "path": "models/spark-rack/docs/FreeCAD版の操作.md",
+      "bytes": 911,
+      "sha256": "9ef3ab1f557aba9e6c9f43843c8b3ae55b00f419148a31cc433ae1c1f12bf8d7"
+    },
+    {
+      "path": "models/spark-rack/docs/試作ガイド.md",
+      "bytes": 10198,
+      "sha256": "760d859c5194d8381252d1fab6e00744679f50a5812c36371ed5944fbb6b7ddd"
+    },
+    {
+      "path": "models/spark-rack/source/build_spark_rack.py",
+      "bytes": 4616,
+      "sha256": "f5858bc5d6812e49b95be0c072af71dc15365786e7b212c3ff85e758c854fb92"
+    },
+    {
+      "path": "models/spark-rack/source/freecad_spark_rack.py",
+      "bytes": 12391,
+      "sha256": "7ec17bd138a56e85a1242026fed35ab321c1386e156508181952ebe65f8a515e"
+    },
+    {
+      "path": "models/spark-rack/source/run_spark_rack.FCMacro",
+      "bytes": 493,
+      "sha256": "bd9414c582e9f3a6ecd8586b881a53ee15f35dd1207c9a6da6f6ae53c5080de7"
+    },
+    {
+      "path": "models/spark-rack/source/spark_rack_parameters.py",
+      "bytes": 2340,
+      "sha256": "6f79527ed56abda14df820545b511db4a268784ae24acf6083a9299c7fe66f62"
+    },
+    {
+      "path": "models/spark-rack/source/validate_spark_rack.py",
+      "bytes": 3175,
+      "sha256": "a52e97b163fc36a16e6cda66f1926864385ae1e7d11a847103634738fe2b93a2"
+    },
+    {
+      "path": "print-projects/README.md",
+      "bytes": 2228,
+      "sha256": "a236edd5a4e8d5920d36f77832c18da61da7a7d2e9aca4b183e0d4e81141d982"
+    },
+    {
+      "path": "print-projects/adapter-rack/production/README.md",
+      "bytes": 279,
+      "sha256": "6e449cfe1150fc85a26d6efd72ff1809c6be9fd3cc3ac1df12bcf39f58f27bf0"
+    },
+    {
+      "path": "print-projects/adapter-rack/prototype/README.md",
+      "bytes": 350,
+      "sha256": "7405b9368ae399a791d6f956043c27b86b92a24bbbc3d802c03ee8eaec0478b8"
+    },
+    {
+      "path": "print-projects/fan-controller/production/README.md",
+      "bytes": 281,
+      "sha256": "7fe1015689c79bf741d443e812539edb286e41700e39da6d748a3af2797b238a"
+    },
+    {
+      "path": "print-projects/fan-controller/prototype/README.md",
+      "bytes": 669,
+      "sha256": "d1b313c754b8bb8b59b411207615c86b36f513df66f40eaf2db7cedfe59991a3"
+    },
+    {
+      "path": "print-projects/fan-controller/prototype/fan-controller-blue-pla-body-lid-20260923.3mf",
+      "bytes": 583177,
+      "sha256": "c6ce595866cf0d222c4729bf3678e13da4c623f5ea0ac1dbd36a5df773d8226b"
+    },
+    {
+      "path": "print-projects/profiles/pla-prototype.json",
+      "bytes": 384,
+      "sha256": "cf4021c258937549201de84aebb205755519e8204cd33738769fd87cb68800dc"
+    },
+    {
+      "path": "print-projects/spark-rack/production/README.md",
+      "bytes": 277,
+      "sha256": "f54f6eefd8d78ea728f74bc97500d7e378e42e8df057179da557994521c2c8bd"
+    },
+    {
+      "path": "print-projects/spark-rack/prototype/README.md",
+      "bytes": 348,
+      "sha256": "3ae3ef22176ba6d35c41affc731d90f3e0c78b394529f3496dca923633888487"
+    },
+    {
+      "path": "print-projects/spark-rack/prototype/pla-fan-cassette.3mf",
+      "bytes": 52783,
+      "sha256": "9438a17cd0a7b01a22abd1e6dfe6c584c6df342d9240361ba42b12bd1c1cd64b"
+    },
+    {
+      "path": "print-projects/spark-rack/prototype/pla-fit-tests.3mf",
+      "bytes": 52007,
+      "sha256": "f368f715d13e9d843fb51ab8fb35fd8430c85f70e00c622c8f0f6b9468e039c7"
+    },
+    {
+      "path": "print-projects/spark-rack/prototype/pla-frame-without-pins.3mf",
+      "bytes": 87571,
+      "sha256": "72c93febbcec203d4c43ab177c8519d859ed9eb53185c46416817a253bc9a59f"
+    },
+    {
+      "path": "print-projects/spark-rack/prototype/pla-pin-trial-brim5.3mf",
+      "bytes": 30263,
+      "sha256": "cf101125932937986f1aed9c76c257594009d82f3eb99bc9ef7f6686a86f5fb6"
+    },
+    {
+      "path": "print-projects/spark-rack/prototype/pla-pins-3-brim5.3mf",
+      "bytes": 34199,
+      "sha256": "d283b280486eea29853333d91fbd275896b85686680abfcf4da4cd3f6b34174b"
+    },
+    {
+      "path": "tests/test_cad_tasks.py",
+      "bytes": 6237,
+      "sha256": "9bdf2f188353567e394733607588945c188c86f5cd556cbb14042a9c5f47fd06"
+    },
+    {
+      "path": "tools/README.md",
+      "bytes": 657,
+      "sha256": "8fd214e27e93ca5fb80f575eecf92a899d07cfdb56df3032ec2ed97c7f920fcf"
+    },
+    {
+      "path": "tools/cad/check_controller_mounts.py",
+      "bytes": 12551,
+      "sha256": "33069c9d702fa1d02616c84623f57590f5d88106efcc998d2bd3880b6f2715b8"
+    },
+    {
+      "path": "tools/cad/check_stl.py",
+      "bytes": 2834,
+      "sha256": "21db5806a695fb37a0a352105ccd6625bf20c4427f6575c2544ab663c5262d88"
+    },
+    {
+      "path": "tools/cad/controller_mount.py",
+      "bytes": 4228,
+      "sha256": "6f13d67f5a08b3b628524a3f2b9ee8f0f8a9dc9ad4102bda571dcf678b64267a"
+    },
+    {
+      "path": "tools/cad/freecad_features.py",
+      "bytes": 5245,
+      "sha256": "7354509223e7b677c5a4364c4d872aeccea3cd044b628de1f4edf08e48d97361"
+    },
+    {
+      "path": "tools/cad/freecad_mcp.py",
+      "bytes": 2346,
+      "sha256": "dbb717fb5453b8947acf61d42c737f7860ba5685c2e5eb0b0b15f26bac8603af"
+    },
+    {
+      "path": "tools/tasks/cad.py",
+      "bytes": 10077,
+      "sha256": "a172a2a09da56be1ab503e548895fd4a7d224b8731eda26a5994bb3e9efbbf40"
+    },
+    {
+      "path": "tools/tasks/cad_worker.py",
+      "bytes": 1010,
+      "sha256": "ea8f251715281806606871c8e65289f163b5a2a0411cdda7554f62f362ceaca1"
+    }
+  ],
+  "renamed_working_files": {
+    "print-projects/spark-rack/prototype/pla-fit-tests.3mf": "print-projects/spark-rack/prototype/modular-spark-rack-pla-fit-tests.3mf",
+    "print-projects/spark-rack/prototype/pla-frame-without-pins.3mf": "print-projects/spark-rack/prototype/modular-spark-rack-pla-frame-without-pins.3mf",
+    "print-projects/spark-rack/prototype/pla-pin-trial-brim5.3mf": "print-projects/spark-rack/prototype/modular-spark-rack-pla-pin-trial-brim5.3mf",
+    "print-projects/spark-rack/prototype/pla-pins-3-brim5.3mf": "print-projects/spark-rack/prototype/modular-spark-rack-pla-pins-3-brim5.3mf",
+    "print-projects/spark-rack/prototype/pla-fan-cassette.3mf": "print-projects/spark-rack/prototype/modular-spark-rack-pla-fan-cassette.3mf"
+  },
+  "local_build_history": "このworktreeにはbuild/と手調整済み3MFのgenerated/が存在しない。別worktreeやアプリ内の未保存文書は対象外。"
+}

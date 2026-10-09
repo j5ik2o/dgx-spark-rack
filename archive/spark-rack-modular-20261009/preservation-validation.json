@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "verified_file_count": 122,
+  "zip_integrity": "passed",
+  "all_file_hashes_match": "passed",
+  "cad_geometry_validation": "未実施。今回は保全のみで、既存形状を変更していない。",
+  "physical_validation": "未実施。適合・強度・冷却・ケーブル到達は別に検証する。"
+}
