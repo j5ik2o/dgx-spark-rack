@@ -38,7 +38,7 @@ ENCODER_BASE_LENGTH = 12.52  # 実測: 土台の左右(X)方向
 ENCODER_BASE_WIDTH = 13.26   # 実測: 土台自体の縦(Y)方向
 ENCODER_TOP_TO_BASE_BOTTOM = 16.16 # 注釈画像: 基板上端から土台下端まで
 ENCODER_BASE_BOTTOM_Y = PCB_WIDTH - ENCODER_TOP_TO_BASE_BOTTOM # 左下原点で8.84mm
-ENCODER_RIGHT_TO_BASE_LEFT = 18.09 # 実測: 基板右端から土台左端まで
+ENCODER_RIGHT_TO_BASE_LEFT = 18.09 # 旧採寸値: 測定対象の解釈は要再確認。軸Xの算出には使わない
 ENCODER_BASE_TOP_MARGIN = ENCODER_TOP_TO_BASE_BOTTOM - ENCODER_BASE_WIDTH # 基板上端から2.90mm
 SHAFT_DIAMETER = 6.0           # 要確認
 KNOB_PASS_DIAMETER = 7.0       # 実測: つまみ径。蓋を通過する外径として使用
@@ -60,8 +60,8 @@ DISPLAY_WIDTH = 10.43         # 実測: 表示器外形の短辺
 DISPLAY_X = 10.71             # 実測: 基板左端から表示器左端
 DISPLAY_TOP_MARGIN = 0.0      # 実測: 基板上端から表示器上端
 DISPLAY_Y = PCB_WIDTH - DISPLAY_TOP_MARGIN - DISPLAY_WIDTH  # 左下原点へ変換
-ENCODER_X = PCB_LENGTH - ENCODER_RIGHT_TO_BASE_LEFT + ENCODER_BASE_LENGTH / 2
-# 上式は軸が土台の左右中央にある前提。現寸法ではX=64.17mm。
+ENCODER_X = 54.55             # 再試作後の補正: 56.55からさらに左へ2mm（2026-09-24）
+# 土台端の採寸解釈から軸位置を推定せず、試作で確認した穴と軸の相対差を反映する。
 ENCODER_Y = ENCODER_BASE_BOTTOM_Y + ENCODER_BASE_WIDTH / 2 # 軸中央の前提で15.47mm
 
 # (面, 面上の中心位置, 中心Z, 実寸幅, 実寸高さ)
