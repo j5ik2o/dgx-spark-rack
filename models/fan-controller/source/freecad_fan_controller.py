@@ -6,7 +6,8 @@
 左短辺をX_MIN、右短辺をX_MAX、手前長辺をY_MIN、奥長辺をY_MAXとする。
 PCBを上から置き、本体側の独立したねじ留め押さえ4個で抜けを防ぐ。
 基板への穴あけは不要。押さえは着座面まで締め、基板を直接締め付けない。
-蓋の固定は厚い側壁に樹脂用呼び径2mmの小ねじ4本。下穴径は試験片で調整。
+蓋と基板押さえはM2×0.4切削タップで後加工し、M2×6mmなべ小ねじで固定。
+下穴の加工性とタップ先端の逃げは試験片と使用工具で確認する。
 初期状態は組立座標。印刷時は本体を底面下、蓋を天面下にする。
 """
 
@@ -95,9 +96,9 @@ CLAMP_LUG_WIDTH = 6.0         # ねじ周囲のX方向幅
 CLAMP_LUG_LENGTH = 4.0        # ねじ周囲のY方向長さ
 CLAMP_SCREW_OFFSET = 2.5      # 内壁から外側へねじ中心までの距離
 CLAMP_POCKET_CLEARANCE = 0.30 # 着座用ポケットの片側隙間
-CLAMP_PILOT_DIAMETER = 1.6   # 呼び径2mm樹脂用ねじの仮下穴
+CLAMP_PILOT_DIAMETER = 1.6   # M2×0.4切削タップ用。印刷後の実穴径を確認
 CLAMP_CLEAR_DIAMETER = 2.5
-CLAMP_SCREW_LENGTH = 8.0     # 押さえ専用: 呼び径2mm×8mmを4本
+CLAMP_SCREW_LENGTH = 6.0     # M2×6mmなべ小ねじを4本（頭下長）
 CLAMP_PILOT_DEPTH = 6.0
 CLAMP_HEAD_DIAMETER = 4.0    # 許容するねじ頭の外径上限（実物要確認）
 CLAMP_HEAD_HEIGHT = 1.6      # 許容するねじ頭高さ上限
@@ -106,10 +107,12 @@ CLAMP_DRIVER_DIAMETER = 4.5  # 上からアクセスするドライバー軸の�
 SCREW_X = (9.0, 68.0)        # 蓋用。独立押さえの着座ポケットを避ける新版位置
 SCREW_ZONE_LENGTH = 7.0      # ねじの周囲で配線開口を避けるX方向幅
 SCREW_RAIL_WIDTH = 5.0       # 基本壁の外側に加えるねじ固定用側壁の幅
-SCREW_PILOT_DIAMETER = 1.6   # 樹脂用呼び径2mmねじの仮下穴。材質ごとに要調整
+SCREW_PILOT_DIAMETER = 1.6   # M2×0.4切削タップ用。加工性は試験片で確認
 SCREW_CLEAR_DIAMETER = 2.5   # 蓋側通し穴
 SCREW_PILOT_DEPTH = 8.0      # 本体の止まり穴
-SCREW_LENGTH = 8.0           # 設計用: なべ頭下からの長さ（別途購入）
+SCREW_LENGTH = 6.0           # M2×6mmなべ小ねじを4本（頭下長）
+THREAD_PITCH = 0.4           # M2並目
+TAP_END_ALLOWANCE = 2.0      # 食付き・先端・加工余裕の予算。使用工具で適合確認
 SCREW_TIP_CLEARANCE = 1.0    # 止まり穴底の余裕
 
 VENT_COUNT = 6               # 底面スリット数
@@ -203,6 +206,10 @@ require(CLAMP_THICKNESS < CLAMP_SCREW_LENGTH
         "基板押さえのねじ長さが下穴に適合しません。")
 require(retainer_bottom_z - CLAMP_PILOT_DEPTH > bottom_z + FLOOR,
         "基板押さえの下穴が底の肉厚へ入り込みます。")
+require(CLAMP_SCREW_LENGTH - CLAMP_THICKNESS + TAP_END_ALLOWANCE <= CLAMP_PILOT_DEPTH,
+        "基板押さえの下穴にタップ先端の逃げがありません。")
+require(SCREW_LENGTH - LID_THICKNESS + TAP_END_ALLOWANCE <= SCREW_PILOT_DEPTH,
+        "蓋の下穴にタップ先端の逃げがありません。")
 require(CLAMP_POCKET_CLEARANCE > 0
         and 0 < CLAMP_PILOT_DIAMETER < CLAMP_CLEAR_DIAMETER < CLAMP_LUG_WIDTH,
         "基板押さえの穴径・隙間が不適切です。")
