@@ -1,0 +1,82 @@
+{
+  "recorded_on": "2026-10-11",
+  "basis": "ユーザーの購入報告と、この会話で確認した販売元・メーカー資料。必要数と注文数・所有数を区別する。",
+  "supersedes": "CRS812またはCRS804の機種未定条件、およびスイッチ配線を40cmまたは50cmに限定した条件。保存済みの比較模型は購入条件への再設計前の参考。",
+  "spark": {
+    "quantity": 4,
+    "preferred_arrangement": "2列×2段、4台を支える共通フレーム",
+    "power_adapter_quantity": 4,
+    "power_adapter_reference": "models/adapter-rack/reference/adapter_spec.json"
+  },
+  "switch": {
+    "model": "MikroTik CRS812-8DS-2DQ-2DDQ-RM",
+    "ordered_quantity": 1,
+    "seller_url": "https://www.getic.com/product/mikrotik-crs812-8ds-2dq-2ddq-rm",
+    "product_sheet_url": "https://www.getic.com/files/catalogue/6825/crs8128ds2dq2ddqrm-68d38575332a7.pdf",
+    "reference_body_dimensions_mm": [443, 268, 44],
+    "dimension_status": "製品資料の値。公式取扱説明の奥行156mmとは不一致。取付耳・底面脚・突出部を含む実機寸法は未確認。",
+    "ports": {
+      "qsfp56_200_gbps": 2,
+      "qsfp56_dd_400_gbps": 2
+    },
+    "internal_power_supply_quantity": 2,
+    "ac_cord_quantity": 2,
+    "maximum_power_consumption_w": 134,
+    "without_attachments_power_consumption_w": 81,
+    "design_requirement": "自重を支える部材と、ずれ・浮き上がりを抑える固定、配線・吸排気・電源と本体の取り外し経路を設計に含める。CRS804への対応は今回の必須条件から外す。"
+  },
+  "switch_breakout_cable": {
+    "manufacturer": "NADDOD",
+    "model": "Q2Q56-400G-CU2",
+    "seller_url": "https://www.naddod.com/products/103563.html",
+    "datasheet_url": "https://resource.naddod.com/files/2026-08-12/q2q56-400g-dac-datasheet-017673.pdf",
+    "ordered_quantity": null,
+    "ordered_quantity_status": "2m品を注文したという報告。注文本数は未提示。",
+    "nominal_length_mm": 2000,
+    "switch_end": "400ギガビット毎秒、QSFP-DDコネクター",
+    "spark_ends": "200ギガビット毎秒、QSFP56コネクター2端",
+    "coding": "MikroTik互換として注文",
+    "required_quantity_for_four_sparks_using_only_this_breakout": 2,
+    "required_quantity_basis": "1本につきSpark側2端。4台をこの分岐ケーブルだけで接続する場合は2本とスイッチの400ギガビット毎秒端子2個を使う。注文数の確認ではない。",
+    "family_minimum_bend_radius_mm": [37, 42],
+    "provisional_minimum_bend_radius_mm": 42,
+    "bend_radius_status": "シリーズ資料の範囲の大きい側を仮条件とする。2m品の指定値は個別確認が必要。",
+    "pending": ["公称長の測定基準", "分岐位置", "幹線と枝線それぞれの長さ", "端子と引き出し部分の外形", "必要な分岐設定と実機での通信確認"]
+  },
+  "initial_ring_cables": {
+    "user_report": "QSFP112ダイレクトアタッチケーブル40cmを4本所有。当面はリング接続に使う。",
+    "quantity": 4,
+    "nominal_length_mm": 400,
+    "manufacturer_and_model_status": "ELSA製と思われるが未確認。",
+    "reference": "models/spark-rack/reference/prepared-fans-and-cable.json",
+    "constraint_scope": "40cmの経路制約は当面のリングに適用。注文済みのスイッチ配線は2mの分岐ケーブル。"
+  },
+  "cooling": {
+    "reference": "models/spark-rack/reference/prepared-fans-and-cable.json",
+    "spark_fans_140mm_planned_quantity": 4,
+    "adapter_fans_120mm_reference_quantity": 2,
+    "individual_controller_required_quantity": 6,
+    "controller_owned_quantity": null,
+    "controller_case_source": "models/fan-controller/source/freecad_fan_controller.py",
+    "controller_dock_source": "tools/cad/controller_mount.py",
+    "controller_power": {
+      "existing_reference": "models/fan-controller/docs/ラックへの取り付け.md",
+      "existing_scheme": "コントローラー2個に12V・3A電源1個と直流電源の二股ケーブル1本。基板接続用の直流電源ジャック付きケーブルはコントローラーごとに1本。",
+      "conditional_12v_3a_supply_required_quantity": 3,
+      "conditional_two_way_splitter_required_quantity": 3,
+      "conditional_dc_jack_lead_required_quantity": 6,
+      "quantity_basis": "既存の2個で1系統の構成を6個へ拡張する場合。注文・所有数の確認ではない。",
+      "power_adapter_dimensions_mm": null,
+      "owned_power_adapter_quantity": null,
+      "pending": ["電源の形状と寸法", "所有数", "端子の極性", "配線の太さと長さ", "コントローラーを含めた電流容量"],
+      "design_requirement": "コントローラー用交流電源アダプターの支持・配線・放熱・交換場所もラック全体に含める。現状の比較模型ではその全数分の収容は未設計。"
+    }
+  },
+  "ac_distribution": {
+    "conditional_required_outlets": 9,
+    "basis": "Spark用4口、スイッチ用2口、上記のコントローラー用電源3口。給電方式を変更する場合は再計算する。",
+    "pending": ["電源タップの型番と寸法", "プラグの干渉", "電流容量", "電源スイッチの操作", "接地と配線経路"],
+    "power_accounting": "電源の定格出力を実際の消費電力として合算しない。"
+  },
+  "validation_status": "購入報告・資料と設計要求の記録。実物の適合・強度・冷却・通信を確認した結果ではない。"
+}

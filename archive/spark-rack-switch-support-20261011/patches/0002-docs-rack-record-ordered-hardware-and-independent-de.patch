@@ -1,0 +1,212 @@
+From 3119ee150aec35f5d483d4ff5a13b02aab409d32 Mon Sep 17 00:00:00 2001
+From: Junichi Kato <j5ik2o@gmail.com>
+Date: Sun, 11 Oct 2026 23:57:57 +0900
+Subject: [PATCH 2/2] docs(rack): record ordered hardware and independent
+ design brief
+
+---
+ README.md                                     |  4 +-
+ models/spark-rack/README.md                   |  2 +
+ .../docs/4台専用ラックの設計条件.md           | 10 +++
+ ...エージェント向け設計プロンプト-20261011.md | 52 ++++++++++++
+ .../ordered-network-equipment-20261011.json   | 82 +++++++++++++++++++
+ 5 files changed, 148 insertions(+), 2 deletions(-)
+ create mode 100644 models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md
+ create mode 100644 models/spark-rack/reference/ordered-network-equipment-20261011.json
+
+diff --git a/README.md b/README.md
+index 62e8425..092a217 100644
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,8 @@
+ # DGX Spark Rack
+ 
+-DGX Spark本体とACアダプターを置く、3Dプリント用ラックです。**4台専用ラックへの再設計を始めています。** 2列×2段とラック内の交換可能なスイッチ置き場を前提に、リング接続・スイッチ接続の配線は手持ち40cmと当初案の50cmを比較します。[新設計の条件](models/spark-rack/docs/4台専用ラックの設計条件.md)と[従来データの保全](archive/spark-rack-modular-20261009/README.md)を参照してください。
++DGX Spark本体と交流電源アダプターを置く、3Dプリント用ラックです。**Spark4台と注文済みのMikroTik CRS812 1台を収める設計を検討しています。** 当面のリング接続は手持ち40cm×4本、スイッチ接続は注文済みのNADDOD Q2Q56-400G-CU2の2m品です。[最新の条件](models/spark-rack/docs/4台専用ラックの設計条件.md)、[別エージェント向け設計プロンプト](models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md)、[従来データの保全](archive/spark-rack-modular-20261009/README.md)を参照してください。
+ 
+-136部品案は不採用です。現在は`mise run overview:spark-rack`で[枠を小型化し、電源4個も内蔵する全体構想](models/spark-rack/docs/凹凸の接合試験片と次案.md)を確認できます。試験片の印刷は後回しです。`mise run joint:spark-rack`は短い接合試験片だけを生成します。梁の取付穴とスイッチ支持板は実測後に設計します。`mise run layout:spark-rack`は[配置の参考](models/spark-rack/docs/仮配置の確認.md)、`mise run build`は従来の3モデル用です。正本は引き続き各モデルの`source/`です。
++136部品案は不採用です。現在は`mise run overview:spark-rack`で[枠を小型化し、電源4個も内蔵する全体構想](models/spark-rack/docs/凹凸の接合試験片と次案.md)と[スイッチの支持・交換経路](models/spark-rack/docs/スイッチ支持部と交換経路.md)を確認できます。これらは購入条件への再設計前の比較案で、コントローラー用電源の全数分の収容は未設計です。試験片の印刷は後回しです。`mise run joint:spark-rack`は短い接合試験片だけを生成します。梁の取付穴とスイッチ支持部の製造寸法は実測後に確定します。`mise run layout:spark-rack`は[配置の参考](models/spark-rack/docs/仮配置の確認.md)、`mise run build`は従来の3モデル用です。正本は引き続き各モデルの`source/`です。
+ 
+ ## 何を編集するか
+ 
+diff --git a/models/spark-rack/README.md b/models/spark-rack/README.md
+index 5da3698..0587d95 100644
+--- a/models/spark-rack/README.md
++++ b/models/spark-rack/README.md
+@@ -1,5 +1,7 @@
+ # Spark本体ラック
+ 
++**最新の購入条件はSpark4台とCRS812 1台です。** スイッチ用はNADDOD Q2Q56-400G-CU2の2m品、当面のリング用は手持ち40cm×4本です。[注文済み機器と必要数](reference/ordered-network-equipment-20261011.json)と[別エージェント向け設計プロンプト](docs/別エージェント向け設計プロンプト-20261011.md)へ記録しました。比較模型は購入条件への再設計前の案で、コントローラー用電源の全数分の収容は未設計です。
++
+ **136部品案は不採用です。** 現在は[スイッチ支持部と交換経路](docs/スイッチ支持部と交換経路.md)を含め、[枠を小型化し、電源4個も内蔵する全体構想](docs/凹凸の接合試験片と次案.md)を検討しています。`mise run overview:spark-rack`で新旧比較の画面を生成します。試験片の印刷は後回しです。`joint:spark-rack`または`structure:spark-rack`は短い試験片だけを生成し、全体の造形用データは生成しません。
+ 
+ [設計条件](docs/4台専用ラックの設計条件.md)と[配置参考](docs/仮配置の確認.md)を参照してください。配置参考の下段高さと制御ケース位置は次案の共通定義へそろえ、未測定の横ずれは製造穴に採用しません。
+diff --git a/models/spark-rack/docs/4台専用ラックの設計条件.md b/models/spark-rack/docs/4台専用ラックの設計条件.md
+index 31b9e77..5f2a693 100644
+--- a/models/spark-rack/docs/4台専用ラックの設計条件.md
++++ b/models/spark-rack/docs/4台専用ラックの設計条件.md
+@@ -1,5 +1,15 @@
+ # 4台専用ラックは2列×2段と中央のスイッチ置き場で設計する
+ 
++## 2026年10月11日に記録した最新条件
++
++ユーザーから、**Spark4台とMikroTik CRS812 1台で構成が決まった**との報告がありました。NADDODのMikroTik互換分岐ケーブルQ2Q56-400G-CU2、2m品を注文済みです。注文本数は未提示です。手持ちの40cmケーブル4本は当面のリング接続に使います。スイッチ側の配線を40cmまたは50cmに限定する条件と、CRS804を含む機種未定条件は、この購入報告で更新しました。
++
++ファンは本体用140mmを4個、電源用120mmを2個です。個別制御の必要数はコントローラー6個です。コントローラー用電源と分岐配線、Spark用電源4個、スイッチの交流電源ケーブル2本も全体へ含めます。必要数と所有数は[注文済み機器と必要数](../reference/ordered-network-equipment-20261011.json)で区別しています。[別エージェント向け設計プロンプト](別エージェント向け設計プロンプト-20261011.md)にはこの条件を反映しました。
++
++以下は2026年10月9日からの検討記録です。既存の比較模型と中央支持板の仮設計は保持しますが、2m分岐ケーブルとコントローラー用電源の全数収容を含む新案は未設計です。既存の外形や段の移動方法を、新案の必須条件として扱いません。
++
++## 購入報告前の検討記録
++
+ DGX Sparkが4台になったため、最初から4台を支える共通フレームへ設計を改めます。配置は2列×2段とし、将来のスイッチはラック内の交換可能な置き場に載せます。当初は両接続とも50cmの指定でしたが、その後に**QSFP112ダイレクトアタッチケーブル40cmを4本所有している**ことが分かりました。手持ち40cmと当初の50cmを比較します。
+ 
+ 2026年10月9日のユーザー指定を記録した設計条件です。[調整できる仮配置と参照モデル](仮配置の確認.md)を作成しました。ラック外形や印刷部品の寸法はまだ確定していません。連結式の従来設計は[保全パッケージ](../../../archive/spark-rack-modular-20261009/README.md)に残しました。
+diff --git a/models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md b/models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md
+new file mode 100644
+index 0000000..db54b38
+--- /dev/null
++++ b/models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md
+@@ -0,0 +1,52 @@
++# 別エージェント向けの4台ラック設計プロンプト
++
++以下をそのまま別エージェントへ渡してください。購入条件の記録は[注文済み機器と必要数](../reference/ordered-network-equipment-20261011.json)です。
++
++---
++
++DGX Sparkを4台収容するラックの設計案を出してください。既存案の寸法に合わせる必要はありません。購入済み・手持ちの機器、配線、冷却、組立、保守を含めて、実際に使える全体構成を検討してください。
++
++## 本体・接続方式
++
++- DGX Sparkは4台です。2列×2段を第一候補とし、4台を一つの共通フレームで支えます。1台用ラックを連結して増設する方式は不要です。
++- スイッチはMikroTik CRS812-8DS-2DQ-2DDQ-RMを1台注文済みです。CRS804への対応は必須ではありません。購入先は[GETICの製品ページ](https://www.getic.com/product/mikrotik-crs812-8ds-2dq-2ddq-rm)です。
++- スイッチ接続用に、NADDODのMikroTik互換分岐ケーブルQ2Q56-400G-CU2、2m品を注文済みです。[NADDODの製品ページ](https://www.naddod.com/products/103563.html)を確認してください。400ギガビット毎秒のQSFP-DDコネクターから、200ギガビット毎秒のQSFP56コネクター2端へ分かれる銅線のダイレクトアタッチケーブルです。
++- 注文本数は未提示です。1本でSpark側は2端なので、4台をこの分岐ケーブルだけでつなぐ場合、必要数は2本です。必要数を注文数・所有数として扱わないでください。スイッチ側の分岐設定、必要なソフトウェアの版、実機での通信確認も別途整理してください。
++- 当面は4台の直結リング接続も使います。手持ちのQSFP112ダイレクトアタッチケーブル40cmが4本あります。メーカーはELSA製と思われますが、型番、コネクター寸法、曲げ条件は未確認です。
++- 40cmの長さ制約はリング側です。スイッチ側は注文した2m品を前提に、余長と分岐位置を収容してください。両方式の配線図と、切り替え作業を示してください。
++
++## 収容する機器と電源
++
++次の全項目について、支持する部材、固定、配線、放熱、取り外し経路を設計してください。図に箱を置くだけで完成扱いにしないでください。
++
++1. Spark本体4台。参考寸法は各150×150×50.5mm、質量1.2kgです。足、通気口、背面端子の位置は実測前です。
++2. Spark用240W交流電源アダプター4個。ラックの内部へ収めたいです。既存資料の参考寸法は99.05×98.99×35.17mm、質量542.3g、固定されたUSB Type-C電源ケーブルは約1.8mです。公開記事に基づく値で、製造公差付きの図面や実物適合の確認はありません。プラグとケーブルの余裕も含めてください。
++3. CRS812を1台。参考筐体寸法は443×268×44mmですが、公式取扱説明に奥行156mmの記載もあり不一致です。取付耳、底面脚、端子、突出部を含む寸法は未確認です。電源は内部に2系統あり、交流電源ケーブル2本を使います。別置きのスイッチ用電源アダプターがある前提にはしないでください。
++4. 140mmファン4個。Spark用に各1個を用意する予定です。既存の型番はNoctua NF-A14x25 G2 PWMで、厚さ27mm、取付穴の間隔124.5mmです。本体よりファンが大きいので、通風口へ風を寄せる導風も検討してください。
++5. 120mmファン2個。Spark用電源アダプターの冷却用です。既存資料はNoctua NF-A12x25 G2 PWM PPA/PPB、厚さ27mm、取付穴の間隔105mmです。用途をSpark本体用へ変更しないでください。
++6. ファンコントローラーとケース。既存方針はファン1個にコントローラー1個で個別制御するため、必要数は合計6個です。6個の所有確認ではありません。温度センサー付き基板は76×25mm、既存ケースは取付耳を含む長さ100mm、幅39.4mm、つまみを含む厚さ29.5mmです。共通ドックは幅43.4mm、厚さ11mmです。つまみ・端子・センサー線の操作と交換も含めてください。
++7. ファンコントローラー用の交流電源アダプター。これもラックに収めてください。既存構成はコントローラー2個に12V・3A電源1個、直流電源の二股ケーブル1本、基板接続用の直流電源ジャック付きケーブルは各コントローラーに1本です。この構成を6個へ拡張するなら電源3個、二股3本、ジャック付きケーブル6本が必要です。電源の所有数・寸法・形状・極性は未確認なので、調整可能な保持部と必要な実測を提案してください。電流容量と配線を根拠に給電方式を変更する案も比較できますが、ファンごとの個別制御は維持してください。
++
++既存給電方式を使う場合、交流電源の差込口はSpark用4口、スイッチ用2口、コントローラー用3口の合計9口が基準です。電源タップの寸法、プラグ同士の干渉、容量、接地、操作、配線の保持も検討してください。電源の定格出力と実際の消費電力は区別してください。
++
++## 配線・構造・保守の条件
++
++- リングは隣接する4台を一周させる配線を第一候補にしてください。端子間の直線距離だけで40cmに届くと判定せず、コネクター、真っすぐ引き出す部分、曲げ、抜き差し空間を含めて経路を示してください。未測定値は仮定として明記してください。
++- 2m分岐ケーブルは幹線・枝線それぞれの長さと分岐位置、公称長の測定基準が未確認です。シリーズ資料の最小曲げ半径は37～42mmなので、個別確認まで42mm以上を仮条件として検討してください。余長を小さく折り畳まず、通風や保守を塞がない保持経路を用意してください。
++- スイッチは自重を支える部材と、ずれ・浮き上がりを抑える固定を含めて設計してください。宙に浮く配置やケーブルで支える配置にしないでください。取り外す際にどのねじ・バンド・配線を外すか、途中で手による支持が必要かも説明してください。
++- 3次元プリンターの造形範囲に合わせて部材を分割してよいですが、別部品の継ぎ手や外側の固定板を大量に並べる構造は避けたいです。柱の穴と梁のほぞ、段差で荷重を受ける接合、内側か下面からのねじを第一候補にしてください。最後の部材まで差し込める組立順序と、横方向の変形を止める方法を示してください。
++- 以前の512×520×420mmの外形、28mm角の部材、中央の3mmアルミ支持板、上段を持ち上げる切替方法は比較用の旧案です。今回の必須寸法ではありません。2m品で配線の制約が変わるので、外形を小さくできるか、段を移動せず両方式を使えるかも検討してください。
++- 未測定の端子横ずれを梁の固定穴に刻まないでください。位置を調整できる方法か、実測後に穴位置を決める方法を提案してください。
++- 本体、電源、スイッチ、ファン、コントローラー、全電源ケーブルの支持と固定を含めて、荷重が床へ伝わる経路を説明してください。通気、ケーブルへの力、振動、樹脂の変形、転倒、温度による変化も設計に関係する範囲で検討してください。
++- 試験片の印刷と実物試験は後回しです。いまは全体の案と寸法、構造、検査方法まで進めてください。計算上の形状検査と、実物の適合・強度・冷却・通信の確認を区別してください。
++
++## 出力してほしいもの
++
++- 配置や支持方式が異なる2～3案。推奨案を先頭にし、外形、配線、冷却、部品数、組立、保守の6項目で比較してください。各案に全電源アダプターを含めてください。
++- 推奨案の全体図、正面・側面・背面・上面の寸法図。可能なら回転・表示切替できる図、または三次元の設計モデルも示してください。
++- 各機器の支持と固定の詳細、荷重の流れ、組立順序、Spark・スイッチ・電源・ファンを交換する手順。
++- リング運用とスイッチ運用それぞれの配線図、ケーブル保持と余長の置き場、切替手順。
++- 印刷部品、購入部材、ねじ、配線の一覧。必要数、所有・注文の確認済み数、未確認数を区別してください。
++- 採用寸法の出典、仮定、必要な実測、検査結果、未検証事項。取付耳や曲げ半径などに資料の食い違いがあれば、それを残してください。
++
++このリポジトリを参照できる場合は、最初にAGENTS.mdを読んでください。正本はモデルごとのsourceディレクトリです。ファン、ケース、共通ドック、電源アダプターの資料は利用できますが、古い機器数や配線条件より、このプロンプトの条件を優先してください。既存の設計や生成物を上書きせず、別案と分かる新しいファイルで提案してください。古い資料の「コントローラー4個・電源2系統」や、比較模型の「制御ケース4個」だけで完成扱いにしないでください。既存データの保全、設計コードへの反映、生成時の記録と検査結果の保存を守ってください。
+diff --git a/models/spark-rack/reference/ordered-network-equipment-20261011.json b/models/spark-rack/reference/ordered-network-equipment-20261011.json
+new file mode 100644
+index 0000000..5345533
+--- /dev/null
++++ b/models/spark-rack/reference/ordered-network-equipment-20261011.json
+@@ -0,0 +1,82 @@
++{
++  "recorded_on": "2026-10-11",
++  "basis": "ユーザーの購入報告と、この会話で確認した販売元・メーカー資料。必要数と注文数・所有数を区別する。",
++  "supersedes": "CRS812またはCRS804の機種未定条件、およびスイッチ配線を40cmまたは50cmに限定した条件。保存済みの比較模型は購入条件への再設計前の参考。",
++  "spark": {
++    "quantity": 4,
++    "preferred_arrangement": "2列×2段、4台を支える共通フレーム",
++    "power_adapter_quantity": 4,
++    "power_adapter_reference": "models/adapter-rack/reference/adapter_spec.json"
++  },
++  "switch": {
++    "model": "MikroTik CRS812-8DS-2DQ-2DDQ-RM",
++    "ordered_quantity": 1,
++    "seller_url": "https://www.getic.com/product/mikrotik-crs812-8ds-2dq-2ddq-rm",
++    "product_sheet_url": "https://www.getic.com/files/catalogue/6825/crs8128ds2dq2ddqrm-68d38575332a7.pdf",
++    "reference_body_dimensions_mm": [443, 268, 44],
++    "dimension_status": "製品資料の値。公式取扱説明の奥行156mmとは不一致。取付耳・底面脚・突出部を含む実機寸法は未確認。",
++    "ports": {
++      "qsfp56_200_gbps": 2,
++      "qsfp56_dd_400_gbps": 2
++    },
++    "internal_power_supply_quantity": 2,
++    "ac_cord_quantity": 2,
++    "maximum_power_consumption_w": 134,
++    "without_attachments_power_consumption_w": 81,
++    "design_requirement": "自重を支える部材と、ずれ・浮き上がりを抑える固定、配線・吸排気・電源と本体の取り外し経路を設計に含める。CRS804への対応は今回の必須条件から外す。"
++  },
++  "switch_breakout_cable": {
++    "manufacturer": "NADDOD",
++    "model": "Q2Q56-400G-CU2",
++    "seller_url": "https://www.naddod.com/products/103563.html",
++    "datasheet_url": "https://resource.naddod.com/files/2026-08-12/q2q56-400g-dac-datasheet-017673.pdf",
++    "ordered_quantity": null,
++    "ordered_quantity_status": "2m品を注文したという報告。注文本数は未提示。",
++    "nominal_length_mm": 2000,
++    "switch_end": "400ギガビット毎秒、QSFP-DDコネクター",
++    "spark_ends": "200ギガビット毎秒、QSFP56コネクター2端",
++    "coding": "MikroTik互換として注文",
++    "required_quantity_for_four_sparks_using_only_this_breakout": 2,
++    "required_quantity_basis": "1本につきSpark側2端。4台をこの分岐ケーブルだけで接続する場合は2本とスイッチの400ギガビット毎秒端子2個を使う。注文数の確認ではない。",
++    "family_minimum_bend_radius_mm": [37, 42],
++    "provisional_minimum_bend_radius_mm": 42,
++    "bend_radius_status": "シリーズ資料の範囲の大きい側を仮条件とする。2m品の指定値は個別確認が必要。",
++    "pending": ["公称長の測定基準", "分岐位置", "幹線と枝線それぞれの長さ", "端子と引き出し部分の外形", "必要な分岐設定と実機での通信確認"]
++  },
++  "initial_ring_cables": {
++    "user_report": "QSFP112ダイレクトアタッチケーブル40cmを4本所有。当面はリング接続に使う。",
++    "quantity": 4,
++    "nominal_length_mm": 400,
++    "manufacturer_and_model_status": "ELSA製と思われるが未確認。",
++    "reference": "models/spark-rack/reference/prepared-fans-and-cable.json",
++    "constraint_scope": "40cmの経路制約は当面のリングに適用。注文済みのスイッチ配線は2mの分岐ケーブル。"
++  },
++  "cooling": {
++    "reference": "models/spark-rack/reference/prepared-fans-and-cable.json",
++    "spark_fans_140mm_planned_quantity": 4,
++    "adapter_fans_120mm_reference_quantity": 2,
++    "individual_controller_required_quantity": 6,
++    "controller_owned_quantity": null,
++    "controller_case_source": "models/fan-controller/source/freecad_fan_controller.py",
++    "controller_dock_source": "tools/cad/controller_mount.py",
++    "controller_power": {
++      "existing_reference": "models/fan-controller/docs/ラックへの取り付け.md",
++      "existing_scheme": "コントローラー2個に12V・3A電源1個と直流電源の二股ケーブル1本。基板接続用の直流電源ジャック付きケーブルはコントローラーごとに1本。",
++      "conditional_12v_3a_supply_required_quantity": 3,
++      "conditional_two_way_splitter_required_quantity": 3,
++      "conditional_dc_jack_lead_required_quantity": 6,
++      "quantity_basis": "既存の2個で1系統の構成を6個へ拡張する場合。注文・所有数の確認ではない。",
++      "power_adapter_dimensions_mm": null,
++      "owned_power_adapter_quantity": null,
++      "pending": ["電源の形状と寸法", "所有数", "端子の極性", "配線の太さと長さ", "コントローラーを含めた電流容量"],
++      "design_requirement": "コントローラー用交流電源アダプターの支持・配線・放熱・交換場所もラック全体に含める。現状の比較模型ではその全数分の収容は未設計。"
++    }
++  },
++  "ac_distribution": {
++    "conditional_required_outlets": 9,
++    "basis": "Spark用4口、スイッチ用2口、上記のコントローラー用電源3口。給電方式を変更する場合は再計算する。",
++    "pending": ["電源タップの型番と寸法", "プラグの干渉", "電流容量", "電源スイッチの操作", "接地と配線経路"],
++    "power_accounting": "電源の定格出力を実際の消費電力として合算しない。"
++  },
++  "validation_status": "購入報告・資料と設計要求の記録。実物の適合・強度・冷却・通信を確認した結果ではない。"
++}
+-- 
+2.55.0
+

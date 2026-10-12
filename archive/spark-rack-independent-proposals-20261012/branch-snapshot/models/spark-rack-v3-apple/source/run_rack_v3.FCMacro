@@ -1,0 +1,5 @@
+# FreeCADから案D(Apple風)を生成する実行入口。形状定義は rack_v3_layout.py / rack_v3_parameters.py。
+import os
+src = os.path.dirname(os.path.abspath(__file__))
+os.environ['RACK_V3_SRC'] = src
+exec(open(os.path.join(src, 'build_rack_v3.py'), encoding='utf-8').read(), {'__file__': os.path.join(src, 'build_rack_v3.py'), '__name__': '__main__'})

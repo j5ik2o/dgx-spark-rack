@@ -1,0 +1,182 @@
+{
+  "preserved_on": "2026-10-12",
+  "purpose": "別エージェントの独立案2つを、正本と分けて参照用に保管する",
+  "branch": "grokbot/rack-v2-v3-apple",
+  "branch_location": "手元のみ（リモートなし、削除予定）",
+  "base_commit": "0806d37bca1efc52d6a7dfe4ec08f9f63df5646c",
+  "tip_commit": "19a28c83cc2b335791e9349693a73c3e0e74c414",
+  "commits": [
+    {
+      "commit": "19a28c83cc2b335791e9349693a73c3e0e74c414",
+      "author": "Junichi Kato",
+      "date": "2026-10-12T00:26:53+09:00",
+      "subject": "feat(rack): add independent rack proposals v2 (frame) and v3-apple (enclosure) with print parts"
+    }
+  ],
+  "added_files": [
+    {
+      "path": "models/spark-rack-v2/README.md",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/README.md",
+      "sha256": "e29d926ddafbf520b2407b309e9df8fbd4ff80bb4f00556d6af041b1109f62e4",
+      "blob": "721d9c0a2171b205c0fb5fdc4b9289afc8a8f8b3"
+    },
+    {
+      "path": "models/spark-rack-v2/docs/数量表.csv",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/docs/数量表.csv",
+      "sha256": "2779e96c3523bd0e10de7052113ae2d936e8c083bad5549bbff98e852351fadd",
+      "blob": "1fb88a679b4f7487f221b170214eb6ff6cdda6c6"
+    },
+    {
+      "path": "models/spark-rack-v2/docs/設計提案.md",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/docs/設計提案.md",
+      "sha256": "57f1aa7d911cff2eb509d34a25a7dfac1b7a888a068808f400a15c1d59d6978e",
+      "blob": "1a9ee533c87c03c934501df1bbfe2041ec93f197"
+    },
+    {
+      "path": "models/spark-rack-v2/reference/specs_v2.json",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/reference/specs_v2.json",
+      "sha256": "7df27de2cb78c28be844094a8780ed02dd86de9e16451059fe9ef69a10746cc3",
+      "blob": "f991e9f91c2bff677f4318cd7c7d1c7dd0bef216"
+    },
+    {
+      "path": "models/spark-rack-v2/source/build_rack_v2.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/build_rack_v2.py",
+      "sha256": "e72a9bec0bbeaa643e48faad048c577fc3bc9b853c3509d77820fea549515744",
+      "blob": "e91f8810b9006a0e0285849271e4108dfcdff912"
+    },
+    {
+      "path": "models/spark-rack-v2/source/draw_rack_v2.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/draw_rack_v2.py",
+      "sha256": "3346c50ad3e983f822fa8152f7e9616db685a83980744100c6ef167f4e208c9c",
+      "blob": "9d4037af2a6ed9ae1aafe49d6336e9d5b7b4cb57"
+    },
+    {
+      "path": "models/spark-rack-v2/source/rack_v2_checks.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/rack_v2_checks.py",
+      "sha256": "c28ac3cce7227df3fc6044096fa666322b86ac662860c6c75ed1bf3aa232c4e7",
+      "blob": "0bf9225a466f569e527248fafea661b571579b17"
+    },
+    {
+      "path": "models/spark-rack-v2/source/rack_v2_layout.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/rack_v2_layout.py",
+      "sha256": "0d68e1beeead6e9ff65f3bbc1cd76f3dd8f8e9397a4062171bfd89df7ae404a3",
+      "blob": "9e58d882b0849fe467094d6371d57c18c683424e"
+    },
+    {
+      "path": "models/spark-rack-v2/source/rack_v2_parameters.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/rack_v2_parameters.py",
+      "sha256": "8c45f43f905b8f8bd9ab6368be1f67732bba07d2d2a8ceeb7da0dc5c5d3fcb69",
+      "blob": "5890dbbd58eee411c68f021359e8bc157f6cb019"
+    },
+    {
+      "path": "models/spark-rack-v2/source/run_rack_v2.FCMacro",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/run_rack_v2.FCMacro",
+      "sha256": "3734a3ac3b9f8ed99643e69947a29f396b45e9de5eff7b7f4e9bdc4afffe962d",
+      "blob": "4b67c8955da8caef00bbcbce8b0c5e63c1c8fac1"
+    },
+    {
+      "path": "models/spark-rack-v2/source/viewer_template.html",
+      "snapshot": "branch-snapshot/models/spark-rack-v2/source/viewer_template.html",
+      "sha256": "3af7ace7c74eebfcbc4784b39e40d375c8d832977e3494bed21c5e9c2e04d672",
+      "blob": "85580a82b819e9d6e0c94511332d4061dc5cc1f3"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/README.md",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/README.md",
+      "sha256": "c4d73d68738519ad4313ff0bc9bb29569e98d0f1375798a68d1b3151e46b9a24",
+      "blob": "e4cd2e8c97ed204e38097f63cbf105c8075c0e12"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/docs/印刷指示書.md",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/docs/印刷指示書.md",
+      "sha256": "2e24dd6a6034d4f2248cf48e05e94b956a04459b88d7ea21446fe1ef8880f9b9",
+      "blob": "4abb598f91122fba2a63003f0ff6f361d902979b"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/docs/数量表.csv",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/docs/数量表.csv",
+      "sha256": "85c0a3bd2f9a2457bc5bc4911cf15e9c3e26e6d699f4d76095543d35e55600cb",
+      "blob": "eb724769e74285b6db4c50b728977a2c23d74194"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/docs/設計提案.md",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/docs/設計提案.md",
+      "sha256": "06a4b567225e4a241237a55f7bff629d551632e691a85aa94e099d4f3f8b95a8",
+      "blob": "2a6111d7617ddfaf1d064b3e138259877335d7e9"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/reference/specs_v3.json",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/reference/specs_v3.json",
+      "sha256": "a238b3b1aa38155497253e48efbba442b8cd880df040ac56e8843efe47dbb104",
+      "blob": "4326be8ca6f701ee6c38ce6c4db7612d4baf759d"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/build_print_v3.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/build_print_v3.py",
+      "sha256": "6fd7935a456f060174e19b2667fb89271ac4e5cf4c3de3ee7d71b484940f30ec",
+      "blob": "ab85c85f14453d01d211cda829f65b7b19a7b5e8"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/build_rack_v3.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/build_rack_v3.py",
+      "sha256": "2f938ce293ff0d44cc2991f06b894e381dd0d6854659935894476425f7ba6f8b",
+      "blob": "6e9d1dd10468252753acf9282fef6c8c7ef06d98"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/draw_rack_v3.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/draw_rack_v3.py",
+      "sha256": "4626eab5cc6bfb0d2bc5823106726fba9b9a47b778b5b61d5a8ad116daca79fa",
+      "blob": "a25bcb17747354b966cde3d40291b3ab9b05c42a"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/printed_parts_v3.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/printed_parts_v3.py",
+      "sha256": "c01181a2b19a0a57ca3497c6d4aa2766e05e3a280ad0150d6dd204b842b6ddff",
+      "blob": "e40f56b24d3254438cae8aebd2418e76ceb68323"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/printed_tiles_v3.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/printed_tiles_v3.py",
+      "sha256": "423b841c050388717136c8e47320a2890ec82aa66bb5a667c5e1e04dae50b3de",
+      "blob": "3dc556e0b2a3bc472b075e6e716b0e5c8f6657ac"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/rack_v3_checks.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/rack_v3_checks.py",
+      "sha256": "3af122ceac0dde1e8d12d5bdd32938048155e32e287e86f5e385828317b83d85",
+      "blob": "6dedc65f2420169d6582d061ab4dc56ff8619c5c"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/rack_v3_layout.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/rack_v3_layout.py",
+      "sha256": "85c865a4b435953ce30df36ac398cd533e6a3401b276b8d21c15b14b6206b8b5",
+      "blob": "9827dfffd9fe54e78263db6fcd438516e489d1a4"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/rack_v3_parameters.py",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/rack_v3_parameters.py",
+      "sha256": "ddad8cd7bde34afb6836206fc6e841a0ac9e3506537379cead9a74b4101a2ea1",
+      "blob": "5d2169c2a088edb6e08c4315fffcd376b75c9b1e"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/run_rack_v3.FCMacro",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/run_rack_v3.FCMacro",
+      "sha256": "75256c9b979eff02953c55f872f711746ce59de60b79070a7d86706ef101a28d",
+      "blob": "45071c70221bfdf0fbbee68a56f210dbd7ff233e"
+    },
+    {
+      "path": "models/spark-rack-v3-apple/source/viewer_template.html",
+      "snapshot": "branch-snapshot/models/spark-rack-v3-apple/source/viewer_template.html",
+      "sha256": "3af7ace7c74eebfcbc4784b39e40d375c8d832977e3494bed21c5e9c2e04d672",
+      "blob": "85580a82b819e9d6e0c94511332d4061dc5cc1f3"
+    },
+    {
+      "path": "print-projects/spark-rack-v3-apple/README.md",
+      "snapshot": "branch-snapshot/print-projects/spark-rack-v3-apple/README.md",
+      "sha256": "0912075becfd244f924322c2ee28a7e1b697d065b4cc30aa925522915a0cd24b",
+      "blob": "ac45c2ac76e06f76e4c2470d91b84adfebbc676d"
+    }
+  ],
+  "modified_files_preserved_only_as_patches": [],
+  "patches": []
+}

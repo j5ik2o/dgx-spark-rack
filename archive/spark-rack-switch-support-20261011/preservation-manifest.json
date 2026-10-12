@@ -1,0 +1,81 @@
+{
+  "preserved_on": "2026-10-12",
+  "purpose": "固定段ラックへ置き換わった旧枠のスイッチ受け板案を、ブランチ削除前に保管する",
+  "branch": "codex/switch-support-design",
+  "branch_location": "origin/codex/switch-support-design（削除予定）",
+  "base_commit": "0806d37bca1efc52d6a7dfe4ec08f9f63df5646c",
+  "tip_commit": "3119ee150aec35f5d483d4ff5a13b02aab409d32",
+  "commits": [
+    {
+      "commit": "5b92307cf689c864776d7315a9baaadf82bcfc18",
+      "author": "Junichi Kato",
+      "date": "2026-10-11T23:55:21+09:00",
+      "subject": "feat(rack): integrate switch support and service access"
+    },
+    {
+      "commit": "3119ee150aec35f5d483d4ff5a13b02aab409d32",
+      "author": "Junichi Kato",
+      "date": "2026-10-11T23:57:57+09:00",
+      "subject": "docs(rack): record ordered hardware and independent design brief"
+    }
+  ],
+  "added_files": [
+    {
+      "path": "models/spark-rack/docs/スイッチ支持部と交換経路.md",
+      "snapshot": "branch-snapshot/models/spark-rack/docs/スイッチ支持部と交換経路.md",
+      "sha256": "9ad9f79bf90e679366bdb97c6d6c22da391f4b47a8bdab4b212f1b6a95781974",
+      "blob": "c3db89d7db82530ee183f7d37409dba87dc7223a"
+    },
+    {
+      "path": "models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md",
+      "snapshot": "branch-snapshot/models/spark-rack/docs/別エージェント向け設計プロンプト-20261011.md",
+      "sha256": "402f7008e2e8e1439e9d03cc9cc9f9b51b0d4ffcf1ee4fba36c286056304ab56",
+      "blob": "db54b3872ddc0e72c616155ef83ec666e1fb8fed"
+    },
+    {
+      "path": "models/spark-rack/reference/ordered-network-equipment-20261011.json",
+      "snapshot": "branch-snapshot/models/spark-rack/reference/ordered-network-equipment-20261011.json",
+      "sha256": "b0091a943adb6de29db8bc05bd38d079676b7175ffb946a7bf9cc62d161b02e9",
+      "blob": "534553397a9ac223604be4ec9f8b372a6a818dac"
+    },
+    {
+      "path": "models/spark-rack/source/build_switch_support_cad.py",
+      "snapshot": "branch-snapshot/models/spark-rack/source/build_switch_support_cad.py",
+      "sha256": "ed92de18856fa9262cc8fafa09e1978609fe79d866f83c7a9f16ce5dbe830f87",
+      "blob": "032137a9b7b4ca71caaf0672a7f11819aef48573"
+    },
+    {
+      "path": "models/spark-rack/source/freecad_switch_support.py",
+      "snapshot": "branch-snapshot/models/spark-rack/source/freecad_switch_support.py",
+      "sha256": "3bab67e09d9469706412ad9f9f90a0abab3d532345481e603fe092b73d49dcbe",
+      "blob": "8113e86aa55fa14bc96e44bc3946be0886af1490"
+    },
+    {
+      "path": "models/spark-rack/source/switch_support_parameters.py",
+      "snapshot": "branch-snapshot/models/spark-rack/source/switch_support_parameters.py",
+      "sha256": "8714788e7daf9741621b0c8ee01505aa32764bc7988a6fff1a33709990fffc55",
+      "blob": "a4aa5fb95dd1aae5cdd6e51b0fac8a7556d13b19"
+    },
+    {
+      "path": "tests/test_switch_support_freecad.py",
+      "snapshot": "branch-snapshot/tests/test_switch_support_freecad.py",
+      "sha256": "6a49cff6caa88f39233b8f01244e6c7380f589053d7b0506d4a67bacf31dec8b",
+      "blob": "3640a52073699361b40b3d54bb03c488e476c31e"
+    }
+  ],
+  "modified_files_preserved_only_as_patches": [
+    "README.md",
+    "models/spark-rack/README.md",
+    "models/spark-rack/docs/4台専用ラックの設計条件.md",
+    "models/spark-rack/docs/凹凸の接合試験片と次案.md",
+    "models/spark-rack/reference/pending-mount-measurements.json",
+    "models/spark-rack/source/build_rack_candidate_overview.py",
+    "models/spark-rack/source/rack_candidate_overview.html",
+    "tests/check_rack_candidate_overview.cjs",
+    "tests/test_compact_rack_overview.py"
+  ],
+  "patches": [
+    "0001-feat-rack-integrate-switch-support-and-service-acces.patch",
+    "0002-docs-rack-record-ordered-hardware-and-independent-de.patch"
+  ]
+}
