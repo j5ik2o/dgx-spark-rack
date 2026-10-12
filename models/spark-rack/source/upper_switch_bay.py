@@ -98,6 +98,16 @@ def bay_layout(p, q=None):
             'manufacturing_geometry': False, 'physical_validation': False}
 
 
+def upper_scene(mode='crs812', q=None, with_accessories=True):
+    """上部専用段の案の寸法・専用段・中段の機器棚をそろえて返す。"""
+    from rack_accessories import accessory_layout
+    q = q or UpperSwitchBayParameters()
+    p = rack_parameters(q)
+    bay = bay_layout(p, q)
+    accessories = accessory_layout(p, fixed_layout(mode, p, bay)) if with_accessories else None
+    return p, bay, accessories, fixed_layout(mode, p, bay, accessories)
+
+
 def front_service_obstructions(service, obstacles):
     return sorted({b['name'] for b in obstacles if b['name'] != 'switch' and overlaps(service, b)})
 

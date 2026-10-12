@@ -31,14 +31,19 @@ def cross_beams(p, bay=None):
     return result
 
 
-def fixed_layout(mode='ring', parameters=None, bay=None):
-    """bayはupper_switch_bay.bay_layoutの結果。省略時は中央の暫定配置。"""
+def fixed_layout(mode='ring', parameters=None, bay=None, accessories=None):
+    """bayはupper_switch_bay.bay_layout、accessoriesはrack_accessories.accessory_layoutの結果。
+
+    省略時は中央の暫定配置。遠隔操作機器の棚は、中段が空く上部専用段の案でだけ使える。
+    """
     if mode not in ('ring', 'crs812'):
         raise ValueError('採用構成はリング接続またはCRS812です')
     p = parameters or FixedRackParameters()
     p.validate()
     if bay is not None and p.height + 1e-9 < bay['required_height']:
         raise ValueError('上部専用段に必要な全高が不足しています')
+    if accessories is not None and bay is None:
+        raise ValueError('遠隔操作機器の棚は上部専用段の案でだけ使えます。中央配置ではスイッチと重なります。')
     lp = replace(LayoutParameters(), lower_base=p.lower_base, row_pitch=p.row_pitch,
                  column_pitch=p.column_pitch, rack_width=p.width, rack_height=p.height,
                  rack_front_y=p.front_y, rear_space=p.rear_y, switch_face_y=100,
@@ -148,6 +153,9 @@ def fixed_layout(mode='ring', parameters=None, bay=None):
             'control_door_sweep': box('control_door_sweep', '制御器扉を前方へ90度開く経路の保守的な箱',
                                      [-224, p.controller_origin_y + 3 - 360, 8], [404, 372, 140], 'service'),
             'selected_switch': selected_network()['final_phase']['switch']}
+    if accessories is not None:
+        scene['equipment'] = scene['equipment'] + deepcopy(accessories['equipment'])
+        scene['accessories'] = deepcopy(accessories)
     if bay is not None:
         scene['switch_bay'] = deepcopy(bay)
         scene['conditional_service_spaces'] = [deepcopy(bay['front_service'])] if mode == 'crs812' else []
@@ -157,6 +165,8 @@ def fixed_layout(mode='ring', parameters=None, bay=None):
 def check_fixed_layout(scene):
     bay = scene.get('switch_bay')
     bay_objects = bay['objects'] if bay else []
+    if scene.get('accessories'):
+        bay_objects = bay_objects + scene['accessories']['objects']
     solids = scene['equipment'] + scene['carriers'] + scene['trays'] + scene['power_trays']
     solids += [scene['separator'], scene['control_panel']] + bay_objects
     def own_fan_and_holder(a, b):
@@ -192,6 +202,11 @@ def check_fixed_layout(scene):
                                      if b['name'] != 'switch' and overlaps(space, b)})}
             for space in scene.get('conditional_service_spaces', [])]
         if any(row['required'] and row['obstructions'] for row in result['conditional_front_service']):
+            raise ValueError(str(result))
+    if scene.get('accessories'):
+        from rack_accessories import check_accessories
+        result.update(check_accessories(scene))
+        if result['accessory_service_obstructions'] or result['accessory_connector_obstructions']:
             raise ValueError(str(result))
     if collisions or air_conflicts or service_conflicts or storage_conflicts or outside:
         raise ValueError(str(result))

@@ -47,15 +47,18 @@ def support_contacts(model):
             if area < 500:
                 raise ValueError('トレーと固定支持面の接触が不足しています: ' + target)
             rows.append({'target': target, 'support': name, 'area_mm2': area})
-        carried = assembly.get('carried')
-        if carried:
-            shape = next(i['shape'] for i in model['references'] if i['name'] == carried['target'])
-            for support in carried['supports']:
-                tray = next(i['shape'] for i in items if i['name'] == support)
-                area = horizontal_contact(tray, shape, carried['z'])
-                if area < 500:
-                    raise ValueError('機器とトレーの接触が不足しています: ' + support)
-                rows.append({'target': carried['target'], 'support': support, 'area_mm2': area})
+        carried = assembly.get('carried') or []
+        if isinstance(carried, dict):
+            carried = [dict(carried, each=True, minimum_area_mm2=500)]
+        everything = {i['name']: i['shape'] for i in items + model['references']}
+        for entry in carried:
+            shape = everything[entry['target']]
+            areas = {support: horizontal_contact(everything[support], shape, entry['z'])
+                     for support in entry['supports']}
+            low = [n for n, a in areas.items() if a < entry['minimum_area_mm2']] if entry['each'] else []
+            if low or sum(areas.values()) < entry['minimum_area_mm2']:
+                raise ValueError('載せる物と支持面の接触が不足しています: ' + entry['target'])
+            rows += [{'target': entry['target'], 'support': n, 'area_mm2': a} for n, a in areas.items() if a > 0]
     return {'status': 'passed', 'contacts': rows,
             'scope': 'トレーから固定支持棚・支持床、側壁の水平な受け面へ荷重を渡す面の存在。強度と長期荷重は未検証。'}
 
@@ -146,6 +149,10 @@ def exchange_envelopes(model):
             b = by_name[part]['shape'].optimalBoundingBox(False)
             x = b.XMin if right else b.XMin - 80
             inspect(part + 'を側面へ', box([x, b.YMin, b.ZMin], [b.XLength + 80, b.YLength, b.ZLength]), moving, fixed)
+    accessories = model.get('accessories')
+    if accessories is not None:
+        for space in accessories['service_spaces']:
+            inspect(space['label'], box(space['origin'], space['size']), set(space['moving']), fixed)
     front_service = None
     bay = model.get('switch_bay')
     if bay is not None:
@@ -194,7 +201,7 @@ def validate(model):
         raise ValueError('形状干渉: ' + str(collisions))
     results = {}
     for mode in ('ring', 'crs812'):
-        scene = fixed_layout(mode, p, model.get('switch_bay'))
+        scene = fixed_layout(mode, p, model.get('switch_bay'), model.get('accessories'))
         results[mode] = check_fixed_layout(scene)
     reference = model['scene']
     service_failures, air_failures = [], []
@@ -234,6 +241,27 @@ def validate(model):
                        'load_path': 'スイッチ→左右のトレー→床の支持帯→床の左右の舌→側枠の水平な受け→側枠の重ね継ぎ→脚',
                        'switch_fixing': 'トレーの側面の止めと前側の止めで位置を決め、後ろのねじ2本でトレーを床へ留める。'
                                         'スイッチ本体の固定金具は穴位置の実測後に設計する。'}
+    accessories = model.get('accessories')
+    accessory_summary = None
+    if accessories is not None:
+        remaining += ['切替器の実寸・電源・端子の面に合わせた棚の位置',
+                      'Comet Pro・切替器・CRS812の交流電源（電源タップの置き場）',
+                      '切替器からSparkのHDMIとUSBへの配線の経路と保持']
+        comet = next(i for i in model['references'] if i['name'] == 'remote_kvm')['shape'].BoundBox
+        panel = next(i for i in model['parts'] if i['name'] == 'mid_panel_center')['shape']
+        probe = box([comet.XMin, accessories['panel_y'], comet.ZMin],
+                    [comet.XLength, accessories['parameters']['panel_thickness'], comet.ZLength])
+        open_fraction = 1 - probe.common(panel).Volume / probe.Volume
+        if open_fraction < .75:
+            raise ValueError('Comet Proの画面の前の窓が不足しています')
+        accessory_summary = {'shelf_bottom_mm': accessories['shelf_z'], 'device_support_mm': accessories['support_z'],
+                             'front_panel_z_mm': accessories['panel_z'],
+                             'screen_recess_mm': accessories['screen_recess_mm'],
+                             'screen_window_open_fraction': open_fraction,
+                             'part_count': model['supports']['accessories']['part_count'],
+                             'kvm_switch_measured': accessories['kvm_measured'],
+                             'thermal_reason': accessories['thermal_reason'], 'wifi_note': accessories['wifi_note'],
+                             'open_items': accessories['open_items']}
     volumes = {}
     for record in records.values():
         role = record['role']
@@ -253,6 +281,7 @@ def validate(model):
                                 'by_role_mm3': volumes,
                                 'scope': '参考部品を除いた形状体積。充填率・支持材・印刷損失を含む材料使用量ではない。'},
             **({'switch_bay': bay_summary} if bay_summary else {}),
+            **({'accessories': accessory_summary} if accessory_summary else {}),
             'scope': '形状候補の妥当性、246mm外形、静止干渉、機器の交換予約、前後の固定障害物。',
             'manufacturing_geometry': False, 'physical_validation': False,
             'whole_assembly_path_validated': False,

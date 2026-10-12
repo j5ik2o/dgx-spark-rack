@@ -15,7 +15,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Path(__file__).parent
 VARIANTS = {None: ('fixed-rack', '固定段・独立電源区画の形状候補'),
-            'upper': ('upper-switch-bay', '上枠を共有する上部専用段の形状候補')}
+            'upper': ('upper-switch-bay', '上枠を共有する上部専用段と中段の遠隔操作機器棚の形状候補')}
 
 
 def digest(path):
@@ -35,9 +35,9 @@ def worker(folder, variant=None):
     from validate_fixed_rack import validate
     Gui.showMainWindow()
     if variant == 'upper':
-        from upper_switch_bay import bay_layout, rack_parameters
-        parameters = rack_parameters()
-        doc, model = create_fixed_rack(parameters, 'crs812', bay_layout(parameters))
+        from upper_switch_bay import upper_scene
+        parameters, bay, accessories, _ = upper_scene()
+        doc, model = create_fixed_rack(parameters, 'crs812', bay, accessories)
     else:
         doc, model = create_fixed_rack()
     validation = validate(model)
@@ -87,8 +87,10 @@ def build(variant=None):
               ROOT / 'tests/test_fixed_rack_layout.py', ROOT / 'tests/test_fixed_rack_geometry.py']
     if variant == 'upper':
         files += [SOURCE / n for n in ('upper_switch_bay.py', 'switch_bay_geometry.py',
-                                       'switch_placement_comparison.py')]
-        files += [ROOT / 'tests/test_upper_switch_bay.py', ROOT / 'tests/test_switch_bay_geometry.py']
+                                       'switch_placement_comparison.py', 'rack_accessories.py',
+                                       'accessory_geometry.py')]
+        files += [ROOT / 'tests/test_upper_switch_bay.py', ROOT / 'tests/test_switch_bay_geometry.py',
+                  ROOT / 'tests/test_rack_accessories.py', ROOT / 'tests/test_accessory_geometry.py']
     hashes = {str(f.relative_to(ROOT)): digest(f) for f in files}
     manifest = {'status': 'running', 'purpose': purpose,
                 'sources_sha256': hashes, 'manufacturing_geometry': False, 'physical_validation': False}

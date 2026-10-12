@@ -47,7 +47,7 @@ description = "固定段・独立電源区画の形状候補と交換予約を�
 run = "python3 models/spark-rack/source/build_fixed_rack.py"
 
 [tasks."upper-bay:spark-rack"]
-description = "上枠を共有する上部専用段の形状候補・3案の比較・検査を生成（造形用ではない）"
+description = "上枠を共有する上部専用段と中段の遠隔操作機器棚の形状候補・3案の比較・検査を生成（造形用ではない）"
 run = "python3 models/spark-rack/source/build_fixed_rack.py --switch-bay upper"
 
 [tasks."compare-switch:spark-rack"]

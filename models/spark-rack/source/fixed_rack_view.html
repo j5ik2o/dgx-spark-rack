@@ -32,7 +32,7 @@ function draw(){
  const low=[Math.min(...bounds.map(p=>p[0])),Math.min(...bounds.map(p=>p[1]))],high=[Math.max(...bounds.map(p=>p[0])),Math.max(...bounds.map(p=>p[1]))];
  const scale=Math.min(980/(high[0]-low[0]),745/(high[1]-low[1]));
  const project=p=>{const q=camera(p);return[550+(q[0]-(low[0]+high[0])/2)*scale,438+(q[1]-(low[1]+high[1])/2)*scale]};
- const referenceRoles=['spark','fan','adapter','switch','case_reference','controller_knob_reference','controller_display_reference'];
+ const referenceRoles=['spark','fan','adapter','switch','accessory','case_reference','controller_knob_reference','controller_display_reference'];
  const isPower=m=>m.role==='adapter'||m.role==='separator'||m.name.startsWith('power_');
  const visible=data.meshes.filter(m=>!(m.role==='side_panel'&&!el('outer_walls').checked)&&!(m.role==='switch'&&mode==='ring')&&(!referenceRoles.includes(m.role)||el('equipment').checked)&&(!isPower(m)||el('power').checked));
  const faces=[];
@@ -44,6 +44,7 @@ function draw(){
  if(el('air').checked)for(const b of [...data.layout.intake_spaces,...data.layout.exhaust_spaces])outline(b,'#5996bd');
  if(el('service').checked)for(const b of data.layout.service_spaces.filter(b=>mode!=='ring'||b.name!=='switch_removal'))outline(b,'#b7804b');
  if(el('service').checked&&mode!=='ring')for(const b of data.layout.conditional_service_spaces||[])outline(b,'#c45f5f');
+ if(el('service').checked&&data.layout.accessories)for(const b of data.layout.accessories.service_spaces)outline(b,'#4f8f6f');
  if(el('storage').checked)for(const b of data.layout.cable_storage_spaces)outline(b,'#835ea1');
  ctx.fillStyle='#536475';ctx.font='17px -apple-system,sans-serif';ctx.fillText({iso:'接合を含む形状候補・ドラッグで回転',front:'前面：4つの140mmファンと制御器の扉',back:'背面：機器の交換経路を確保',side:'側面：電源用ファンは保持板ごと外へ',top:'上面：2列の本体と共通枠'}[view],25,35);
  el('caption').textContent=(mode==='ring'?'当初のリング接続。スイッチだけを外して表示。':'最終のCRS812接続。分岐ケーブルの実経路は未確定。')+' 本体は両方式とも底面208／428mmの同じ位置です。';
@@ -54,11 +55,11 @@ el('size').textContent=data.layout.frame_outer_mm.join(' × ')+'mm';
 if(data.variants){
  const bay=data.validation.switch_bay,labels={passed:'確保',blocked:'上段ファン保持部に当たる'},causes={switch_front_service_over_fan_carriers:'前側の作業空間を上段ファン保持部の上へ通す',upper_spark_rear_exchange:'上段Sparkを背面へ出す空間の直上',};
  el('headline').textContent='上部専用段を持つ4台ラック。';
- el('lead').textContent='上枠を専用段の上へ移し、スイッチを載せる床を左右の側枠へ差し込みました。本体の段位置と電源区画は変えず、全高は'+bay.frame_height_mm+'mmです。スイッチは左右のトレーに載せて背面へ引き出します。';
+ el('lead').textContent='上枠を専用段の上へ移し、スイッチを載せる床を左右の側枠へ差し込みました。本体の段位置と電源区画は変えず、全高は'+bay.frame_height_mm+'mmです。スイッチは左右のトレーに載せて背面へ引き出します。'+(data.validation.accessories?'上下のSparkの間には遠隔操作機器の棚を置き、前にComet Pro、後ろに4入力の切替器を載せました。上下のファンの間は、画面の窓を持つ前面板で閉じています。':'');
  el('variant').hidden=false;el('variants-link').hidden=false;
  el('variant-rows').innerHTML=data.variants.rows.map(r=>`<tr class="${r.key===data.variants.recommendation?'chosen':''}"><td>${r.label}${r.key===data.variants.recommendation?'（推奨）':''}</td><td class="num">${r.height_mm}mm</td><td class="num">${r.switch_bottom_mm}mm</td><td>${labels[r.front_service]}</td><td>${causes[r.binding_constraint]||r.binding_constraint}</td></tr>`).join('');
  el('variant-reason').textContent=data.variants.reason;
- el('warning').textContent='形状候補です。スイッチ本体をトレーへ留める金具は、後方支持耳の穴位置を実測してから設計します。トレー抜け止めねじの床側の雌ねじ、専用段前面の開口の覆い、制御器扉のヒンジ、トレーのガイドと抜け止め（本体と電源）、仕切りの固定、余長収納の保持部、脚は未完成です。スイッチの吸排気方向、質量、実奥行は未確認です。実物の適合・強度・冷却は未検証で、造形用のファイルは生成していません。';
+ el('warning').textContent='形状候補です。スイッチ本体をトレーへ留める金具は、後方支持耳の穴位置を実測してから設計します。トレー抜け止めねじの床側の雌ねじ、専用段前面の開口の覆い、制御器扉のヒンジ、トレーのガイドと抜け止め（本体と電源）、仕切りの固定、余長収納の保持部、脚は未完成です。スイッチの吸排気方向、質量、実奥行は未確認です。'+(data.validation.accessories?'切替器の外形は仮の箱で、電源の取り方、SparkのHDMIとUSBへの配線、電源タップの置き場は未設計です。':'')+'実物の適合・強度・冷却は未検証で、造形用のファイルは生成していません。';
 }
 el('validation-summary').textContent='形状候補'+data.validation.candidate_part_instances+'個の有効性と外形、静止した形状の干渉、本体とスイッチの背面交換予約、前後の固定障害物、保存後の再読込を確認しました。支持面の接触と共通操作面の視線・指の仮空間も検査済みです。扉を開く予約と、電源・ファンの交換方向にも固定障害物がないことを確認しました。接続線、留め具、実際の手の操作と全体組立は未検証です。';
 el('mode').addEventListener('change',()=>{mode=el('mode').value;draw()});

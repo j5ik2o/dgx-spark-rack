@@ -165,6 +165,41 @@ class UpperSwitchBayParameters:
 
 
 @dataclass(frozen=True)
+class RemoteConsoleParameters:
+    """上下のSparkの間に置く遠隔操作機器の棚と前面板。余裕の寸法は設計仮定。
+
+    機器の外形は未確定値の記録から読む。Comet Proは公式資料の値、切替器は仮の箱。
+    """
+    shelf_plate: float = 4
+    shelf_rib: float = 8
+    panel_thickness: float = 4
+    panel_center_half_width: float = 60
+    window_margin: float = 3
+    slot_pitch: float = 10
+    comet_side_margin: float = 12
+    comet_top_margin: float = 6
+    comet_rear_cable_space: float = 60
+    kvm_rear_face_y: float = 90
+    kvm_rear_connector_space: float = 50
+    kvm_front_connector_space: float = 40
+    kvm_hand_margin: float = 12
+    band_width: float = 20
+    front_gap: float = 4
+    flange_thickness: float = 4
+    flange_overlap: float = 20
+
+    @property
+    def shelf_thickness(self):
+        return self.shelf_plate + self.shelf_rib
+
+    def validate(self):
+        import math
+        for key, value in asdict(self).items():
+            if not math.isfinite(value) or (key != 'kvm_rear_face_y' and value <= 0):
+                raise ValueError('遠隔操作機器の棚の寸法は有限の正の値にしてください: ' + key)
+
+
+@dataclass(frozen=True)
 class Parameters:
     module_width: float = 210
     module_depth: float = 230
