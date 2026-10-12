@@ -21,11 +21,12 @@ class AccessoryGeometryTests(unittest.TestCase):
         cls.p, cls.bay, cls.acc, cls.scene = upper_scene()
         cls.parts, cls.metadata = accessory_parts(cls.scene, cls.p, cls.acc)
         cls.by_name = {item['name']: item['shape'] for item in cls.parts}
-        cls.shelf = [item['shape'] for item in cls.parts if item['role'] == 'accessory_shelf']
+        cls.shelf = [item['shape'] for item in cls.parts if item['name'].startswith('accessory_shelf_')]
 
-    def test_six_shelf_tiles_and_three_panels_fit_the_printer(self):
+    def test_six_shelf_tiles_three_panels_and_a_sled_fit_the_printer(self):
         self.assertEqual(len(self.shelf), 6)
         self.assertEqual(sum(item['role'] == 'mid_panel' for item in self.parts), 3)
+        self.assertIn('remote_kvm_sled', self.by_name)
         for item in self.parts:
             with self.subTest(part=item['name']):
                 shape = item['shape']
@@ -117,8 +118,8 @@ class AccessoryGeometryTests(unittest.TestCase):
         from fixed_rack_geometry import shapes
         from upper_switch_bay import upper_scene
         from validate_fixed_rack import validate
-        p, bay, acc, _ = upper_scene('ring')
-        result = validate(shapes(p, 'ring', bay, acc))
+        p, bay, acc, scene = upper_scene('ring')
+        result = validate(shapes(p, 'ring', bay, acc, scene['finish']))
         self.assertEqual(result['status'], 'passed')
         self.assertNotIn('switch_front_service', result['exchange_envelopes'])
 

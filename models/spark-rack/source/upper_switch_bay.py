@@ -98,14 +98,21 @@ def bay_layout(p, q=None):
             'manufacturing_geometry': False, 'physical_validation': False}
 
 
-def upper_scene(mode='crs812', q=None, with_accessories=True):
-    """上部専用段の案の寸法・専用段・中段の機器棚をそろえて返す。"""
+def upper_scene(mode='crs812', q=None, with_accessories=True, with_finish=True):
+    """上部専用段の案の寸法・専用段・中段の機器棚・前面と天面の板をそろえて返す。
+
+    互換のため4要素を返す。前面と天面の板はscene['finish']から読む。
+    """
     from rack_accessories import accessory_layout
+    from rack_finish import finish_layout
     q = q or UpperSwitchBayParameters()
     p = rack_parameters(q)
     bay = bay_layout(p, q)
     accessories = accessory_layout(p, fixed_layout(mode, p, bay)) if with_accessories else None
-    return p, bay, accessories, fixed_layout(mode, p, bay, accessories)
+    finish = None
+    if with_accessories and with_finish:
+        finish = finish_layout(p, fixed_layout(mode, p, bay, accessories), accessories)
+    return p, bay, accessories, fixed_layout(mode, p, bay, accessories, finish)
 
 
 def front_service_obstructions(service, obstacles):

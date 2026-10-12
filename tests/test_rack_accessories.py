@@ -25,13 +25,17 @@ class RackAccessoriesTests(unittest.TestCase):
         comet = self.by_name['remote_kvm']
         self.assertLess(comet['origin'][2] + comet['size'][2], self.acc['front_top_limit_mm'])
 
-    def test_comet_sits_behind_the_lower_fans_and_faces_the_window(self):
+    def test_comet_screen_sits_right_behind_the_window_on_a_sled(self):
         comet = self.by_name['remote_kvm']
-        self.assertGreater(comet['origin'][1], self.p.fan_front_y + self.p.fan_depth)
+        sled = self.by_name['remote_kvm_sled']
         self.assertEqual(comet['size'], [93, 84, 47])
+        self.assertLess(self.acc['screen_recess_mm'], 1)
         cx, cz = self.acc['window']['center']
         self.assertAlmostEqual(cz, comet['origin'][2] + comet['size'][2] / 2)
-        self.assertLess(self.acc['screen_recess_mm'], 40)
+        # 載せ台の前の部分は、下段ファン保持部の上を片持ちで延びる。
+        self.assertEqual(sled['origin'][2] + sled['size'][2], comet['origin'][2])
+        self.assertGreater(sled['origin'][2], self.acc['lower_carrier_top_mm'])
+        self.assertLess(sled['origin'][1], self.p.fan_front_y + self.p.fan_depth)
 
     def test_both_phases_pass_with_the_shelf(self):
         for mode in ('ring', 'crs812'):
@@ -50,7 +54,7 @@ class RackAccessoriesTests(unittest.TestCase):
         check_fixed_layout(self.scene)
         scene = deepcopy(self.scene)
         scene['accessories']['objects'].append({'name': 'front_obstacle', 'label': '前の障害物',
-                                                'origin': [-10, -330, 330], 'size': [6, 2, 6], 'kind': 'mid_panel'})
+                                                'origin': [-10, -346, 330], 'size': [6, 2, 6], 'kind': 'mid_panel'})
         with self.assertRaisesRegex(ValueError, "'remote_kvm_removal', 'front_obstacle'"):
             check_fixed_layout(scene)
 

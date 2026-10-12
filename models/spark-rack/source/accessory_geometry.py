@@ -32,6 +32,21 @@ def _flange_holes(acc, p):
     return [(x, y) for x in side + [-center, center] + [-v for v in side]]
 
 
+def _sled_holes(acc):
+    sled = next(o for o in acc['objects'] if o['name'] == 'remote_kvm_sled')
+    y = sled['origin'][1] + sled['size'][1] - 15
+    return [(-30, y), (30, y)]
+
+
+def _sled(acc):
+    """Comet Proの載せ台。後ろ寄りを棚へねじで留め、前の部分は片持ちで前面板の後ろまで延ばす。"""
+    sled = next(o for o in acc['objects'] if o['name'] == 'remote_kvm_sled')
+    shape = _box(sled['origin'], sled['size'])
+    for x, y in _sled_holes(acc):
+        shape = shape.cut(_hole(x, y, sled['origin'][2] - 1, sled['size'][2] + 2))
+    return shape.removeSplitter()
+
+
 def _shelf(p, acc):
     q = acc['parameters']
     end = p.inner_width / 2 + 8
@@ -58,7 +73,7 @@ def _shelf(p, acc):
     flange = _flange_holes(acc, p)
     shapes += [Part.makeCylinder(7, rib_h, App.Vector(x, y, rib_z)) for x, y in laps]
     shelf = _fuse(shapes)
-    for x, y in laps + flange:
+    for x, y in laps + flange + _sled_holes(acc):
         shelf = shelf.cut(_hole(x, y, z0 - 1, top - z0 + 2))
     return shelf.removeSplitter(), [-end, front, z0], [2 * end, run, top - z0], laps, flange
 
@@ -117,6 +132,8 @@ def accessory_parts(scene, p, acc):
                       'shape': shape, 'role': 'accessory_shelf'})
     panels = _panels(p, acc)
     parts += panels
+    parts.append({'name': 'remote_kvm_sled', 'label': 'Comet Proの載せ台・棚から前へ延びる',
+                  'shape': _sled(acc), 'role': 'accessory_shelf'})
     sockets = [_socket('accessory_shelf_' + side, side, origin[1], size[1], origin[2], size[2], p)
                for side in ('left', 'right')]
     fasteners = [{'assembly': 'accessory_shelf', 'axis': [0, 0, 1], 'origin': [x, y, origin[2]],
@@ -129,7 +146,13 @@ def accessory_parts(scene, p, acc):
                    'thread_nominal_diameter_mm': 4, 'removable': True,
                    'head_and_nut_retention': '棚側は熱圧入ナットかナット保持の候補で未確定',
                    'status': '前面板の受け板を棚へ留める。中央の板はComet Proの交換時に外す。'} for x, y in flange]
-    carried = [{'target': 'remote_kvm', 'supports': tiles, 'z': acc['support_z'], 'each': False,
+    fasteners += [{'assembly': 'remote_kvm_sled', 'axis': [0, 0, 1], 'origin': [x, y, origin[2]],
+                   'through_length_mm': size[2] + acc['parameters']['sled_thickness'], 'hole_diameter_mm': 4.5,
+                   'thread_nominal_diameter_mm': 4, 'head_and_nut_retention': '頭とナットの保持方法は未確定',
+                   'status': '載せ台を棚へ留める。前の部分は片持ち。'} for x, y in _sled_holes(acc)]
+    carried = [{'target': 'remote_kvm', 'supports': ['remote_kvm_sled'], 'z': acc['comet_z'], 'each': False,
+                'minimum_area_mm2': 500},
+               {'target': 'remote_kvm_sled', 'supports': tiles, 'z': acc['support_z'], 'each': False,
                 'minimum_area_mm2': 500},
                {'target': 'kvm_switch', 'supports': tiles, 'z': acc['support_z'], 'each': False,
                 'minimum_area_mm2': 500}]

@@ -22,7 +22,8 @@ ROLE_COLORS = {'spark': (.77, .61, .30), 'fan': (.79, .70, .56), 'adapter': (.30
                'controller_face': (.62, .65, .67), 'case_reference': (.19, .21, .23),
                'controller_display_reference': (.12, .19, .22),
                'controller_knob_reference': (.18, .19, .20),
-               'accessory': (.20, .22, .25), 'mid_panel': (.62, .65, .67)}
+               'accessory': (.20, .22, .25), 'mid_panel': (.62, .65, .67),
+               'removable_cover': (.62, .65, .67), 'top_lid': (.69, .71, .73), 'lower_filler': (.62, .65, .67)}
 
 
 def box(origin, size):
@@ -310,10 +311,10 @@ def merge_bay(support_metadata, bay_metadata, key_name='switch_bay'):
     return support_metadata
 
 
-def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
+def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=None):
     """bayを渡すと上部専用段、accessoriesを渡すと中段の機器棚を持つ案を作る。省略時は中央の暫定配置。"""
     p = parameters or FixedRackParameters()
-    scene = fixed_layout(mode, p, bay, accessories)
+    scene = fixed_layout(mode, p, bay, accessories, finish)
     supports, support_metadata = integrated_supports(scene, p)
     bay_parts = []
     if bay is not None:
@@ -325,6 +326,11 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
         accessory_items, accessory_metadata = accessory_parts(scene, p, accessories)
         bay_parts = bay_parts + accessory_items
         support_metadata = merge_bay(support_metadata, accessory_metadata, 'accessories')
+    if finish is not None:
+        from finish_geometry import finish_parts
+        finish_items, finish_metadata = finish_parts(scene, p, finish)
+        bay_parts = bay_parts + finish_items
+        support_metadata = merge_bay(support_metadata, finish_metadata, 'finish')
     case_model = load_case_model()
     face = controller_front_face(p, case_model)
     if abs(face['metadata']['face_front_y_mm'] - p.front_face_y) > 1e-6:
@@ -363,11 +369,11 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
         refs.append({'name': b['name'], 'label': b['label'], 'shape': s, 'role': b['kind']})
     return {'parameters': p, 'scene': scene, 'parts': parts, 'references': refs,
             'supports': support_metadata, 'controller_face': face, 'switch_bay': bay,
-            'accessories': accessories}
+            'accessories': accessories, 'finish': finish}
 
 
-def create(parameters=None, mode='crs812', bay=None, accessories=None):
-    model = shapes(parameters, mode, bay, accessories)
+def create(parameters=None, mode='crs812', bay=None, accessories=None, finish=None):
+    model = shapes(parameters, mode, bay, accessories, finish)
     doc = App.newDocument('FixedFourNodeRack')
     doc.Label = ('上部専用段を持つ4台ラック・形状候補' if bay is not None
                  else '固定段・独立電源区画の4台ラック・形状候補')
