@@ -16,10 +16,10 @@ PRINT_PARTS = ("side_L", "side_R", "crossbar", "locking_pin", "stack_locator", "
 LAYOUTS = {"single": (1, 1), "two_horizontal": (2, 1), "two_vertical": (1, 2), "four_units": (2, 2)}
 
 
-def create_fixed_rack(parameters=None, mode='crs812'):
-    """現行の再設計。固定段と独立電源区画の形状候補を作る。"""
+def create_fixed_rack(parameters=None, mode='crs812', bay=None):
+    """現行の再設計。固定段と独立電源区画の形状候補を作る。bayで上部専用段の案を作る。"""
     from fixed_rack_geometry import create as create_fixed
-    return create_fixed(parameters, mode)
+    return create_fixed(parameters, mode, bay)
 
 
 def box(x, y, z, dx, dy, dz):

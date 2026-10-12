@@ -1,4 +1,5 @@
 """固定段ラックの配置と交換経路。実測値を確定した製造データではない。"""
+from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
 import sys
@@ -12,7 +13,7 @@ sys.path.insert(0, str(ROOT / 'models/adapter-rack/source'))
 from adapter_rack_parameters import INPUTS as ADAPTER_INPUTS
 
 
-def cross_beams(p):
+def cross_beams(p, bay=None):
     result = []
     def add(name, y, z, height, role, width=20):
         result.append(box(name, name, [-p.inner_width / 2 - 8, y - width / 2, z],
@@ -23,16 +24,21 @@ def cross_beams(p):
     for row, base in enumerate((p.lower_base, p.upper_base)):
         fan_bottom = base + p.spark_height / 2 - p.fan_size / 2
         add(f'fan_rail_{row}', p.front_face_y + 10, fan_bottom - 14, 8, 'support_beam')
-    for y, end in ((-146, 'front'), (78, 'rear')):
-        add('switch_rail_' + end, y, p.switch_center_z - 22 - 8 - 12, 12, 'support_beam')
+    # 上部専用段ではスイッチを中段へ置かないため、中央用の受け梁を外す。
+    if bay is None:
+        for y, end in ((-146, 'front'), (78, 'rear')):
+            add('switch_rail_' + end, y, p.switch_center_z - 22 - 8 - 12, 12, 'support_beam')
     return result
 
 
-def fixed_layout(mode='ring', parameters=None):
+def fixed_layout(mode='ring', parameters=None, bay=None):
+    """bayはupper_switch_bay.bay_layoutの結果。省略時は中央の暫定配置。"""
     if mode not in ('ring', 'crs812'):
         raise ValueError('採用構成はリング接続またはCRS812です')
     p = parameters or FixedRackParameters()
     p.validate()
+    if bay is not None and p.height + 1e-9 < bay['required_height']:
+        raise ValueError('上部専用段に必要な全高が不足しています')
     lp = replace(LayoutParameters(), lower_base=p.lower_base, row_pitch=p.row_pitch,
                  column_pitch=p.column_pitch, rack_width=p.width, rack_height=p.height,
                  rack_front_y=p.front_y, rear_space=p.rear_y, switch_face_y=100,
@@ -116,7 +122,11 @@ def fixed_layout(mode='ring', parameters=None):
     # 接続を外した本体とトレーの移動を確認する。接続中の引き出しは想定しない。
     equipment = nodes + fans + power + controllers
     switch = None
-    if mode == 'crs812':
+    if mode == 'crs812' and bay is not None:
+        switch = deepcopy(bay['switch'])
+        equipment.append(switch)
+        service.append(deepcopy(bay['removal']))
+    elif mode == 'crs812':
         spec = selected_network()['final_phase']['switch']
         width, depth, height = spec['body_envelope_mm']
         switch = box('switch', 'CRS812の参考外形・実支持板は未設計',
@@ -125,10 +135,10 @@ def fixed_layout(mode='ring', parameters=None):
         service.append(box('switch_removal', 'スイッチの背面交換経路・手の仮余裕12mm',
                            [switch['origin'][0] - 12, switch['origin'][1], switch['origin'][2] - 8],
                            [switch['size'][0] + 24, p.rear_y + switch['size'][1] - switch['origin'][1], 64], 'service'))
-    return {'mode': mode, 'parameters': p.values(), 'frame_outer_mm': [p.width, p.depth, p.height],
+    scene = {'mode': mode, 'parameters': p.values(), 'frame_outer_mm': [p.width, p.depth, p.height],
             'nodes': nodes, 'equipment': equipment, 'fans': fans, 'carriers': carriers, 'trays': trays,
             'power_trays': power_trays, 'separator': ceiling, 'control_panel': control_panel,
-            'cross_beams': cross_beams(p), 'service_spaces': service,
+            'cross_beams': cross_beams(p, bay), 'service_spaces': service,
             'intake_spaces': intake, 'exhaust_spaces': exhaust, 'connector_spaces': connector_spaces,
             'cable_storage_spaces': storage, 'switch': switch,
             'ring_cables': ring_cables, 'final_network': final_topology(),
@@ -138,17 +148,25 @@ def fixed_layout(mode='ring', parameters=None):
             'control_door_sweep': box('control_door_sweep', '制御器扉を前方へ90度開く経路の保守的な箱',
                                      [-224, p.controller_origin_y + 3 - 360, 8], [404, 372, 140], 'service'),
             'selected_switch': selected_network()['final_phase']['switch']}
+    if bay is not None:
+        scene['switch_bay'] = deepcopy(bay)
+        scene['conditional_service_spaces'] = [deepcopy(bay['front_service'])] if mode == 'crs812' else []
+    return scene
 
 
 def check_fixed_layout(scene):
+    bay = scene.get('switch_bay')
+    bay_objects = bay['objects'] if bay else []
     solids = scene['equipment'] + scene['carriers'] + scene['trays'] + scene['power_trays']
-    solids += [scene['separator'], scene['control_panel']]
+    solids += [scene['separator'], scene['control_panel']] + bay_objects
     def own_fan_and_holder(a, b):
         return (a['name'].removesuffix('_fan') == b['name'].removesuffix('_carrier')
                 and {a['kind'], b['kind']} == {'fan', 'carrier'})
     collisions = [[a['name'], b['name']] for i, a in enumerate(solids) for b in solids[i + 1:]
                   if not own_fan_and_holder(a, b) and overlaps(a, b)]
     obstacles = scene['equipment'] + scene['carriers'] + [scene['separator'], scene['control_panel']]
+    # 専用段の床・ガイド・止めは固定障害物。トレーはスイッチと一緒に動く。
+    obstacles += [b for b in bay_objects if b['kind'] != 'switch_tray']
     air_conflicts = [[a['name'], b['name']] for a in scene['intake_spaces'] + scene['exhaust_spaces']
                      for b in obstacles if overlaps(a, b)]
     service_conflicts = []
@@ -166,6 +184,15 @@ def check_fixed_layout(scene):
     result = {'equipment_collisions': collisions, 'fixed_air_obstructions': air_conflicts,
               'rear_service_obstructions': service_conflicts, 'storage_obstructions': storage_conflicts,
               'outside_frame': outside, 'scope': '参考外形・固定障害物・手の仮余裕12mmを含む背面交換経路。接続端子と配線の実操作は未検証。'}
+    if bay:
+        result['conditional_front_service'] = [
+            {'name': space['name'], 'required': bay['front_service_required'],
+             'dependency': bay['front_service_dependency'],
+             'obstructions': sorted({b['name'] for b in obstacles + scene['cross_beams'] + scene['cable_storage_spaces']
+                                     if b['name'] != 'switch' and overlaps(space, b)})}
+            for space in scene.get('conditional_service_spaces', [])]
+        if any(row['required'] and row['obstructions'] for row in result['conditional_front_service']):
+            raise ValueError(str(result))
     if collisions or air_conflicts or service_conflicts or storage_conflicts or outside:
         raise ValueError(str(result))
     return result

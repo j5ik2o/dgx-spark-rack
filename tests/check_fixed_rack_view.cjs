@@ -1,4 +1,5 @@
 // 接続切替、交換予約、取付面の開閉表示をブラウザーで確認する。
+// 使い方: node check_fixed_rack_view.cjs <出力フォルダ> [印刷候補の部品数・既定72]
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
@@ -15,7 +16,10 @@ let browser;
   assert.equal(validation.exchange_envelopes.status, 'passed');
   assert.equal(validation.support_contacts.status, 'passed');
   assert.equal(validation.controller_face_validation.status, 'passed');
-  assert.equal(validation.candidate_part_instances, 72);
+  const expectedParts = Number(process.argv[3] || 72);
+  assert.equal(validation.candidate_part_instances, expectedParts);
+  const upperBay = !!validation.switch_bay;
+  if (upperBay) assert.equal(validation.exchange_envelopes.switch_front_service.status, 'passed');
   browser = await chromium.launch({headless: true});
   const page = await browser.newPage({viewport: {width: 1320, height: 1050}});
   const errors = [];
@@ -23,6 +27,12 @@ let browser;
   await page.goto(pathToFileURL(path.join(folder, 'fixed-rack.html')).href);
   await page.waitForFunction(() => !!window.fixedRackState);
   const z = await page.evaluate(() => fixedRackState.layout.nodes.map(n => n.origin[2]).sort());
+  assert.equal(await page.locator('#variant').isVisible(), upperBay);
+  if (upperBay) {
+    assert.equal(await page.locator('#variant-rows tr').count(), 3);
+    assert.equal(await page.locator('#variant-rows tr.chosen').count(), 1);
+    await page.locator('#variant').screenshot({path: path.join(folder, 'upper-bay-variants.png')});
+  }
   for (const mode of ['ring', 'crs812']) {
     await page.locator('#mode').selectOption(mode);
     const actual = await page.evaluate(() => fixedRackState);
@@ -70,7 +80,7 @@ let browser;
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   assert.deepEqual(errors, []);
   await browser.close();
-  const result = {status: 'passed', scope: '2接続方式で段位置を維持、5方向、構造面の切替、90度の取付面表示、予約空間、機器表示、ドラッグ、390px表示、実行時エラー'};
+  const result = {status: 'passed', scope: '2接続方式で段位置を維持、5方向、構造面の切替、90度の取付面表示、予約空間、機器表示、ドラッグ、390px表示、実行時エラー' + (upperBay ? '、上部専用段の3案の比較表' : '')};
   fs.writeFileSync(path.join(folder, 'browser-validation.json'), JSON.stringify(result, null, 2) + '\n');
   const manifestPath = path.join(folder, 'manifest.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath));

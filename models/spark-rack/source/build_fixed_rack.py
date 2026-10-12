@@ -1,4 +1,7 @@
-"""固定段と独立電源区画の形状候補を新規出力する。造形用データは出さない。"""
+"""固定段と独立電源区画の形状候補を新規出力する。造形用データは出さない。
+
+--switch-bay upper を付けると、上枠を共有する上部専用段の案を別の出力先へ作る。
+"""
 from datetime import datetime
 import hashlib
 import json
@@ -11,6 +14,8 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Path(__file__).parent
+VARIANTS = {None: ('fixed-rack', '固定段・独立電源区画の形状候補'),
+            'upper': ('upper-switch-bay', '上枠を共有する上部専用段の形状候補')}
 
 
 def digest(path):
@@ -21,7 +26,7 @@ def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
-def worker(folder):
+def worker(folder, variant=None):
     import FreeCAD as App
     import FreeCADGui as Gui
     import Part
@@ -29,7 +34,12 @@ def worker(folder):
     from fixed_rack_geometry import ROLE_COLORS
     from validate_fixed_rack import validate
     Gui.showMainWindow()
-    doc, model = create_fixed_rack()
+    if variant == 'upper':
+        from upper_switch_bay import bay_layout, rack_parameters
+        parameters = rack_parameters()
+        doc, model = create_fixed_rack(parameters, 'crs812', bay_layout(parameters))
+    else:
+        doc, model = create_fixed_rack()
     validation = validate(model)
     objects = [o for o in doc.Objects if hasattr(o, 'Shape')]
     expected = {o.Name: o.Shape.Volume for o in objects}
@@ -59,8 +69,9 @@ def worker(folder):
     write_json(folder / 'freecad-version.json', App.Version())
 
 
-def build():
-    out = ROOT / 'build/spark-rack/fixed-rack' / (datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8])
+def build(variant=None):
+    folder, purpose = VARIANTS[variant]
+    out = ROOT / 'build/spark-rack' / folder / (datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8])
     out.mkdir(parents=True, exist_ok=False)
     files = [SOURCE / n for n in ('spark_rack_parameters.py', 'freecad_spark_rack.py', 'fixed_rack_layout.py',
              'fixed_rack_geometry.py', 'validate_fixed_rack.py', 'build_fixed_rack.py', 'network_configuration.py',
@@ -74,20 +85,30 @@ def build():
               ROOT / 'tools/cad/controller_mount.py', ROOT / 'tools/cad/edge_finishing.py',
               ROOT / 'tools/cad/render_mesh_scene.py', ROOT / 'tests/check_fixed_rack_view.cjs',
               ROOT / 'tests/test_fixed_rack_layout.py', ROOT / 'tests/test_fixed_rack_geometry.py']
+    if variant == 'upper':
+        files += [SOURCE / n for n in ('upper_switch_bay.py', 'switch_bay_geometry.py',
+                                       'switch_placement_comparison.py')]
+        files += [ROOT / 'tests/test_upper_switch_bay.py', ROOT / 'tests/test_switch_bay_geometry.py']
     hashes = {str(f.relative_to(ROOT)): digest(f) for f in files}
-    manifest = {'status': 'running', 'purpose': '固定段・独立電源区画の形状候補',
+    manifest = {'status': 'running', 'purpose': purpose,
                 'sources_sha256': hashes, 'manufacturing_geometry': False, 'physical_validation': False}
     try:
         env = os.environ.copy()
         env['PYTHONPATH'] = os.environ.get('FREECAD_LIB', '/Applications/FreeCAD.app/Contents/Resources/lib')
         python = os.environ.get('FREECAD_PYTHON', '/Applications/FreeCAD.app/Contents/Resources/bin/python')
-        run = subprocess.run([python, str(Path(__file__)), '--worker', str(out)], cwd=ROOT, env=env, capture_output=True, text=True)
+        if variant == 'upper':
+            from upper_switch_bay import variants
+            write_json(out / 'upper-bay-variants.json', variants())
+        command = [python, str(Path(__file__)), '--worker', str(out)] + ([variant] if variant else [])
+        run = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, text=True)
         (out / 'freecad.log').write_text(run.stdout + run.stderr)
         if run.returncode or not (out / 'validation.json').exists():
             raise RuntimeError('固定段ラックの形状検査に失敗しました: ' + str(out / 'freecad.log'))
         payload = {'meshes': json.loads((out / 'fixed-rack-scene.json').read_text()),
                    'layout': json.loads((out / 'layout.json').read_text()),
                    'validation': json.loads((out / 'validation.json').read_text())}
+        if variant == 'upper':
+            payload['variants'] = json.loads((out / 'upper-bay-variants.json').read_text())
         template = (SOURCE / 'fixed_rack_view.html').read_text()
         if template.count('__FIXED_RACK_DATA__') != 1:
             raise ValueError('表示用データの挿入位置が不正です')
@@ -107,9 +128,12 @@ def build():
 if __name__ == '__main__':
     if sys.argv[1:2] == ['--worker']:
         try:
-            worker(Path(sys.argv[2]))
+            worker(Path(sys.argv[2]), sys.argv[3] if len(sys.argv) > 3 else None)
         except Exception:
             import traceback
             traceback.print_exc(); sys.stderr.flush(); os._exit(1)
         sys.stdout.flush(); os._exit(0)
-    print(build())
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--switch-bay', choices=['upper'], help='上部専用段の案を生成する')
+    print(build(parser.parse_args().switch_bay))
