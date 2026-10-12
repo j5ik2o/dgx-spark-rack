@@ -10,7 +10,8 @@
   "cable": {
     "minimum_bend_radius_mm": null,
     "connector_envelopes_mm": null,
-    "nominal_length_basis": null
+    "nominal_length_basis": null,
+    "phase": "initial_ring_only"
   },
   "switches": {
     "crs812": {
@@ -23,14 +24,18 @@
         268,
         156
       ],
-      "note": "小型化案の内のりは456mm。取付耳が482.6mmまで伸びる場合は収まらない。筐体を下から支え、耳を外す構想だが、耳と奥行が確定するまで支持板は生成しない。旧163.25mmの予約穴は使わない。"
+      "note": "現行固定段案の内のりは488mm。耳を含む実外形と取付方法は未確定。参考筐体443mmは収まるが、耳・奥行・質量・支持面・吸排気の確認後に支持板を設計する。旧小型化案の内のり456mmと旧163.25mmの予約穴は現行へ採用しない。",
+      "selection_status": "最終構成として選定済み。購入・到着は未確認。",
+      "airflow_direction": null,
+      "power_and_fan_service_envelopes_mm": null
     },
     "crs804": {
       "overall_width_with_ears_mm": null,
       "adopted_depth_mm": null,
       "mass_kg": null,
       "support_interface": null,
-      "note": "耳と突出部を含む収容寸法、支持方法を確認してから支持板を設計する。"
+      "note": "耳と突出部を含む収容寸法、支持方法を確認してから支持板を設計する。",
+      "selection_status": "最終設計の対象外。旧比較の記録として保持。"
     }
   },
   "adapter": {
@@ -39,5 +44,15 @@
     "cable_bend_space_mm": null,
     "mount_interface": null,
     "note": "候補図では既存の正本寸法99.05×98.99×35.17mmと端子側30mmの設計予約を使用。実物の適合と冷却は未検証。"
+  },
+  "updated_on": "2026-10-12",
+  "final_breakout_cable": {
+    "reference": "models/spark-rack/reference/selected-network-20261012/configuration.json",
+    "connector_envelopes_mm": null,
+    "trunk_length_mm": null,
+    "branch_lengths_mm": null,
+    "splitter_envelope_mm": null,
+    "nominal_length_basis": null,
+    "note": "NADDODのMikroTik互換Q2Q56-400G-CU2（2m）。2mを各分岐線の使用可能長として扱わない。曲げ条件の根拠は選定記録を参照。"
   }
 }

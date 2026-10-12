@@ -66,6 +66,10 @@
       "source": "https://help.mikrotik.com/docs/spaces/ROS/pages/220233794/MikroTik%20wired%20interface%20compatibility",
       "mode": "200G-baseCR4",
       "scope": "スイッチの対応するリンク方式。当該40cmケーブルの認識や安定動作を確認したものではない。"
-    }
-  }
+    },
+    "phase": "initial_ring_only",
+    "phase_note": "40cmの4本は当初リング用。最終のスイッチ接続はselected-network-20261012/configuration.jsonの2m分岐ケーブル。50cmは旧比較条件。"
+  },
+  "updated_on": "2026-10-12",
+  "final_network_reference": "models/spark-rack/reference/selected-network-20261012/configuration.json"
 }

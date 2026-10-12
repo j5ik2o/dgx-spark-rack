@@ -11,6 +11,7 @@ import uuid
 from zoneinfo import ZoneInfo
 
 from four_node_layout import LayoutParameters, SWITCHES, evaluate
+from network_configuration import CONFIGURATION, final_topology, selected_network
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Path(__file__).parent
@@ -36,6 +37,7 @@ def build(*, cad=True):
     sources.append(ROOT / 'tools/cad/controller_mount.py')
     sources.append(SOURCE / 'rack_candidate_datums.py')
     sources.append(ROOT / 'models/spark-rack/reference/pending-mount-measurements.json')
+    sources.extend([SOURCE / 'network_configuration.py', CONFIGURATION, ROOT / 'tests/check_four_node_layout.cjs'])
     hashes = {str(p.relative_to(ROOT)): digest(p) for p in sources}
     report = {'ring': evaluate(replace(LayoutParameters(), row_pitch=160), include_switch=False)}
     report.update({key: evaluate(LayoutParameters(), key) for key in SWITCHES})
@@ -43,10 +45,16 @@ def build(*, cad=True):
                 'sources_sha256': hashes, 'physical_validation': '未検証'}
     try:
         write_json(out / 'layout-report.json', report)
+        adopted = {'configuration': selected_network(), 'topology': final_topology(),
+                   'scene_status': '再設計前の配置比較。2m分岐ケーブルの実経路は未検証。'}
+        write_json(out / 'selected-network.json', adopted)
         payload = json.dumps(report, ensure_ascii=False).replace('<', '\\u003c')
         template = (SOURCE / 'four_node_layout.html').read_text(encoding='utf-8')
         if template.count('__LAYOUT_DATA__') != 1:
             raise ValueError('画面テンプレートのデータ挿入位置が不正です')
+        if template.count('__SELECTED_NETWORK__') != 1:
+            raise ValueError('最終接続構成のデータ挿入位置が不正です')
+        template = template.replace('__SELECTED_NETWORK__', json.dumps(adopted, ensure_ascii=False).replace('<', '\\u003c'))
         (out / 'four-node-layout.html').write_text(template.replace('__LAYOUT_DATA__', payload), encoding='utf-8')
         checks = {key: value['checks'] for key, value in report.items()}
         if any(c['equipment_and_shelf_collisions'] or c['outside_envelope']
@@ -65,9 +73,11 @@ def build(*, cad=True):
         if hashes != {str(p.relative_to(ROOT)): digest(p) for p in sources}:
             raise ValueError('生成中に正本が変更されました')
         write_json(out / 'validation.json', {'status': 'passed', 'layout_checks': checks,
+                   'selected_network_topology': adopted['topology'],
                    'cad_generated': cad, 'physical_validation': '未検証',
                    'scope': '仮収容範囲、機器・支持範囲の干渉、配線計算。実端子・実曲げ条件は未検証。'})
-        manifest.update(status='generated', outputs_sha256={str(p.relative_to(out)): digest(p)
+        manifest.update(status='generated', selected_network_routing_validated=False, scene_status=adopted['scene_status'],
+                        outputs_sha256={str(p.relative_to(out)): digest(p)
                         for p in sorted(out.iterdir()) if p.is_file()})
     except Exception as error:
         manifest.update(status='failed', error=str(error))

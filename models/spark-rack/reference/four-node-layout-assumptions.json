@@ -40,5 +40,7 @@
     "assumed_service_slack": 30,
     "assumed_length_basis_reserve": 40,
     "note": "引き出し、曲げ半径、余長、公称長の測定基準は実測未確認。数値を満たしても実物の到達を検証済みとは扱わない。"
-  }
+  },
+  "status": "再設計前の配置比較。最終分岐ケーブルの経路ではない。",
+  "final_network_reference": "models/spark-rack/reference/selected-network-20261012/configuration.json"
 }

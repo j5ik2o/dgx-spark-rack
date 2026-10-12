@@ -42,6 +42,14 @@ run = "python3 models/spark-rack/source/build_spark_rack_joint_coupons.py"
 description = "凹凸でつなぐ4台ラックの全体構想図を生成（製造形状ではない）"
 run = "python3 models/spark-rack/source/build_rack_candidate_overview.py"
 
+[tasks."redesign:spark-rack"]
+description = "固定段・独立電源区画の形状候補と交換予約を検査して生成（造形用ではない）"
+run = "python3 models/spark-rack/source/build_fixed_rack.py"
+
+[tasks."compare-switch:spark-rack"]
+description = "スイッチの中央・上部・下部の配置と交換予約を比較（製造用ではない）"
+run = "python3 models/spark-rack/source/build_switch_placement_comparison.py"
+
 [tasks."3mf:prototype"]
 description = "all のPLA試作用3MFを生成"
 run = "python3 tools/tasks/cad.py 3mf all --purpose prototype"

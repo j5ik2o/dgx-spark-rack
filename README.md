@@ -1,8 +1,12 @@
 # DGX Spark Rack
 
-DGX Spark本体とACアダプターを置く、3Dプリント用ラックです。**4台専用ラックへの再設計を始めています。** 2列×2段とラック内の交換可能なスイッチ置き場を前提に、リング接続・スイッチ接続の配線は手持ち40cmと当初案の50cmを比較します。[新設計の条件](models/spark-rack/docs/4台専用ラックの設計条件.md)と[従来データの保全](archive/spark-rack-modular-20261009/README.md)を参照してください。
+DGX Spark本体と電源アダプターを置く、3Dプリント用ラックです。**印刷部品を主構造とする4台専用ラックへ再設計中です。** 当初は手持ち40cmケーブル4本のリング接続、最終はCRS812-8DS-2DQ-2DDQ-RM 1台とNADDODのMikroTik互換Q2Q56-400G-CU2（2m）へ移行します。各台を200ギガビット毎秒の1接続にする場合、分岐ケーブルの必要数は2本です。[最終接続構成](models/spark-rack/docs/最終接続構成.md)、[設計条件](models/spark-rack/docs/4台専用ラックの設計条件.md)、[従来データの保全](archive/spark-rack-modular-20261009/README.md)を参照してください。
 
-136部品案は不採用です。現在は`mise run overview:spark-rack`で[枠を小型化し、電源4個も内蔵する全体構想](models/spark-rack/docs/凹凸の接合試験片と次案.md)を確認できます。試験片の印刷は後回しです。`mise run joint:spark-rack`は短い接合試験片だけを生成します。梁の取付穴とスイッチ支持板は実測後に設計します。`mise run layout:spark-rack`は[配置の参考](models/spark-rack/docs/仮配置の確認.md)、`mise run build`は従来の3モデル用です。正本は引き続き各モデルの`source/`です。
+`mise run redesign:spark-rack`で[固定段と独立電源区画の形状候補](models/spark-rack/docs/固定段ラックの再設計.md)を生成します。左右の構造面と内側のリブで支持し、ファンと制御器の前面をそろえました。支持梁30部品は固定棚・支持床12部品へ統合し、本体の段位置、電源の平置き、交換方向を維持しています。固定機構と実測は未完成で、造形用のファイルは生成しません。試験片の印刷は後回しです。
+
+スイッチの中央・上部・下部は[専用段の配置比較](models/spark-rack/docs/スイッチ専用段の配置比較.md)へ整理しました。`mise run compare-switch:spark-rack`で外形と交換空間を比較できます。固定段を保つ条件では上部追加を推奨候補とし、現行の中央配置の詳細形状は保持しています。
+
+136部品案は不採用です。`mise run overview:spark-rack`は[再設計前の全体構想の比較](models/spark-rack/docs/凹凸の接合試験片と次案.md)、`mise run layout:spark-rack`は[再設計前の配置比較](models/spark-rack/docs/仮配置の確認.md)です。旧40cm／50cmのスイッチ配線は最終構成へ採用しません。`mise run joint:spark-rack`は短い接合試験片だけ、`mise run build`は従来の3モデル用です。正本は引き続き各モデルの`source/`です。
 
 ## 何を編集するか
 

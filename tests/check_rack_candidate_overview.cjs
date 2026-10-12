@@ -13,6 +13,13 @@ let browser;
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(pathToFileURL(path.join(folder, 'rack-candidate-overview.html')).href);
   await page.waitForFunction(() => !!window.overviewState);
+  const selected = JSON.parse(fs.readFileSync(path.join(folder, 'selected-network.json')));
+  assert.equal(selected.topology.physical_cable_count, 2);
+  assert.equal(selected.topology.node_connection_count, 4);
+  assert.equal(selected.topology.routing_validated, false);
+  assert.ok((await page.locator('#selected-network-summary').textContent()).includes('Q2Q56-400G-CU2'));
+  assert.ok((await page.locator('#selected-network-note').textContent()).includes('42mm以上'));
+  assert.ok((await page.locator('main').textContent()).includes('再設計前の配置を比較する'));
   for (const mode of ['ring', 'crs812', 'crs804']) {
     await page.locator('#mode').selectOption(mode);
     const actual = await page.evaluate(() => window.overviewState.scene);
@@ -75,7 +82,7 @@ let browser;
   const crypto = require('node:crypto');
   const manifestPath = path.join(folder, 'manifest.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath));
-  const validation = {status: 'passed', scope: '3配置・5方向・新旧比較・電源表示切替・機器表示切替・ドラッグ回転・390px表示・参照画像・実行時エラー'};
+  const validation = {status: 'passed', scope: '最終接続の必要数・未検証表示、旧3配置・5方向・新旧比較・電源表示切替・機器表示切替・ドラッグ回転・390px表示・参照画像・実行時エラー'};
   fs.writeFileSync(path.join(folder, 'browser-validation.json'), JSON.stringify(validation, null, 2) + '\n');
   for (const name of fs.readdirSync(folder).filter(n => n !== 'manifest.json')) {
     manifest.outputs_sha256[name] = crypto.createHash('sha256').update(fs.readFileSync(path.join(folder, name))).digest('hex');
