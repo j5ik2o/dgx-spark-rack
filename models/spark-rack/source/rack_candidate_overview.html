@@ -19,7 +19,7 @@
 const overview=__OVERVIEW_DATA__;
 const adopted=overview.selected_network.topology;
 document.getElementById('selected-network-summary').textContent=adopted.switch_model+'を1台、'+adopted.cable_model+'（2m）を必要数'+adopted.physical_cable_count+'本。Spark4台へ各200ギガビット毎秒を1接続とする前提です。';
-document.getElementById('selected-network-note').textContent='最終配線の設計曲げ半径は'+adopted.routing_minimum_bend_radius_mm+'mm以上。主線・分岐線の長さ、分岐部と端子の外形は未確定です。購入・到着・実機動作は未確認です。';
+document.getElementById('selected-network-note').textContent='最終配線の設計曲げ半径は'+adopted.routing_minimum_bend_radius_mm+'mm以上。主線・分岐線の長さ、分岐部と端子の外形は未確定です。注文済みで、到着と実機動作は未確認です。';
 let revision='current';
 let mode='ring',view='iso',yaw=-0.72,tilt=0.34;
 const el=id=>document.getElementById(id);
