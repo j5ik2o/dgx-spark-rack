@@ -19,6 +19,14 @@
       "adopted_depth_mm": null,
       "mass_kg": null,
       "support_interface": null,
+      "manual_mounting_methods": {
+        "source": "https://manual.mikrotik.com/hardware/crs812-8ds-2dq-2ddq-rm/",
+        "checked_on": "2026-10-12",
+        "rack": "前側の取付耳を本体側面の前寄りへ付け、小さい後方支持耳を本体側面へ付け、長い後方支持耳をラック後側へ付けて両者を固定する4点支持。",
+        "desktop": "付属のゴム足を本体底面へ付けて机上へ置く。",
+        "not_stated": "耳込み幅、耳と支持耳の穴位置、質量、吸排気方向、前後どちらの面に電源とファンがあるか。",
+        "design_use": "上部専用段の引き出しトレーは机上置きと同じ底面支持の候補。耳による固定は穴位置の実測後に比較する。"
+      },
       "reference_body_width_mm": 443,
       "conflicting_depths_mm": [
         268,
@@ -27,7 +35,8 @@
       "note": "現行固定段案の内のりは488mm。耳を含む実外形と取付方法は未確定。参考筐体443mmは収まるが、耳・奥行・質量・支持面・吸排気の確認後に支持板を設計する。旧小型化案の内のり456mmと旧163.25mmの予約穴は現行へ採用しない。",
       "selection_status": "最終構成として選定済み。1台を注文済み、未着（2026-10-12確認）。",
       "airflow_direction": null,
-      "power_and_fan_service_envelopes_mm": null
+      "power_and_fan_service_envelopes_mm": null,
+      "power_and_fan_panel": null
     },
     "crs804": {
       "overall_width_with_ears_mm": null,
