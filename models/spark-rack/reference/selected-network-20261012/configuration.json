@@ -1,0 +1,75 @@
+{
+  "recorded_on": "2026-10-12",
+  "decision_basis": "ユーザー指定：当初はリング接続、最終構成はGETICのCRS812 DDQを1台とNADDODのMikroTik互換Q2Q56-400G-CU2（2m）",
+  "node_count": 4,
+  "initial_phase": {
+    "topology": "ring",
+    "cable_reference": "models/spark-rack/reference/prepared-fans-and-cable.json",
+    "physical_cable_count": 4,
+    "nominal_length_mm": 400,
+    "ownership_status": "ユーザー所有。製品型番の一致は未確認。"
+  },
+  "final_phase": {
+    "topology": "switch_breakout",
+    "links_per_node": 1,
+    "link_rate_gbps": 200,
+    "connection_basis": "各Sparkへ200ギガビット毎秒を1接続とする設計前提。全台の両端子を同時使用する構成ではない。",
+    "switch": {
+      "manufacturer": "MikroTik",
+      "model": "CRS812-8DS-2DQ-2DDQ-RM",
+      "quantity": 1,
+      "procurement_status": "ユーザーが最終構成として選定。購入・到着の完了は未確認。",
+      "retailer_url": "https://www.getic.com/product/mikrotik-crs812-8ds-2dq-2ddq-rm",
+      "manufacturer_url": "https://mikrotik.com/product/crs812_ddq",
+      "manual_url": "https://manual.mikrotik.com/hardware/crs812-8ds-2dq-2ddq-rm/",
+      "interface_compatibility_url": "https://manual.mikrotik.com/docs/wired-connections/mikrotik-wired-interface-compatibility/",
+      "physical_400g_port_count": 2,
+      "physical_200g_port_count": 2,
+      "breakout_links_per_400g_port": 2,
+      "body_envelope_mm": [443, 268, 44],
+      "body_envelope_basis": "GETICと既存の製品資料は443×268×44mm。公式取扱説明の443×156×44mmとの不一致が残るため、奥行268mmを参考収容寸法として維持。",
+      "overall_width_with_ears_mm": null,
+      "adopted_depth_mm": null,
+      "mass_kg": null,
+      "power_input_count": 2,
+      "maximum_power_without_attachments_w": 81,
+      "maximum_power_w": 134,
+      "hot_swap_fan_count": 4,
+      "airflow_direction": null
+    },
+    "cable": {
+      "manufacturer": "NADDOD",
+      "model": "Q2Q56-400G-CU2",
+      "compatibility_option": "MikroTik",
+      "product_url": "https://www.naddod.com/products/103563.html",
+      "datasheet_url": "https://resource.naddod.com/files/2026-08-12/q2q56-400g-dac-datasheet-017673.pdf",
+      "nominal_length_mm": 2000,
+      "switch_end": "QSFP-DD 400ギガビット毎秒端子1個",
+      "node_end": "QSFP56 200ギガビット毎秒端子2個",
+      "node_ends_per_cable": 2,
+      "manufacturer_minimum_bend_radius_range_mm": [37, 42],
+      "routing_minimum_bend_radius_mm": 42,
+      "bend_radius_basis": "製品ページ記載37〜42mmの上限42mmを暫定の設計下限として採用。主線・分岐線ごとの適用と測定基準は要確認。",
+      "quantity_status": "必要数は接続構成から計算。ユーザーの注文数・所有数は未確認。",
+      "connector_envelopes_mm": null,
+      "trunk_length_mm": null,
+      "branch_lengths_mm": null,
+      "splitter_envelope_mm": null,
+      "nominal_length_basis": null,
+      "electrical_validation": "メーカーはMikroTik互換とDGX Spark用途を掲載。手元の機器・ケーブルでの認識、設定、安定動作は未検証。"
+    }
+  },
+  "superseded_conditions": [
+    "CRS804との両機種共用を最終設計の要件にする条件",
+    "スイッチ接続にも40cmまたは50cmの独立ケーブル4本を使う条件",
+    "最終配線へ曲げ半径20mmを採用する仮定"
+  ],
+  "mechanical_design_implications": [
+    "段位置を固定し、リングからスイッチへ移行してもSparkの支持段を動かさない方針で再設計する。",
+    "スイッチ端子をSpark背面へ最短で寄せることより、吸排気と電源・ファンの交換経路を優先する。",
+    "分岐点2か所と2mケーブル2本の余長を収納し、端子へ引張り荷重を掛けない。",
+    "ケーブル保持は開放できる構造とし、本体・スイッチの取り出し経路と排気を塞がない。",
+    "2mを分岐線各々の使用可能長と扱わない。主線と分岐線の寸法が確定するまで実経路の到達を合格扱いにしない。",
+    "スイッチの交流電源線2本と、交換可能な電源・ファンの操作経路を予約する。"
+  ]
+}

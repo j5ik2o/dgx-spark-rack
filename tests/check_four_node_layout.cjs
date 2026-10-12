@@ -16,6 +16,10 @@ let activeBrowser;
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(pathToFileURL(path.join(folder, 'four-node-layout.html')).href);
   await page.waitForFunction(() => !!window.layoutState);
+  assert.ok((await page.locator('#selected-network').textContent()).includes('Q2Q56-400G-CU2'));
+  assert.ok((await page.locator('#selected-network').textContent()).includes('必要数2本'));
+  assert.ok((await page.locator('#selected-network').textContent()).includes('42mm以上'));
+  assert.ok((await page.locator('#selected-network').textContent()).includes('未反映'));
   for (const mode of ['ring', 'crs812', 'crs804']) {
     await page.locator('#mode').selectOption(mode);
     const actual = await page.evaluate(() => window.layoutState.cables.map(c => c.required_length_mm));

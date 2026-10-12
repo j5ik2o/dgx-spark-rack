@@ -13,6 +13,7 @@ import sys
 
 from four_node_layout import LayoutParameters, box, evaluate, overlaps
 from rack_candidate_datums import DATUMS
+from network_configuration import CONFIGURATION, final_topology, selected_network
 
 ROOT = Path(__file__).resolve().parents[3]
 SOURCE = Path(__file__).parent
@@ -216,6 +217,7 @@ def build():
                   ROOT / 'models/adapter-rack/source/adapter_rack_parameters.py',
                   ROOT / 'tests/check_rack_candidate_overview.cjs',
                   PREVIOUS / 'overview-report.json', PREVIOUS / 'manifest.json']
+        paths += [SOURCE / 'network_configuration.py', CONFIGURATION]
         paths += [coupon / name for name in (*pictures, 'manifest.json', 'validation.json')]
         hashes = {str(p.relative_to(ROOT)): digest(p) for p in paths}
         manifest['sources_sha256'] = hashes
@@ -227,18 +229,22 @@ def build():
                       'frame_floor_area_reduction_percent': (1 - (512*520)/(520*530))*100,
                       'installation_rectangle_reduction_percent': (1 - (512*520)/(618*530))*100,
                       'note': '設置長方形の比較。線材・突出した実コネクター・取付耳は未確定。'}
+        adopted = {'configuration': selected_network(), 'topology': final_topology(),
+                   'scene_status': '再設計前の比較図。最終分岐ケーブルの実経路・余長・固定段位置は未反映。'}
+        write_json(out / 'selected-network.json', adopted)
         write_json(out / 'overview-report.json', data)
         write_json(out / 'comparison.json', comparison)
         shutil.copyfile(PREVIOUS / 'overview-report.json', out / 'previous-overview-report.json')
         template = (SOURCE / 'rack_candidate_overview.html').read_text(encoding='utf-8')
         assert template.count('__OVERVIEW_DATA__') == 1
         (out / 'rack-candidate-overview.html').write_text(
-            template.replace('__OVERVIEW_DATA__', json.dumps({'current': data, 'previous': previous,
+            template.replace('__OVERVIEW_DATA__', json.dumps({'current': data, 'previous': previous, 'selected_network': adopted,
                                                              'comparison': comparison}, ensure_ascii=False).replace('<', '\\u003c')),
             encoding='utf-8')
         for name in pictures:
             shutil.copyfile(coupon / name, out / name)
         write_json(out / 'validation.json', {'status': 'passed', 'scope': '構想図の外形箱、共通座標、仮の配線経路',
+            'selected_network_topology': adopted['topology'],
             'checks': {mode: {'frame_members': len(value['members']),
                               'sparks': sum(i['kind'] == 'spark' for i in value['equipment']),
                               'fans_140mm': sum(i['kind'] == 'fan' and i['size_mm'] == 140 for i in value['equipment']),
@@ -252,7 +258,8 @@ def build():
             raise ValueError('生成中に入力ファイルが変更されました')
         manifest.update({'status': 'generated', 'purpose': '設計変更後の全体構想図',
             'sources_sha256': hashes, 'outputs_sha256': {p.name: digest(p) for p in sorted(out.iterdir())},
-            'manufacturing_geometry': False})
+            'manufacturing_geometry': False, 'selected_network_routing_validated': False,
+            'scene_status': adopted['scene_status']})
     except Exception as error:
         manifest.update(status='failed', error=str(error))
         raise

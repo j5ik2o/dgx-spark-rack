@@ -10,7 +10,8 @@
 </head>
 <body>
 <main id="layout-app">
-  <div class="header"><div><div class="eyebrow">DGX SPARK / 4台専用ラック</div><h1>本体は140mm×4、2列×2段。</h1><div class="muted">120mm×2は別置きの電源用。背面で40cm／50cmを比較する配置案</div></div><span class="pill">次案の配置参考・製造穴未確定</span></div>
+  <div class="header"><div><div class="eyebrow">DGX SPARK / 4台専用ラック</div><h1>再設計前の配置と配線を比較する。</h1><div class="muted">最終はCRS812 1台とQ2Q56-400G-CU2（2m）。以下の40cm／50cmは旧案の比較資料</div></div><span class="pill">旧案の比較・最終配線は未反映</span></div>
+  <div class="notice" id="selected-network"></div>
   <div class="layout">
     <section class="card stage" aria-label="ラックの仮配置">
       <div class="toolbar"><strong id="mode-title">リング接続</strong><div class="views" role="group" aria-label="見る方向"><button data-view="iso" aria-pressed="true">立体</button><button data-view="front" aria-pressed="false">前面</button><button data-view="back" aria-pressed="false">背面</button><button data-view="side" aria-pressed="false">側面</button><button data-view="top" aria-pressed="false">上面</button></div></div>
@@ -19,7 +20,7 @@
       <div class="footnote">金色：Spark　薄茶：ファン　濃灰：コントローラー範囲　薄青：支持範囲<br>前面を選ぶとファン4個の配置を確認できます。画面の変更は保存済みモデルへ自動反映しません。</div>
     </section>
     <section class="card controls" aria-label="配置条件の調整"><h2>配置を調整</h2>
-      <label for="mode">接続方式・スイッチ</label><select id="mode"><option value="ring">リング接続・4本</option><option value="crs812">CRS812へ接続・4本</option><option value="crs804">CRS804へ接続・4本</option></select>
+      <label for="mode">接続方式・スイッチ</label><select id="mode"><option value="ring">リング接続・4本</option><option value="crs812">旧案：CRS812へ独立4本</option><option value="crs804">旧比較：CRS804・不採用</option></select>
       <div class="subnote">切替時の段間隔：リング160mm／スイッチ220mm。支持段を移動する仮案です。</div>
       <label for="cable_length">ケーブルの公称長</label><select id="cable_length"><option value="400">手持ちの40cm</option><option value="500">当初案の50cm</option></select>
       <label class="numeric"><span>本体用140mm×4とケース範囲</span><input id="include_fans" type="checkbox" checked></label>
@@ -50,6 +51,9 @@
 <script>
 (() => {
   const baseline = JSON.parse(document.getElementById('layout-data').textContent);
+  const adopted = __SELECTED_NETWORK__;
+  const final = adopted.topology;
+  document.getElementById('selected-network').textContent='採用構成：'+final.switch_model+' 1台＋'+final.cable_model+'（2m）必要数'+final.physical_cable_count+'本、4台へ各200ギガビット毎秒を1接続。設計曲げ半径は'+final.routing_minimum_bend_radius_mm+'mm以上。分岐点・余長・最終経路は下の比較図へ未反映です。';
   const initial = {...baseline.ring.parameters};
   const colors = ['#2e7e6a','#4574b0','#be8541','#875ca4'];
   const names = ['upper_left','upper_right','lower_right','lower_left'];
