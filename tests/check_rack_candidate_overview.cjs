@@ -19,6 +19,8 @@ let browser;
   assert.equal(selected.topology.routing_validated, false);
   assert.ok((await page.locator('#selected-network-summary').textContent()).includes('Q2Q56-400G-CU2'));
   assert.ok((await page.locator('#selected-network-note').textContent()).includes('42mm以上'));
+  const ordered = selected.configuration.final_phase.cable.ordered_quantity;
+  assert.ok((await page.locator('#selected-network-order').textContent()).includes(ordered == null ? '注文本数：未提示' : `注文本数：${ordered}本`));
   assert.ok((await page.locator('main').textContent()).includes('再設計前の配置を比較する'));
   for (const mode of ['ring', 'crs812', 'crs804']) {
     await page.locator('#mode').selectOption(mode);
