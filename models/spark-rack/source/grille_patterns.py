@@ -1,4 +1,4 @@
-"""前面と天板の通気の模様。縦溝とハニカムを同じ入口で作る。
+"""前面、天板、側枠の通気の模様。縦溝とハニカムを同じ入口で作る。
 
 ハニカムは頂点を上下へ向けた正六角形の穴を、横の行ごとに半ピッチずらして並べる。
 穴は範囲の内側に収まるものだけを開け、縁で細く欠けた壁を作らない。
@@ -9,16 +9,23 @@ import FreeCAD as App
 import Part
 
 
+def _point(u, v, offset, plane):
+    """planeは'xz'（前後方向へ抜く）、'xy'（上下方向へ抜く）、'yz'（左右方向へ抜く）。"""
+    return {'xz': App.Vector(u, offset, v), 'xy': App.Vector(u, v, offset), 'yz': App.Vector(offset, u, v)}[plane]
+
+
+def _axis(plane):
+    return {'xz': App.Vector(0, 1, 0), 'xy': App.Vector(0, 0, 1), 'yz': App.Vector(1, 0, 0)}[plane]
+
+
 def _hexagon(cu, cv, across_flats, plane, offset, depth):
-    """planeは'xz'（前後方向へ抜く）か'xy'（上下方向へ抜く）。"""
     r = across_flats / math.sqrt(3)
     points = []
     for i in range(7):
         angle = math.radians(90 + 60 * i)
-        u, v = cu + r * math.cos(angle), cv + r * math.sin(angle)
-        points.append(App.Vector(u, offset, v) if plane == 'xz' else App.Vector(u, v, offset))
+        points.append(_point(cu + r * math.cos(angle), cv + r * math.sin(angle), offset, plane))
     face = Part.Face(Part.makePolygon(points))
-    return face.extrude(App.Vector(0, depth, 0) if plane == 'xz' else App.Vector(0, 0, depth))
+    return face.extrude(_axis(plane) * depth)
 
 
 def _centers(u0, u1, v0, v1, across_flats, wall, inside):
@@ -65,9 +72,7 @@ def honeycomb_clipped_to_circle(cu0, cv0, radius, offset, depth, plane, across_f
         return math.hypot(cu - cu0, cv - cv0) - r < radius
     centers = _centers(cu0 - radius - r, cu0 + radius + r, cv0 - radius - r, cv0 + radius + r,
                        across_flats, wall, touches)
-    axis = App.Vector(0, 1, 0) if plane == 'xz' else App.Vector(0, 0, 1)
-    origin = App.Vector(cu0, offset, cv0) if plane == 'xz' else App.Vector(cu0, cv0, offset)
-    disk = Part.makeCylinder(radius, depth, origin, axis)
+    disk = Part.makeCylinder(radius, depth, _point(cu0, cv0, offset, plane), _axis(plane))
     holes = []
     for cu, cv in centers:
         hexagon = _hexagon(cu, cv, across_flats, plane, offset, depth)

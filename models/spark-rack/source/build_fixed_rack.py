@@ -1,7 +1,7 @@
 """固定段と独立電源区画の形状候補を新規出力する。造形用データは出さない。
 
 --switch-bay upper を付けると、上枠を共有する上部専用段の案を別の出力先へ作る。
-さらに --grille honeycomb を付けると、前面と天板の通気の模様をハニカムにした案を作る。
+さらに --grille honeycomb を付けると、前面、天板、側枠の通気の穴をハニカムにした案を作る。
 """
 from datetime import datetime
 import hashlib
@@ -79,7 +79,7 @@ def build(variant=None, grille='slots'):
         raise ValueError('通気の模様の切替は上部専用段の案（--switch-bay upper）でだけ使えます')
     folder, purpose = VARIANTS[variant]
     if grille == 'honeycomb':
-        folder, purpose = folder + '-honeycomb', purpose + '（前面と天板はハニカム）'
+        folder, purpose = folder + '-honeycomb', purpose + '（通気の穴はハニカム）'
     out = ROOT / 'build/spark-rack' / folder / (datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8])
     out.mkdir(parents=True, exist_ok=False)
     files = [SOURCE / n for n in ('spark_rack_parameters.py', 'freecad_spark_rack.py', 'fixed_rack_layout.py',
@@ -154,6 +154,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--switch-bay', choices=['upper'], help='上部専用段の案を生成する')
     parser.add_argument('--grille', choices=['slots', 'honeycomb'], default='slots',
-                        help='前面と天板の通気の模様（上部専用段の案だけ）')
+                        help='前面、天板、側枠の通気の模様（上部専用段の案だけ）')
     arguments = parser.parse_args()
     print(build(arguments.switch_bay, arguments.grille))

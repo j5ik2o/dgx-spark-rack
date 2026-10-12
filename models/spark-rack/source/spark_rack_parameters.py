@@ -222,7 +222,7 @@ class FrontFinishParameters:
 
 @dataclass(frozen=True)
 class GrilleParameters:
-    """前面と天板の通気の模様。slotsは縦溝、honeycombは正六角形の穴。
+    """前面、天板、側枠の通気の模様。slotsは縦溝、honeycombは正六角形の穴。
 
     壁1.6mmは0.4mmノズルの4本分。穴の対辺10mmで、角から角まで11.5mmとし、
     直径12mmの指を通さない。

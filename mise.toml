@@ -51,7 +51,7 @@ description = "上枠を共有する上部専用段と中段の遠隔操作機�
 run = "python3 models/spark-rack/source/build_fixed_rack.py --switch-bay upper"
 
 [tasks."upper-bay-honeycomb:spark-rack"]
-description = "上部専用段の案を、前面と天板の通気をハニカムにして生成（造形用ではない）"
+description = "上部専用段の案を、前面・天板・側枠の通気の穴をハニカムにして生成（造形用ではない）"
 run = "python3 models/spark-rack/source/build_fixed_rack.py --switch-bay upper --grille honeycomb"
 
 [tasks."compare-switch:spark-rack"]
