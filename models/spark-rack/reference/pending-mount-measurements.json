@@ -55,6 +55,43 @@
     "note": "候補図では既存の正本寸法99.05×98.99×35.17mmと端子側30mmの設計予約を使用。実物の適合と冷却は未検証。"
   },
   "updated_on": "2026-10-12",
+  "remote_console": {
+    "recorded_on": "2026-10-12",
+    "decision_basis": "ユーザー指定：GL.iNet Comet Pro（GL-RM10）とKCEVEの4入力1出力HDMI・USB切替器をラック内へ置く。",
+    "comet_pro": {
+      "model": "GL.iNet Comet Pro GL-RM10",
+      "datasheet_url": "https://static.gl-inet.com/www/images/products/datasheet/rm10_datasheet_20251209.pdf",
+      "body_mm": [93, 84, 47],
+      "body_axis_note": "幅93×奥行84×高さ47mmとして扱う。資料の写真では前面に2.22インチのタッチ画面、配線は背面から出る。軸の対応は実物で確認する。",
+      "mass_kg": 0.17,
+      "power": "USB Type-C 5V/2A（PD対応）。付属の電源アダプターを使う。",
+      "maximum_power_w": 8,
+      "operating_temperature_c": [0, 40],
+      "ports": "Gigabit Ethernet 1、USB 2.0 Type-A 1、キーボード・マウス用USB Type-C 1、HDMI入力 1、HDMI出力 1、電源用USB Type-C 1",
+      "port_faces_mm": null,
+      "wifi": "2.4GHzと5GHzのWi-Fi 6。炭素繊維入りの素材の板は電波を弱める可能性があるため、有線接続を基本にする。"
+    },
+    "kvm_switch": {
+      "product_url": "https://ja.aliexpress.com/item/1005007070779662.html",
+      "title": "KCEVE 4 Ports HDMI KVM Switcher, 4 IN 1 Out HDMI USB Switch",
+      "model": null,
+      "body_mm": null,
+      "provisional_envelope_mm": [250, 120, 40],
+      "provisional_basis": "販売ページと説明書のページを取得できず外形は未確認。同種の4入力切替器を収める余裕を持たせた仮の箱。",
+      "mass_kg": null,
+      "power": null,
+      "port_faces_mm": null,
+      "switching": "同名製品の説明書の掲載では前面のボタンとキーボード操作で切り替える。購入品で同じか、Comet Proのキーボード入力から切り替えられるかは実機で確認する。"
+    },
+    "spark_rear_ports": {
+      "hdmi_and_usb_positions_mm": null,
+      "note": "切替器から各SparkのHDMIとUSBへ届くかは、端子位置とケーブル長の確認後に判定する。"
+    },
+    "ac_power": {
+      "required_outlets": "Comet Proの電源アダプター、切替器の電源（未確認）、CRS812の交流入力2個",
+      "design_status": "電源タップと配線の置き場は未設計。"
+    }
+  },
   "final_breakout_cable": {
     "reference": "models/spark-rack/reference/selected-network-20261012/configuration.json",
     "connector_envelopes_mm": null,
