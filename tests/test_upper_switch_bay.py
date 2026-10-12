@@ -88,6 +88,11 @@ class UpperSwitchBayTests(unittest.TestCase):
         p = rack_parameters(replace(UpperSwitchBayParameters(), upper_hand_margin=24))
         self.assertEqual(p.height, 630)
 
+    def test_changed_hand_space_applies_to_all_three_variants(self):
+        report = variants(replace(UpperSwitchBayParameters(), upper_hand_margin=24))
+        heights = {row['key']: row['height_mm'] for row in report['rows']}
+        self.assertEqual(heights, {'stacked': 680, 'integrated': 630, 'integrated_lowest': 611})
+
     def test_invalid_dimensions_are_rejected(self):
         with self.assertRaises(ValueError):
             rack_parameters(replace(UpperSwitchBayParameters(), tray_thickness=0))

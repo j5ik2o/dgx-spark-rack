@@ -9,7 +9,7 @@ import math
 from fixed_rack_layout import check_fixed_layout, fixed_layout
 from four_node_layout import box, overlaps
 from network_configuration import selected_network
-from spark_rack_parameters import FixedRackParameters, UpperSwitchBayParameters
+from spark_rack_parameters import FixedRackParameters, SwitchPlacementComparisonParameters, UpperSwitchBayParameters
 from switch_placement_comparison import comparison
 
 
@@ -134,7 +134,12 @@ def variants(q=None):
     """積み増し・上枠共有・最低高さの3案を、同じ予約の考え方で比べる。"""
     q = q or UpperSwitchBayParameters()
     base = FixedRackParameters()
-    reference = next(c for c in comparison()['cases'] if c['key'] == 'upper')
+    # 積み増し案も同じ床下の積み上げと手の余裕で計算し、3案の条件をそろえる。
+    stacked_q = SwitchPlacementComparisonParameters(
+        boundary_thickness=q.floor_plate, support_beam_height=q.support_band,
+        support_plate_thickness=q.tray_thickness, upper_hand_margin=q.upper_hand_margin,
+        upper_frame_height=base.section, switch_face_y=q.switch_face_y)
+    reference = next(c for c in comparison(base, stacked_q)['cases'] if c['key'] == 'upper')
     size = switch_size()
     half = size[0] / 2 + q.side_hand_margin
     stacked_z = reference['switch']['origin'][2]

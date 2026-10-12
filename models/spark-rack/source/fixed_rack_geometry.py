@@ -73,16 +73,17 @@ def side_pattern(p, right, support_metadata=None, bay=None, accessories=None):
         # 専用段の床を受ける帯。通気穴の範囲をこの帯の上下へ分ける。
         bands.append((bay['floor_z'] - 12, bay['switch_z']))
         upper_zones = [(p.upper_base, bay['floor_z'] - 12), (bay['switch_z'], p.height - 28)]
-    for z0, z1 in bands:
-        s = s.fuse(box([x, p.front_y, z0], [p.section, p.depth, z1 - z0]))
-    ys = ((p.front_y + 28, p.panel_split_y - 14), (p.panel_split_y + 14, p.rear_y - 28))
-    lower_zone_top = p.switch_center_z - 50
+    lower_zone_top, middle_zone_bottom = p.switch_center_z - 50, p.switch_center_z - 22
     if accessories is not None:
-        # 中段の機器棚を受ける帯。下側の通気穴の範囲を帯の下までに縮める。
+        # 中段の機器棚を受ける帯。通気穴の範囲をこの帯の上下へ縮める。
         band = (accessories['shelf_z'] - 12, accessories['support_z'] + 8)
         bands.append(band)
         lower_zone_top = min(lower_zone_top, band[0])
-    zs = [(p.lower_base, lower_zone_top), (p.switch_center_z - 22, p.upper_base - 60)] + upper_zones
+        middle_zone_bottom = max(middle_zone_bottom, band[1])
+    for z0, z1 in bands:
+        s = s.fuse(box([x, p.front_y, z0], [p.section, p.depth, z1 - z0]))
+    ys = ((p.front_y + 28, p.panel_split_y - 14), (p.panel_split_y + 14, p.rear_y - 28))
+    zs = [(p.lower_base, lower_zone_top), (middle_zone_bottom, p.upper_base - 60)] + upper_zones
     vents = []
     for y0, y1 in ys:
         for z0, z1 in zs:

@@ -52,6 +52,9 @@ def support_contacts(model):
             carried = [dict(carried, each=True, minimum_area_mm2=500)]
         everything = {i['name']: i['shape'] for i in items + model['references']}
         for entry in carried:
+            # リング接続の段階ではスイッチを置かないため、トレーに載せる検査を省く。
+            if entry['target'] == 'switch' and model['scene']['mode'] == 'ring':
+                continue
             shape = everything[entry['target']]
             areas = {support: horizontal_contact(everything[support], shape, entry['z'])
                      for support in entry['supports']}
@@ -155,8 +158,10 @@ def exchange_envelopes(model):
             inspect(space['label'], box(space['origin'], space['size']), set(space['moving']), fixed)
     front_service = None
     bay = model.get('switch_bay')
-    if bay is not None:
-        space = model['scene']['conditional_service_spaces'][0]
+    # リング接続の段階はスイッチがないため、前側の作業空間も検査しない。
+    spaces = model['scene'].get('conditional_service_spaces') or []
+    if bay is not None and spaces:
+        space = spaces[0]
         envelope = box(space['origin'], space['size'])
         blocked = sorted({name for name, shape in fixed if name != 'switch' and overlap(envelope, shape) > .001})
         front_service = {'name': space['name'], 'required': bay['front_service_required'],

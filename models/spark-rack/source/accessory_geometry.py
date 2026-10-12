@@ -123,8 +123,9 @@ def accessory_parts(scene, p, acc):
                   'through_length_mm': size[2], 'hole_diameter_mm': 4.5, 'thread_nominal_diameter_mm': 4,
                   'head_and_nut_retention': '頭とナットの保持方法は未確定',
                   'status': '棚の重ね継ぎを締める直径4mmねじの通し穴'} for x, y in laps]
-    fasteners += [{'assembly': 'mid_panel', 'axis': [0, 0, 1], 'origin': [x, y, acc['support_z']],
-                   'through_length_mm': acc['parameters']['flange_thickness'], 'hole_diameter_mm': 4.5,
+    # 前面板の受け板と棚の前の帯を合わせて貫く長さ。下端は棚の下面。
+    fasteners += [{'assembly': 'mid_panel', 'axis': [0, 0, 1], 'origin': [x, y, origin[2]],
+                   'through_length_mm': size[2] + acc['parameters']['flange_thickness'], 'hole_diameter_mm': 4.5,
                    'thread_nominal_diameter_mm': 4, 'removable': True,
                    'head_and_nut_retention': '棚側は熱圧入ナットかナット保持の候補で未確定',
                    'status': '前面板の受け板を棚へ留める。中央の板はComet Proの交換時に外す。'} for x, y in flange]

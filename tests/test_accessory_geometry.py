@@ -98,6 +98,29 @@ class AccessoryGeometryTests(unittest.TestCase):
         screws = [f for f in self.metadata['fastener_candidates'] if f['assembly'] == 'mid_panel']
         self.assertEqual(len(screws), 6)
         self.assertTrue(all(f['removable'] for f in screws))
+        # 受け板と棚の前の帯を合わせて貫く長さを記録する。
+        for screw in screws:
+            self.assertEqual(screw['origin'][2], self.acc['shelf_z'])
+            self.assertEqual(screw['through_length_mm'],
+                             self.acc['support_z'] - self.acc['shelf_z'] + self.acc['parameters']['flange_thickness'])
+
+    def test_side_frame_band_below_the_shelf_is_solid(self):
+        from fixed_rack_geometry import side_pattern
+        for right in (False, True):
+            pattern = side_pattern(self.p, right, None, self.bay, self.acc)
+            x = self.p.width / 2 - self.p.section if right else -self.p.width / 2
+            # 棚の受け面の下6mmを全厚で残す。従来の中段の帯は293.25mmからで、この範囲を覆わない。
+            probe = Part.makeBox(self.p.section, 40, 6, App.Vector(x, -60, self.acc['shelf_z'] - 6))
+            self.assertAlmostEqual(pattern.common(probe).Volume, probe.Volume, delta=1)
+
+    def test_ring_phase_with_the_bay_and_shelf_validates(self):
+        from fixed_rack_geometry import shapes
+        from upper_switch_bay import upper_scene
+        from validate_fixed_rack import validate
+        p, bay, acc, _ = upper_scene('ring')
+        result = validate(shapes(p, 'ring', bay, acc))
+        self.assertEqual(result['status'], 'passed')
+        self.assertNotIn('switch_front_service', result['exchange_envelopes'])
 
 
 if __name__ == '__main__':
