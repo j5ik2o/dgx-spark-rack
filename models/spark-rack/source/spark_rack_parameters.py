@@ -125,6 +125,81 @@ class SwitchPlacementComparisonParameters:
 
 
 @dataclass(frozen=True)
+class UpperSwitchBayParameters:
+    """上枠を共有する上部専用段。余裕と支持の寸法は設計仮定で、冷却・保守の指定値ではない。
+
+    床下の積み上げは配置比較と同じ仕切り4mm、支持帯12mm、トレー8mmとする。
+    preserve_front_service は、スイッチのラック前側の面へ手と部品を出す経路を残すかを表す。
+    """
+    floor_plate: float = 4
+    support_band: float = 12
+    tray_thickness: float = 8
+    tray_depth: float = 240
+    tray_rim: float = 16
+    tray_split_gap: float = 0.3
+    fence_height: float = 8
+    fence_thickness: float = 4
+    switch_side_clearance: float = 0.5
+    side_hand_margin: float = 12
+    upper_hand_margin: float = 12
+    front_service_clearance: float = 4
+    floor_front_gap: float = 4
+    front_stop_depth: float = 6
+    band_width: float = 20
+    switch_face_y: float = 100
+    preserve_front_service: bool = True
+
+    @property
+    def under_switch(self):
+        return self.floor_plate + self.support_band + self.tray_thickness
+
+    def validate(self):
+        import math
+        for key, value in asdict(self).items():
+            if isinstance(value, bool):
+                continue
+            if not math.isfinite(value) or (key != 'switch_face_y' and value <= 0):
+                raise ValueError('上部専用段の寸法は有限の正の値にしてください: ' + key)
+        if self.tray_rim * 2 >= self.tray_depth:
+            raise ValueError('トレーの縁が奥行を占めています')
+
+
+@dataclass(frozen=True)
+class RemoteConsoleParameters:
+    """上下のSparkの間に置く遠隔操作機器の棚と前面板。余裕の寸法は設計仮定。
+
+    機器の外形は未確定値の記録から読む。Comet Proは公式資料の値、切替器は仮の箱。
+    """
+    shelf_plate: float = 4
+    shelf_rib: float = 8
+    panel_thickness: float = 4
+    panel_center_half_width: float = 60
+    window_margin: float = 3
+    slot_pitch: float = 10
+    comet_side_margin: float = 12
+    comet_top_margin: float = 6
+    comet_rear_cable_space: float = 60
+    kvm_rear_face_y: float = 90
+    kvm_rear_connector_space: float = 50
+    kvm_front_connector_space: float = 40
+    kvm_hand_margin: float = 12
+    band_width: float = 20
+    front_gap: float = 4
+    flange_thickness: float = 4
+    flange_overlap: float = 20
+
+    @property
+    def shelf_thickness(self):
+        return self.shelf_plate + self.shelf_rib
+
+    def validate(self):
+        import math
+        for key, value in asdict(self).items():
+            if not math.isfinite(value) or (key != 'kvm_rear_face_y' and value <= 0):
+                raise ValueError('遠隔操作機器の棚の寸法は有限の正の値にしてください: ' + key)
+
+
+@dataclass(frozen=True)
 class Parameters:
     module_width: float = 210
     module_depth: float = 230

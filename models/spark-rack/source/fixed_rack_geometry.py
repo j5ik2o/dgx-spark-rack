@@ -6,7 +6,7 @@ import sys
 import FreeCAD as App
 import Part
 
-from fixed_rack_layout import fixed_layout
+from fixed_rack_layout import cross_beams, fixed_layout
 from spark_rack_parameters import FixedRackParameters
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -21,7 +21,8 @@ ROLE_COLORS = {'spark': (.77, .61, .30), 'fan': (.79, .70, .56), 'adapter': (.30
                'carrier': (.62, .65, .67), 'power_carrier': (.62, .65, .67),
                'controller_face': (.62, .65, .67), 'case_reference': (.19, .21, .23),
                'controller_display_reference': (.12, .19, .22),
-               'controller_knob_reference': (.18, .19, .20)}
+               'controller_knob_reference': (.18, .19, .20),
+               'accessory': (.20, .22, .25), 'mid_panel': (.62, .65, .67)}
 
 
 def box(origin, size):
@@ -50,21 +51,39 @@ def vent_grid(x, y0, y1, z0, z1, depth, p):
     return tools
 
 
-def side_pattern(p, right, support_metadata=None):
+def side_pattern(p, right, support_metadata=None, bay=None, accessories=None):
     if support_metadata is None:
-        _, support_metadata = integrated_supports(fixed_layout(parameters=p), p)
+        scene = fixed_layout(parameters=p, bay=bay, accessories=accessories)
+        _, support_metadata = integrated_supports(scene, p)
+        if bay is not None:
+            from switch_bay_geometry import switch_bay_parts
+            support_metadata = merge_bay(support_metadata, switch_bay_parts(scene, p, bay)[1])
+        if accessories is not None:
+            from accessory_geometry import accessory_parts
+            support_metadata = merge_bay(support_metadata, accessory_parts(scene, p, accessories)[1], 'accessories')
     x = p.width / 2 - p.section if right else -p.width / 2
     skin_x = p.width / 2 - p.skin if right else x
     s = box([skin_x, p.front_y, 0], [p.skin, p.depth, p.height])
     for y in (p.front_y, p.panel_split_y - 14, p.rear_y - 28):
         s = s.fuse(box([x, y, 0], [p.section, 28, p.height]))
-    bands = ((0, 40), (p.power_ceiling_z - 4, p.lower_base), (p.switch_center_z - 50, p.switch_center_z - 22),
-             (p.upper_base - 60, p.upper_base), (p.height - 28, p.height))
+    bands = [(0, 40), (p.power_ceiling_z - 4, p.lower_base), (p.switch_center_z - 50, p.switch_center_z - 22),
+             (p.upper_base - 60, p.upper_base), (p.height - 28, p.height)]
+    upper_zones = [(p.upper_base, p.height - 28)]
+    if bay is not None:
+        # 専用段の床を受ける帯。通気穴の範囲をこの帯の上下へ分ける。
+        bands.append((bay['floor_z'] - 12, bay['switch_z']))
+        upper_zones = [(p.upper_base, bay['floor_z'] - 12), (bay['switch_z'], p.height - 28)]
+    lower_zone_top, middle_zone_bottom = p.switch_center_z - 50, p.switch_center_z - 22
+    if accessories is not None:
+        # 中段の機器棚を受ける帯。通気穴の範囲をこの帯の上下へ縮める。
+        band = (accessories['shelf_z'] - 12, accessories['support_z'] + 8)
+        bands.append(band)
+        lower_zone_top = min(lower_zone_top, band[0])
+        middle_zone_bottom = max(middle_zone_bottom, band[1])
     for z0, z1 in bands:
         s = s.fuse(box([x, p.front_y, z0], [p.section, p.depth, z1 - z0]))
     ys = ((p.front_y + 28, p.panel_split_y - 14), (p.panel_split_y + 14, p.rear_y - 28))
-    zs = ((p.lower_base, p.switch_center_z - 50), (p.switch_center_z - 22, p.upper_base - 60),
-          (p.upper_base, p.height - 28))
+    zs = [(p.lower_base, lower_zone_top), (middle_zone_bottom, p.upper_base - 60)] + upper_zones
     vents = []
     for y0, y1 in ys:
         for z0, z1 in zs:
@@ -82,7 +101,8 @@ def side_pattern(p, right, support_metadata=None):
             oy, oz = socket['cut_origin'][1:]
             dy, dz = socket['cut_size'][1:]
             protected.append((oy, oy + dy, socket['bearing_z'] - 6, oz + dz + 2))
-    for beam in fixed_layout(parameters=p)['cross_beams']:
+    beams = cross_beams(p, bay)
+    for beam in beams:
         oy, oz = beam['origin'][1:]
         dy, dz = beam['size'][1:]
         protected.append((oy - p.fit_clearance, oy + dy + p.fit_clearance,
@@ -98,7 +118,7 @@ def side_pattern(p, right, support_metadata=None):
     s = s.cut(rounded_window(x - 1, -183, 25, p.section + 2, 126, 126, 6))
     recess_x = x + p.section - 4 if right else x - 1
     s = s.cut(box([recess_x, -192, 16], [5, 144, 144]))
-    for b in fixed_layout(parameters=p)['cross_beams']:
+    for b in beams:
         y, z = b['origin'][1:]
         pocket_x = x - 1 if right else x + p.section - 8 - p.fit_clearance
         s = s.cut(box([pocket_x, y - p.fit_clearance, z],
@@ -116,8 +136,8 @@ def side_pattern(p, right, support_metadata=None):
     return s.removeSplitter()
 
 
-def side_tiles(p, right, support_metadata=None):
-    pattern = side_pattern(p, right, support_metadata)
+def side_tiles(p, right, support_metadata=None, bay=None, accessories=None):
+    pattern = side_pattern(p, right, support_metadata, bay, accessories)
     h = p.lap_length / 2
     ys = [(p.front_y, p.panel_split_y - h, (0,)),
           (p.panel_split_y - h, p.panel_split_y + h, (0, 1)),
@@ -280,16 +300,39 @@ def case_references(scene, p, case_model=None):
     return result
 
 
-def shapes(parameters=None, mode='crs812'):
+def merge_bay(support_metadata, bay_metadata, key_name='switch_bay'):
+    """専用段や機器棚の受け・支持面・ねじ候補を、固定棚の記録へ加える。"""
+    for key in ('socket_envelopes', 'support_surfaces', 'fastener_candidates', 'bearing_surfaces', 'assemblies'):
+        support_metadata[key] = support_metadata[key] + bay_metadata[key]
+    support_metadata[key_name] = {k: v for k, v in bay_metadata.items()
+                                  if k not in ('socket_envelopes', 'support_surfaces', 'fastener_candidates',
+                                               'bearing_surfaces', 'assemblies')}
+    return support_metadata
+
+
+def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
+    """bayを渡すと上部専用段、accessoriesを渡すと中段の機器棚を持つ案を作る。省略時は中央の暫定配置。"""
     p = parameters or FixedRackParameters()
-    scene = fixed_layout(mode, p)
+    scene = fixed_layout(mode, p, bay, accessories)
     supports, support_metadata = integrated_supports(scene, p)
+    bay_parts = []
+    if bay is not None:
+        from switch_bay_geometry import switch_bay_parts
+        bay_parts, bay_metadata = switch_bay_parts(scene, p, bay)
+        support_metadata = merge_bay(support_metadata, bay_metadata)
+    if accessories is not None:
+        from accessory_geometry import accessory_parts
+        accessory_items, accessory_metadata = accessory_parts(scene, p, accessories)
+        bay_parts = bay_parts + accessory_items
+        support_metadata = merge_bay(support_metadata, accessory_metadata, 'accessories')
     case_model = load_case_model()
     face = controller_front_face(p, case_model)
     if abs(face['metadata']['face_front_y_mm'] - p.front_face_y) > 1e-6:
         raise ValueError('共通前面の基準と既存の制御器蓋が一致しません。寸法定義を更新してください。')
-    parts = side_tiles(p, False, support_metadata) + side_tiles(p, True, support_metadata)
+    parts = (side_tiles(p, False, support_metadata, bay, accessories)
+             + side_tiles(p, True, support_metadata, bay, accessories))
     parts.extend(supports)
+    parts.extend(bay_parts)
     for b in scene['cross_beams']:
         parts.extend(beam_segments(b, p))
     for b in scene['trays'] + scene['power_trays']:
@@ -319,13 +362,15 @@ def shapes(parameters=None, mode='crs812'):
             s = s.cut(cylinder(center, b['size_mm'] / 2 - 6, b['size'][w] + 2, axis))
         refs.append({'name': b['name'], 'label': b['label'], 'shape': s, 'role': b['kind']})
     return {'parameters': p, 'scene': scene, 'parts': parts, 'references': refs,
-            'supports': support_metadata, 'controller_face': face}
+            'supports': support_metadata, 'controller_face': face, 'switch_bay': bay,
+            'accessories': accessories}
 
 
-def create(parameters=None, mode='crs812'):
-    model = shapes(parameters, mode)
+def create(parameters=None, mode='crs812', bay=None, accessories=None):
+    model = shapes(parameters, mode, bay, accessories)
     doc = App.newDocument('FixedFourNodeRack')
-    doc.Label = '固定段・独立電源区画の4台ラック・形状候補'
+    doc.Label = ('上部専用段を持つ4台ラック・形状候補' if bay is not None
+                 else '固定段・独立電源区画の4台ラック・形状候補')
     for item in model['parts'] + model['references']:
         obj = doc.addObject('Part::Feature', item['name'])
         obj.Label = item['label']

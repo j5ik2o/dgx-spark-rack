@@ -2,12 +2,12 @@
 <html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>構造面と共通前面を持つ4台ラック</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#292e34;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}main{max-width:1320px;margin:auto;padding:32px 24px}h1{font-size:30px;line-height:1.4;margin:8px 0 14px}h2{font-size:18px;margin:0 0 12px}.muted{color:#677280}.tag{background:#e9eff3;color:#386078;padding:4px 12px;font-size:12px;border-radius:20px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:20px 0}button,select{font:inherit;padding:8px 12px;border-radius:8px;border:1px solid #d2d9df;background:white;color:inherit;cursor:pointer}button[aria-pressed=true]{background:#2d4657;color:white}.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px}.card{background:white;border:1px solid #dce2e7;border-radius:14px;padding:18px;margin-bottom:18px}.stage{padding:0;overflow:hidden}canvas{display:block;width:100%;aspect-ratio:1.25;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.caption{border-top:1px solid #e1e6eb;padding:14px 18px;font-size:13px}.side label{display:block;margin:12px 0}.side input[type=range]{width:100%}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}.facts strong{display:block;font-size:22px}.facts small{color:#677280}.warning{background:#fff2da;padding:16px;border-radius:10px;color:#795b32}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}ul{padding-left:20px}a{color:#386f91;text-underline-offset:3px}.links{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-top:18px}.state{font-size:13px}@media(max-width:850px){.layout,.pair{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;gap:16px}.facts{grid-template-columns:1fr 1fr}}@media(max-width:500px){main{padding:20px 12px}h1{font-size:24px}.side{grid-template-columns:1fr}.toolbar button{font-size:13px}.facts strong{font-size:18px}}
+*{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#292e34;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}main{max-width:1320px;margin:auto;padding:32px 24px}h1{font-size:30px;line-height:1.4;margin:8px 0 14px}h2{font-size:18px;margin:0 0 12px}.muted{color:#677280}.tag{background:#e9eff3;color:#386078;padding:4px 12px;font-size:12px;border-radius:20px}.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:20px 0}button,select{font:inherit;padding:8px 12px;border-radius:8px;border:1px solid #d2d9df;background:white;color:inherit;cursor:pointer}button[aria-pressed=true]{background:#2d4657;color:white}.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px}.card{background:white;border:1px solid #dce2e7;border-radius:14px;padding:18px;margin-bottom:18px}.stage{padding:0;overflow:hidden}canvas{display:block;width:100%;aspect-ratio:1.25;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.caption{border-top:1px solid #e1e6eb;padding:14px 18px;font-size:13px}.side label{display:block;margin:12px 0}.side input[type=range]{width:100%}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}.facts strong{display:block;font-size:22px}.facts small{color:#677280}.warning{background:#fff2da;padding:16px;border-radius:10px;color:#795b32}.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}ul{padding-left:20px}a{color:#386f91;text-underline-offset:3px}.links{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;margin-top:18px}.state{font-size:13px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px 10px;border-top:1px solid #e1e6eb;vertical-align:top}th{font-weight:600;color:#4b5966}td.num{white-space:nowrap}.scroll{overflow-x:auto}.chosen{background:#eef5f9}@media(max-width:850px){.layout,.pair{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr;gap:16px}.facts{grid-template-columns:1fr 1fr}}@media(max-width:500px){main{padding:20px 12px}h1{font-size:24px}.side{grid-template-columns:1fr}.toolbar button{font-size:13px}.facts strong{font-size:18px}}
 </style>
 <main>
 <span class="tag">外観と支持構造を統合した形状候補</span>
-<h1>左右の構造面と、そろえた前面。</h1>
-<p>外側の斜材を廃止し、左右の面と内側のリブで支持する構成へ改めました。上下のファン面と制御器の操作面を同じ前面位置へそろえ、固定段と独立した電源区画を維持します。</p>
+<h1 id="headline">左右の構造面と、そろえた前面。</h1>
+<p id="lead">外側の斜材を廃止し、左右の面と内側のリブで支持する構成へ改めました。上下のファン面と制御器の操作面を同じ前面位置へそろえ、固定段と独立した電源区画を維持します。</p>
 <div class="toolbar"><label>接続 <select id="mode"><option value="crs812">最終：CRS812</option><option value="ring">当初：リング接続</option></select></label><button data-view="iso" aria-pressed="true">斜め</button><button data-view="front" aria-pressed="false">前面</button><button data-view="back" aria-pressed="false">背面</button><button data-view="side" aria-pressed="false">側面</button><button data-view="top" aria-pressed="false">上面</button></div>
 <div class="layout"><div><section class="card stage"><canvas id="drawing" width="1100" height="880" role="img" aria-label="固定段ラックの接合、機器、交換空間を含む立体図"></canvas><div class="caption" id="caption"></div></section>
 <div class="facts"><div><small>枠の外形・脚は未設計</small><strong id="size"></strong></div><div><small>本体の段間隔</small><strong>220mm固定</strong></div><div><small>下段／上段の底面</small><strong>208／428mm</strong></div></div>
@@ -15,8 +15,9 @@
 <aside class="side"><section class="card"><h2>表示するもの</h2><label><input id="outer_walls" type="checkbox" checked> 左右の構造面</label><label><input id="equipment" type="checkbox" checked> 機器と制御器のケース</label><label><input id="power" type="checkbox" checked> 電源と水平な仕切り</label><label><input id="air" type="checkbox"> 前方100mm・後方400mmの空間</label><label><input id="service" type="checkbox"> 本体とスイッチの交換空間</label><label><input id="storage" type="checkbox"> 分岐ケーブルの余長収納予約</label><p class="muted state">斜め表示はドラッグで回転します。薄い予約範囲は、実測した機器や収納済みケーブルではありません。</p></section>
 <section class="card"><h2>前面の制御器扉</h2><label for="door">開く角度 <span id="door-angle">0度</span></label><input id="door" type="range" min="0" max="90" step="5" value="0"><p class="muted state">制御器6組と取付面を一緒に動かす候補です。既存蓋と共通面をそろえ、つまみの露出2.83mmを維持します。ヒンジ、留め具、接続線の余裕は未設計です。</p></section></aside></div>
 <div class="pair"><section class="card"><h2>交換する方向を決める</h2><ul><li>本体とスイッチ：接続を外して背面へ。</li><li>前面の140mmファン：下縁の指掛かりを使い前へ。</li><li>側面の120mmファン：保持板ごと外側へ。</li><li>電源：前側2個は制御器扉を開いて前へ、後側2個は背面へ。</li></ul></section><section class="card"><h2>構造面と支持棚で骨組みを整理する</h2><p>左右の構造面は各6枚へ分割し、内側のリブと受けで棚・台座を支えます。旧30部品の支持梁は、固定棚6部品と台座6部品へ統合しました。外へ張り出す持ち手も廃止しました。</p><p class="muted state">組立の全経路、接合のねじ・ナット保持、材料と実物の隙間は確認前です。部品を印刷できる外形であることと、荷重を支えられることを区別します。</p></section></div>
-<section class="card"><h2>検査済みの範囲と残る設計</h2><p id="validation-summary"></p><div class="warning">形状候補です。スイッチ支持板、トレーのガイドと抜け止め、制御器扉のヒンジ、ファン保持部の留め具と保護格子の実物確認、仕切りの固定、余長収納の保持部、脚は未完成です。格子により円開口の約25%が塞がるため、風量と騒音を確認します。実物の適合・強度・冷却は未検証です。造形用のファイルは生成していません。</div></section>
-<div class="links"><a href="fixed-rack-candidate.FCStd">FreeCADの参考形状</a><a href="fixed-rack-candidate.step">参考形状の交換ファイル</a><a href="layout.json">配置と予約空間</a><a href="support-system.json">支持構造</a><a href="controller-face.json">共通操作面</a><a href="validation.json">検査結果</a><a href="manifest.json">生成元と保存記録</a></div>
+<section class="card" id="variant" hidden><h2>上部専用段の3案を比べる</h2><p class="muted state">本体の底面208／428mmと電源区画は3案とも同じです。前側の作業空間は、スイッチの電源とファンがラック前側の面にある場合に必要です。この面の配置は未確認です。</p><div class="scroll"><table><thead><tr><th>案</th><th>全高</th><th>スイッチ底面</th><th>前側の作業空間</th><th>高さを決める条件</th></tr></thead><tbody id="variant-rows"></tbody></table></div><p class="state" id="variant-reason"></p></section>
+<section class="card"><h2>検査済みの範囲と残る設計</h2><p id="validation-summary"></p><div class="warning" id="warning">形状候補です。スイッチ支持板、トレーのガイドと抜け止め、制御器扉のヒンジ、ファン保持部の留め具と保護格子の実物確認、仕切りの固定、余長収納の保持部、脚は未完成です。格子により円開口の約25%が塞がるため、風量と騒音を確認します。実物の適合・強度・冷却は未検証です。造形用のファイルは生成していません。</div></section>
+<div class="links"><a href="fixed-rack-candidate.FCStd">FreeCADの参考形状</a><a href="fixed-rack-candidate.step">参考形状の交換ファイル</a><a href="layout.json">配置と予約空間</a><a href="support-system.json">支持構造</a><a href="controller-face.json">共通操作面</a><a href="validation.json">検査結果</a><a href="manifest.json">生成元と保存記録</a><a href="upper-bay-variants.json" id="variants-link" hidden>上部専用段の比較</a></div>
 </main>
 <script>
 const data=__FIXED_RACK_DATA__;
@@ -27,11 +28,11 @@ function camera(p){const[x,y,z]=p;if(view==='front')return[x,-z,-y];if(view==='b
 function corners(b){return[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]].map(c=>c.map((v,i)=>b.origin[i]+v*b.size[i]));}
 function doorPoint(p){const a=-Number(el('door').value)*Math.PI/180,dx=p[0]+180,dy=p[1]+299;return[-180+dx*Math.cos(a)-dy*Math.sin(a),-299+dx*Math.sin(a)+dy*Math.cos(a),p[2]];}
 function draw(){
- const bounds=corners({origin:[-290,-700,0],size:[580,1120,580]}).map(camera);
+ const bounds=corners({origin:[-290,-700,0],size:[580,1120,Math.max(580,data.layout.frame_outer_mm[2]+20)]}).map(camera);
  const low=[Math.min(...bounds.map(p=>p[0])),Math.min(...bounds.map(p=>p[1]))],high=[Math.max(...bounds.map(p=>p[0])),Math.max(...bounds.map(p=>p[1]))];
  const scale=Math.min(980/(high[0]-low[0]),745/(high[1]-low[1]));
  const project=p=>{const q=camera(p);return[550+(q[0]-(low[0]+high[0])/2)*scale,438+(q[1]-(low[1]+high[1])/2)*scale]};
- const referenceRoles=['spark','fan','adapter','switch','case_reference','controller_knob_reference','controller_display_reference'];
+ const referenceRoles=['spark','fan','adapter','switch','accessory','case_reference','controller_knob_reference','controller_display_reference'];
  const isPower=m=>m.role==='adapter'||m.role==='separator'||m.name.startsWith('power_');
  const visible=data.meshes.filter(m=>!(m.role==='side_panel'&&!el('outer_walls').checked)&&!(m.role==='switch'&&mode==='ring')&&(!referenceRoles.includes(m.role)||el('equipment').checked)&&(!isPower(m)||el('power').checked));
  const faces=[];
@@ -42,6 +43,8 @@ function draw(){
  function outline(b,color){const p=corners(b).map(project);ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.setLineDash([6,4]);for(const [a,c]of edges){ctx.beginPath();ctx.moveTo(...p[a]);ctx.lineTo(...p[c]);ctx.stroke();}ctx.setLineDash([]);}
  if(el('air').checked)for(const b of [...data.layout.intake_spaces,...data.layout.exhaust_spaces])outline(b,'#5996bd');
  if(el('service').checked)for(const b of data.layout.service_spaces.filter(b=>mode!=='ring'||b.name!=='switch_removal'))outline(b,'#b7804b');
+ if(el('service').checked&&mode!=='ring')for(const b of data.layout.conditional_service_spaces||[])outline(b,'#c45f5f');
+ if(el('service').checked&&data.layout.accessories)for(const b of data.layout.accessories.service_spaces)outline(b,'#4f8f6f');
  if(el('storage').checked)for(const b of data.layout.cable_storage_spaces)outline(b,'#835ea1');
  ctx.fillStyle='#536475';ctx.font='17px -apple-system,sans-serif';ctx.fillText({iso:'接合を含む形状候補・ドラッグで回転',front:'前面：4つの140mmファンと制御器の扉',back:'背面：機器の交換経路を確保',side:'側面：電源用ファンは保持板ごと外へ',top:'上面：2列の本体と共通枠'}[view],25,35);
  el('caption').textContent=(mode==='ring'?'当初のリング接続。スイッチだけを外して表示。':'最終のCRS812接続。分岐ケーブルの実経路は未確定。')+' 本体は両方式とも底面208／428mmの同じ位置です。';
@@ -49,6 +52,15 @@ function draw(){
  window.fixedRackState={mode,view,doorAngle:Number(el('door').value),visibleNames:visible.map(m=>m.name),renderedTriangles:faces.length,layout:data.layout};
 }
 el('size').textContent=data.layout.frame_outer_mm.join(' × ')+'mm';
+if(data.variants){
+ const bay=data.validation.switch_bay,labels={passed:'確保',blocked:'上段ファン保持部に当たる'},causes={switch_front_service_over_fan_carriers:'前側の作業空間を上段ファン保持部の上へ通す',upper_spark_rear_exchange:'上段Sparkを背面へ出す空間の直上',};
+ el('headline').textContent='上部専用段を持つ4台ラック。';
+ el('lead').textContent='上枠を専用段の上へ移し、スイッチを載せる床を左右の側枠へ差し込みました。本体の段位置と電源区画は変えず、全高は'+bay.frame_height_mm+'mmです。スイッチは左右のトレーに載せて背面へ引き出します。'+(data.validation.accessories?'上下のSparkの間には遠隔操作機器の棚を置き、前にComet Pro、後ろに4入力の切替器を載せました。上下のファンの間は、画面の窓を持つ前面板で閉じています。':'');
+ el('variant').hidden=false;el('variants-link').hidden=false;
+ el('variant-rows').innerHTML=data.variants.rows.map(r=>`<tr class="${r.key===data.variants.recommendation?'chosen':''}"><td>${r.label}${r.key===data.variants.recommendation?'（推奨）':''}</td><td class="num">${r.height_mm}mm</td><td class="num">${r.switch_bottom_mm}mm</td><td>${labels[r.front_service]}</td><td>${causes[r.binding_constraint]||r.binding_constraint}</td></tr>`).join('');
+ el('variant-reason').textContent=data.variants.reason;
+ el('warning').textContent='形状候補です。スイッチ本体をトレーへ留める金具は、後方支持耳の穴位置を実測してから設計します。トレー抜け止めねじの床側の雌ねじ、専用段前面の開口の覆い、制御器扉のヒンジ、トレーのガイドと抜け止め（本体と電源）、仕切りの固定、余長収納の保持部、脚は未完成です。スイッチの吸排気方向、質量、実奥行は未確認です。'+(data.validation.accessories?'切替器の外形は仮の箱で、電源の取り方、SparkのHDMIとUSBへの配線、電源タップの置き場は未設計です。':'')+'実物の適合・強度・冷却は未検証で、造形用のファイルは生成していません。';
+}
 el('validation-summary').textContent='形状候補'+data.validation.candidate_part_instances+'個の有効性と外形、静止した形状の干渉、本体とスイッチの背面交換予約、前後の固定障害物、保存後の再読込を確認しました。支持面の接触と共通操作面の視線・指の仮空間も検査済みです。扉を開く予約と、電源・ファンの交換方向にも固定障害物がないことを確認しました。接続線、留め具、実際の手の操作と全体組立は未検証です。';
 el('mode').addEventListener('change',()=>{mode=el('mode').value;draw()});
 for(const id of ['outer_walls','equipment','power','air','service','storage','door'])el(id).addEventListener('input',draw);

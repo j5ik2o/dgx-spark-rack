@@ -40,6 +40,28 @@ def support_contacts(model):
             if area < 100:
                 raise ValueError('固定棚から側壁への受け面が不足しています: ' + socket['name'])
             rows.append({'target': name, 'support': socket['name'], 'area_mm2': area})
+        # 上部専用段：可動トレーを床で受け、スイッチの参考外形をトレーで受ける。
+        for target in assembly.get('moving_parts', []):
+            shape = next(i['shape'] for i in items if i['name'] == target)
+            area = sum(horizontal_contact(s, shape, assembly['support_z']) for s in parts)
+            if area < 500:
+                raise ValueError('トレーと固定支持面の接触が不足しています: ' + target)
+            rows.append({'target': target, 'support': name, 'area_mm2': area})
+        carried = assembly.get('carried') or []
+        if isinstance(carried, dict):
+            carried = [dict(carried, each=True, minimum_area_mm2=500)]
+        everything = {i['name']: i['shape'] for i in items + model['references']}
+        for entry in carried:
+            # リング接続の段階ではスイッチを置かないため、トレーに載せる検査を省く。
+            if entry['target'] == 'switch' and model['scene']['mode'] == 'ring':
+                continue
+            shape = everything[entry['target']]
+            areas = {support: horizontal_contact(everything[support], shape, entry['z'])
+                     for support in entry['supports']}
+            low = [n for n, a in areas.items() if a < entry['minimum_area_mm2']] if entry['each'] else []
+            if low or sum(areas.values()) < entry['minimum_area_mm2']:
+                raise ValueError('載せる物と支持面の接触が不足しています: ' + entry['target'])
+            rows += [{'target': entry['target'], 'support': n, 'area_mm2': a} for n, a in areas.items() if a > 0]
     return {'status': 'passed', 'contacts': rows,
             'scope': 'トレーから固定支持棚・支持床、側壁の水平な受け面へ荷重を渡す面の存在。強度と長期荷重は未検証。'}
 
@@ -130,10 +152,31 @@ def exchange_envelopes(model):
             b = by_name[part]['shape'].optimalBoundingBox(False)
             x = b.XMin if right else b.XMin - 80
             inspect(part + 'を側面へ', box([x, b.YMin, b.ZMin], [b.XLength + 80, b.YLength, b.ZLength]), moving, fixed)
+    accessories = model.get('accessories')
+    if accessories is not None:
+        for space in accessories['service_spaces']:
+            inspect(space['label'], box(space['origin'], space['size']), set(space['moving']), fixed)
+    front_service = None
+    bay = model.get('switch_bay')
+    # リング接続の段階はスイッチがないため、前側の作業空間も検査しない。
+    spaces = model['scene'].get('conditional_service_spaces') or []
+    if bay is not None and spaces:
+        space = spaces[0]
+        envelope = box(space['origin'], space['size'])
+        blocked = sorted({name for name, shape in fixed if name != 'switch' and overlap(envelope, shape) > .001})
+        front_service = {'name': space['name'], 'required': bay['front_service_required'],
+                         'dependency': bay['front_service_dependency'], 'obstructions': blocked,
+                         'status': 'passed' if not blocked else 'blocked'}
+        if bay['front_service_required']:
+            failures += [[space['name'], name] for name in blocked]
+            checks.append('スイッチのラック前側の面から部品を前へ出す仮の経路')
     if failures:
         raise ValueError('交換予約の形状干渉: ' + str(failures))
-    return {'status': 'passed', 'checked': checks,
-            'scope': '接続を外した機器、開いた取付面、移動方向の外形箱。ヒンジ、留め具、配線、実際の手の操作は未検証。'}
+    result = {'status': 'passed', 'checked': checks,
+              'scope': '接続を外した機器、開いた取付面、移動方向の外形箱。ヒンジ、留め具、配線、実際の手の操作は未検証。'}
+    if front_service is not None:
+        result['switch_front_service'] = front_service
+    return result
 
 
 def validate(model):
@@ -163,7 +206,7 @@ def validate(model):
         raise ValueError('形状干渉: ' + str(collisions))
     results = {}
     for mode in ('ring', 'crs812'):
-        scene = fixed_layout(mode, p)
+        scene = fixed_layout(mode, p, model.get('switch_bay'), model.get('accessories'))
         results[mode] = check_fixed_layout(scene)
     reference = model['scene']
     service_failures, air_failures = [], []
@@ -171,7 +214,8 @@ def validate(model):
         target = envelope['name'].removesuffix('_removal')
         sweep = box(envelope['origin'], envelope['size'])
         for item in items:
-            if item['name'] in (target, target + '_tray'):
+            # 機器と一緒に動くトレー（左右2枚に分けたものを含む）は除く。
+            if item['name'] == target or item['name'].startswith(target + '_tray'):
                 continue
             if overlap(sweep, item['shape']) > .001:
                 service_failures.append([envelope['name'], item['name']])
@@ -184,6 +228,45 @@ def validate(model):
         raise ValueError(str({'service_failures': service_failures, 'air_failures': air_failures}))
     motion = exchange_envelopes(model)
     contacts = support_contacts(model)
+    remaining = ['側枠と横梁を全体へ組み込む順序と連続した経路',
+                 '制御器扉のヒンジと留め具', '機器トレーのガイドと抜け止め',
+                 '前面・側面ファン保持部の留め具と格子の実物確認', '電源仕切りの固定',
+                 'スイッチ支持板と固定', '余長収納の保持部', '脚と滑り止め', '接合面を保護した外周の面取りと丸み']
+    bay = model.get('switch_bay')
+    bay_summary = None
+    if bay is not None:
+        remaining[remaining.index('スイッチ支持板と固定')] = 'スイッチ本体をトレーへ留める金具（後方支持耳の穴位置を実測後）'
+        remaining += ['トレー抜け止めねじの床側の雌ねじ（熱圧入ナットかナット保持）',
+                      '専用段前面の開口の覆いと配線の引き出し口']
+        bay_summary = {'variant': bay['variant'], 'frame_height_mm': p.height,
+                       'floor_bottom_mm': bay['floor_z'], 'tray_support_mm': bay['support_z'],
+                       'switch_bottom_mm': bay['switch_z'], 'binding_constraint': bay['binding_constraint'],
+                       'part_count': model['supports']['switch_bay']['part_count'],
+                       'removed_cross_beams': bay['replaced_cross_beams'],
+                       'load_path': 'スイッチ→左右のトレー→床の支持帯→床の左右の舌→側枠の水平な受け→側枠の重ね継ぎ→脚',
+                       'switch_fixing': 'トレーの側面の止めと前側の止めで位置を決め、後ろのねじ2本でトレーを床へ留める。'
+                                        'スイッチ本体の固定金具は穴位置の実測後に設計する。'}
+    accessories = model.get('accessories')
+    accessory_summary = None
+    if accessories is not None:
+        remaining += ['切替器の実寸・電源・端子の面に合わせた棚の位置',
+                      'Comet Pro・切替器・CRS812の交流電源（電源タップの置き場）',
+                      '切替器からSparkのHDMIとUSBへの配線の経路と保持']
+        comet = next(i for i in model['references'] if i['name'] == 'remote_kvm')['shape'].BoundBox
+        panel = next(i for i in model['parts'] if i['name'] == 'mid_panel_center')['shape']
+        probe = box([comet.XMin, accessories['panel_y'], comet.ZMin],
+                    [comet.XLength, accessories['parameters']['panel_thickness'], comet.ZLength])
+        open_fraction = 1 - probe.common(panel).Volume / probe.Volume
+        if open_fraction < .75:
+            raise ValueError('Comet Proの画面の前の窓が不足しています')
+        accessory_summary = {'shelf_bottom_mm': accessories['shelf_z'], 'device_support_mm': accessories['support_z'],
+                             'front_panel_z_mm': accessories['panel_z'],
+                             'screen_recess_mm': accessories['screen_recess_mm'],
+                             'screen_window_open_fraction': open_fraction,
+                             'part_count': model['supports']['accessories']['part_count'],
+                             'kvm_switch_measured': accessories['kvm_measured'],
+                             'thermal_reason': accessories['thermal_reason'], 'wifi_note': accessories['wifi_note'],
+                             'open_items': accessories['open_items']}
     volumes = {}
     for record in records.values():
         role = record['role']
@@ -202,12 +285,11 @@ def validate(model):
             'material_volume': {'total_cad_solid_mm3': sum(volumes.values()),
                                 'by_role_mm3': volumes,
                                 'scope': '参考部品を除いた形状体積。充填率・支持材・印刷損失を含む材料使用量ではない。'},
+            **({'switch_bay': bay_summary} if bay_summary else {}),
+            **({'accessories': accessory_summary} if accessory_summary else {}),
             'scope': '形状候補の妥当性、246mm外形、静止干渉、機器の交換予約、前後の固定障害物。',
             'manufacturing_geometry': False, 'physical_validation': False,
             'whole_assembly_path_validated': False,
-            'remaining_mechanisms': ['側枠と横梁を全体へ組み込む順序と連続した経路',
-                '制御器扉のヒンジと留め具', '機器トレーのガイドと抜け止め',
-                '前面・側面ファン保持部の留め具と格子の実物確認', '電源仕切りの固定',
-                'スイッチ支持板と固定', '余長収納の保持部', '脚と滑り止め', '接合面を保護した外周の面取りと丸み'],
+            'remaining_mechanisms': remaining,
             'physical_checks_pending': ['足・吸気口・端子・電源・スイッチ・分岐ケーブルの実測',
                 '接合隙間と長期荷重・横揺れ', '4台同時負荷の温度・性能・騒音', '実物の交換操作']}
