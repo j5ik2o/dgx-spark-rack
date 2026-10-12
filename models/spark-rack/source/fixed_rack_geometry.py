@@ -201,13 +201,16 @@ def ring_tray(b, rim=9):
     return s.removeSplitter()
 
 
-def fan_carrier(node, p):
+def fan_carrier(node, p, pattern=None):
+    """patternを省くと従来の縦の格子。honeycombなら円の内側を六角形の穴で抜く。"""
     x = node['origin'][0] + p.spark_width / 2
     z = node['origin'][2] + p.spark_height / 2
     y = p.front_face_y
     xlo = -p.inner_width / 2 if x < 0 else 0
     s = box([xlo, y, z - 76], [p.inner_width / 2, 4, 152])
-    s = s.cut(cylinder([x, y - 1, z], p.fan_opening / 2, 6, [0, 1, 0]))
+    honeycomb = pattern is not None and pattern.style == 'honeycomb'
+    if not honeycomb:
+        s = s.cut(cylinder([x, y - 1, z], p.fan_opening / 2, 6, [0, 1, 0]))
     for sx in (-1, 1):
         for sz in (-1, 1):
             s = s.cut(cylinder([x + sx * p.fan_pitch / 2, y - 1, z + sz * p.fan_pitch / 2],
@@ -215,6 +218,11 @@ def fan_carrier(node, p):
         s = s.fuse(box([x + sx * 78 - 6, y, z - 76], [12, 24, 10]))
     # 外へ張り出す持ち手を廃止し、下縁の指掛かりを前面内へ収める。
     s = s.cut(box([x - 16, y - 1, z - 76 + 2], [32, 3, 3]))
+    if honeycomb:
+        from grille_patterns import cut_all, honeycomb_clipped_to_circle
+        holes = honeycomb_clipped_to_circle(x, z, p.fan_opening / 2, y - 1, 6, 'xz', pattern.hex_across_flats,
+                                            pattern.hex_wall, pattern.minimum_fragment_area)
+        return cut_all(s, holes).removeSplitter()
     return grille(s, x, z, y, 4, p.fan_opening / 2, 'y', p)
 
 
@@ -311,7 +319,7 @@ def merge_bay(support_metadata, bay_metadata, key_name='switch_bay'):
     return support_metadata
 
 
-def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=None):
+def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=None, pattern=None):
     """bayを渡すと上部専用段、accessoriesを渡すと中段の機器棚を持つ案を作る。省略時は中央の暫定配置。"""
     p = parameters or FixedRackParameters()
     scene = fixed_layout(mode, p, bay, accessories, finish)
@@ -323,12 +331,12 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=No
         support_metadata = merge_bay(support_metadata, bay_metadata)
     if accessories is not None:
         from accessory_geometry import accessory_parts
-        accessory_items, accessory_metadata = accessory_parts(scene, p, accessories)
+        accessory_items, accessory_metadata = accessory_parts(scene, p, accessories, pattern)
         bay_parts = bay_parts + accessory_items
         support_metadata = merge_bay(support_metadata, accessory_metadata, 'accessories')
     if finish is not None:
         from finish_geometry import finish_parts
-        finish_items, finish_metadata = finish_parts(scene, p, finish)
+        finish_items, finish_metadata = finish_parts(scene, p, finish, pattern)
         bay_parts = bay_parts + finish_items
         support_metadata = merge_bay(support_metadata, finish_metadata, 'finish')
     case_model = load_case_model()
@@ -345,7 +353,7 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=No
         parts.append({'name': b['name'], 'label': b['label'], 'shape': ring_tray(b), 'role': b['kind']})
     for node in scene['nodes']:
         parts.append({'name': node['name'] + '_carrier', 'label': '共通前面にそろえた保護格子一体のファン保持部',
-                      'shape': fan_carrier(node, p), 'role': 'carrier'})
+                      'shape': fan_carrier(node, p, pattern), 'role': 'carrier'})
     for right in (False, True):
         parts.append({'name': 'power_carrier_' + ('right' if right else 'left'),
                       'label': '外へ取り出す電源用ファン保持板・留め具は未設計',
@@ -369,11 +377,11 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=No
         refs.append({'name': b['name'], 'label': b['label'], 'shape': s, 'role': b['kind']})
     return {'parameters': p, 'scene': scene, 'parts': parts, 'references': refs,
             'supports': support_metadata, 'controller_face': face, 'switch_bay': bay,
-            'accessories': accessories, 'finish': finish}
+            'accessories': accessories, 'finish': finish, 'pattern': pattern}
 
 
-def create(parameters=None, mode='crs812', bay=None, accessories=None, finish=None):
-    model = shapes(parameters, mode, bay, accessories, finish)
+def create(parameters=None, mode='crs812', bay=None, accessories=None, finish=None, pattern=None):
+    model = shapes(parameters, mode, bay, accessories, finish, pattern)
     doc = App.newDocument('FixedFourNodeRack')
     doc.Label = ('上部専用段を持つ4台ラック・形状候補' if bay is not None
                  else '固定段・独立電源区画の4台ラック・形状候補')

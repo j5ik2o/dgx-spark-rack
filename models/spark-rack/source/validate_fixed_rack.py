@@ -1,4 +1,6 @@
 """参考形状の干渉と交換経路を検査し、未完成の機構は別に記録する。"""
+from dataclasses import asdict
+
 import FreeCAD as App
 from fixed_rack_geometry import box, cylinder
 from fixed_rack_layout import fixed_layout, check_fixed_layout
@@ -309,6 +311,7 @@ def validate(model):
             **({'switch_bay': bay_summary} if bay_summary else {}),
             **({'accessories': accessory_summary} if accessory_summary else {}),
             **({'finish': finish_summary} if finish_summary else {}),
+            **({'grille_pattern': asdict(model['pattern'])} if model.get('pattern') is not None else {}),
             'scope': '形状候補の妥当性、246mm外形、静止干渉、機器の交換予約、前後の固定障害物。',
             'manufacturing_geometry': False, 'physical_validation': False,
             'whole_assembly_path_validated': False,

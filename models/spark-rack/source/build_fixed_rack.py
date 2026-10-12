@@ -1,6 +1,7 @@
 """固定段と独立電源区画の形状候補を新規出力する。造形用データは出さない。
 
 --switch-bay upper を付けると、上枠を共有する上部専用段の案を別の出力先へ作る。
+さらに --grille honeycomb を付けると、前面と天板の通気の模様をハニカムにした案を作る。
 """
 from datetime import datetime
 import hashlib
@@ -26,7 +27,7 @@ def write_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
-def worker(folder, variant=None):
+def worker(folder, variant=None, grille='slots'):
     import FreeCAD as App
     import FreeCADGui as Gui
     import Part
@@ -36,8 +37,12 @@ def worker(folder, variant=None):
     Gui.showMainWindow()
     if variant == 'upper':
         from upper_switch_bay import upper_scene
+        from spark_rack_parameters import GrilleParameters
         parameters, bay, accessories, scene = upper_scene()
-        doc, model = create_fixed_rack(parameters, 'crs812', bay, accessories, scene['finish'])
+        pattern = GrilleParameters(style=grille) if grille == 'honeycomb' else None
+        if pattern is not None:
+            pattern.validate()
+        doc, model = create_fixed_rack(parameters, 'crs812', bay, accessories, scene['finish'], pattern)
     else:
         doc, model = create_fixed_rack()
     validation = validate(model)
@@ -69,8 +74,12 @@ def worker(folder, variant=None):
     write_json(folder / 'freecad-version.json', App.Version())
 
 
-def build(variant=None):
+def build(variant=None, grille='slots'):
+    if grille != 'slots' and variant != 'upper':
+        raise ValueError('通気の模様の切替は上部専用段の案（--switch-bay upper）でだけ使えます')
     folder, purpose = VARIANTS[variant]
+    if grille == 'honeycomb':
+        folder, purpose = folder + '-honeycomb', purpose + '（前面と天板はハニカム）'
     out = ROOT / 'build/spark-rack' / folder / (datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8])
     out.mkdir(parents=True, exist_ok=False)
     files = [SOURCE / n for n in ('spark_rack_parameters.py', 'freecad_spark_rack.py', 'fixed_rack_layout.py',
@@ -88,12 +97,14 @@ def build(variant=None):
     if variant == 'upper':
         files += [SOURCE / n for n in ('upper_switch_bay.py', 'switch_bay_geometry.py',
                                        'switch_placement_comparison.py', 'rack_accessories.py',
-                                       'accessory_geometry.py', 'rack_finish.py', 'finish_geometry.py')]
+                                       'accessory_geometry.py', 'rack_finish.py', 'finish_geometry.py',
+                                       'grille_patterns.py')]
         files += [ROOT / 'tests/test_upper_switch_bay.py', ROOT / 'tests/test_switch_bay_geometry.py',
                   ROOT / 'tests/test_rack_accessories.py', ROOT / 'tests/test_accessory_geometry.py',
-                  ROOT / 'tests/test_rack_finish.py', ROOT / 'tests/test_finish_geometry.py']
+                  ROOT / 'tests/test_rack_finish.py', ROOT / 'tests/test_finish_geometry.py',
+                  ROOT / 'tests/test_grille_patterns.py']
     hashes = {str(f.relative_to(ROOT)): digest(f) for f in files}
-    manifest = {'status': 'running', 'purpose': purpose,
+    manifest = {'status': 'running', 'purpose': purpose, 'grille': grille,
                 'sources_sha256': hashes, 'manufacturing_geometry': False, 'physical_validation': False}
     try:
         env = os.environ.copy()
@@ -103,6 +114,8 @@ def build(variant=None):
             from upper_switch_bay import variants
             write_json(out / 'upper-bay-variants.json', variants())
         command = [python, str(Path(__file__)), '--worker', str(out)] + ([variant] if variant else [])
+        if grille != 'slots':
+            command += [grille]
         run = subprocess.run(command, cwd=ROOT, env=env, capture_output=True, text=True)
         (out / 'freecad.log').write_text(run.stdout + run.stderr)
         if run.returncode or not (out / 'validation.json').exists():
@@ -131,7 +144,8 @@ def build(variant=None):
 if __name__ == '__main__':
     if sys.argv[1:2] == ['--worker']:
         try:
-            worker(Path(sys.argv[2]), sys.argv[3] if len(sys.argv) > 3 else None)
+            worker(Path(sys.argv[2]), sys.argv[3] if len(sys.argv) > 3 and sys.argv[3] != '-' else None,
+                   sys.argv[4] if len(sys.argv) > 4 else 'slots')
         except Exception:
             import traceback
             traceback.print_exc(); sys.stderr.flush(); os._exit(1)
@@ -139,4 +153,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--switch-bay', choices=['upper'], help='上部専用段の案を生成する')
-    print(build(parser.parse_args().switch_bay))
+    parser.add_argument('--grille', choices=['slots', 'honeycomb'], default='slots',
+                        help='前面と天板の通気の模様（上部専用段の案だけ）')
+    arguments = parser.parse_args()
+    print(build(arguments.switch_bay, arguments.grille))

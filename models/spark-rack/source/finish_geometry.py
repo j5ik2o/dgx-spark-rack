@@ -21,8 +21,13 @@ def _slot(x, y, z, width, depth, height):
     return shape.makeFillet(width / 2 - 1e-3, edges)
 
 
-def _slotted_plate(x0, x1, y, z0, z1, thickness, p, q):
+def _slotted_plate(x0, x1, y, z0, z1, thickness, p, q, pattern=None):
     plate = _box((x0, y, z0), (x1 - x0, thickness, z1 - z0))
+    if pattern is not None and pattern.style == 'honeycomb':
+        from grille_patterns import cut_all, honeycomb_in_rect
+        return cut_all(plate, honeycomb_in_rect(x0 + q['edge_margin'], x1 - q['edge_margin'],
+                                                z0 + q['slot_margin'], z1 - q['slot_margin'], y - 1, thickness + 2,
+                                                'xz', pattern.hex_across_flats, pattern.hex_wall))
     slots, x = [], x0 + q['edge_margin']
     while x + p.vent_slot_width <= x1 - q['edge_margin'] + 1e-9:
         slots.append(_slot(x, y - 1, z0 + q['slot_margin'], p.vent_slot_width, thickness + 2,
@@ -31,7 +36,7 @@ def _slotted_plate(x0, x1, y, z0, z1, thickness, p, q):
     return plate.cut(Part.makeCompound(slots)) if slots else plate
 
 
-def _covers(p, finish, beam):
+def _covers(p, finish, beam, pattern=None):
     q = finish['parameters']
     t = q['panel_thickness']
     y = finish['panel_y']
@@ -41,7 +46,7 @@ def _covers(p, finish, beam):
     for name in finish['removable_covers']:
         b = next(o for o in finish['objects'] if o['name'] == name)
         x0, x1 = b['origin'][0], b['origin'][0] + b['size'][0]
-        shape = _slotted_plate(x0, x1, y, z0, z1, t, p, q)
+        shape = _slotted_plate(x0, x1, y, z0, z1, t, p, q, pattern)
         # 上枠の下面へ当てる受け板。前へ引けば上枠から外れる。
         flange = _box((x0, y + t, z1 - q['flange_thickness']), (x1 - x0, beam_back - (y + t), q['flange_thickness']))
         shape = shape.fuse(flange)
@@ -54,7 +59,7 @@ def _covers(p, finish, beam):
     return parts, holes
 
 
-def _lid(p, finish):
+def _lid(p, finish, pattern=None):
     q = finish['parameters']
     z = p.height
     half_w = p.width / 2
@@ -64,9 +69,17 @@ def _lid(p, finish):
     joint_x = p.width / 6
     joint_y = (p.front_y + p.rear_y) / 2
     plate = _box((-half_w, p.front_y, z), (p.width, p.depth, q['lid_plate']))
-    # 前後方向の溝。継ぎ目のリブと縁の上は避ける。
+    # 前後方向の溝かハニカム。継ぎ目のリブと縁の上は避ける。
     slots = []
+    honeycomb = pattern is not None and pattern.style == 'honeycomb'
     for ylo, yhi in ((y0 + 16, joint_y - 16), (joint_y + 16, y1 - 16)):
+        if honeycomb:
+            from grille_patterns import honeycomb_in_rect
+            for xlo, xhi in ((-inner + q['edge_margin'], -joint_x - 12), (-joint_x + 12, joint_x - 12),
+                             (joint_x + 12, inner - q['edge_margin'])):
+                slots += honeycomb_in_rect(xlo, xhi, ylo, yhi, z - 1, q['lid_plate'] + 2, 'xy',
+                                           pattern.hex_across_flats, pattern.hex_wall)
+            continue
         x = -inner + q['edge_margin']
         while x + p.vent_slot_width <= inner - q['edge_margin'] + 1e-9:
             if not any(abs(x + p.vent_slot_width / 2 - j) < 12 for j in (-joint_x, joint_x)):
@@ -91,7 +104,7 @@ def _lid(p, finish):
     return lid.removeSplitter(), [-half_w, p.front_y, rib_z], [p.width, p.depth, q['lid_rib'] + q['lid_plate']], holes
 
 
-def _fillers(p, finish):
+def _fillers(p, finish, pattern=None):
     q = finish['parameters']
     t = q['panel_thickness']
     y = finish['filler_y']
@@ -101,7 +114,7 @@ def _fillers(p, finish):
     for name in ('lower_filler_left', 'lower_filler_right'):
         b = next(o for o in finish['objects'] if o['name'] == name)
         x0, x1 = b['origin'][0], b['origin'][0] + b['size'][0]
-        shape = _slotted_plate(x0, x1, y, z0, z1, t, p, q)
+        shape = _slotted_plate(x0, x1, y, z0, z1, t, p, q, pattern)
         # 下端の受け板を電源の床の上面へ載せる。
         flange = _box((x0, y + t, floor_top), (x1 - x0, q['filler_flange_depth'], q['flange_thickness']))
         shape = shape.fuse(flange)
@@ -114,16 +127,16 @@ def _fillers(p, finish):
     return parts, holes
 
 
-def finish_parts(scene, p, finish):
+def finish_parts(scene, p, finish, pattern=None):
     """部品一覧と、支持面・ねじ候補を integrated_supports と同じ形式で返す。"""
     beam = next(b for b in scene['cross_beams'] if b['name'] == 'frame_top_front')
-    covers, cover_holes = _covers(p, finish, beam)
-    lid, origin, size, lid_holes = _lid(p, finish)
+    covers, cover_holes = _covers(p, finish, beam, pattern)
+    lid, origin, size, lid_holes = _lid(p, finish, pattern)
     lid_parts = []
     for col, row, shape in _tiles(lid, origin, size, 3, 2, p.lap_length):
         lid_parts.append({'name': f'top_lid_{row}_{col}', 'label': f'溝付きの天板・{row + 1}列目・{col + 1}分割目',
                           'shape': shape, 'role': 'top_lid'})
-    fillers, filler_holes = _fillers(p, finish)
+    fillers, filler_holes = _fillers(p, finish, pattern)
     parts = covers + lid_parts + fillers
     fasteners = [{'assembly': 'bay_cover', 'part': name, 'axis': [0, 0, 1],
                   'origin': [x, y, finish['cover_z'][1] - finish['parameters']['flange_thickness']],

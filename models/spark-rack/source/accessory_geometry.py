@@ -78,7 +78,7 @@ def _shelf(p, acc):
     return shelf.removeSplitter(), [-end, front, z0], [2 * end, run, top - z0], laps, flange
 
 
-def _panels(p, acc):
+def _panels(p, acc, pattern=None):
     q = acc['parameters']
     inner = p.inner_width / 2
     half = q['panel_center_half_width']
@@ -100,6 +100,10 @@ def _panels(p, acc):
             w, h = acc['window']['size']
             cz = acc['window']['center'][1]
             shape = shape.cut(_front_window(-w / 2, y - 1, cz - h / 2, w, t + 2, h, 6))
+        elif pattern is not None and pattern.style == 'honeycomb':
+            from grille_patterns import cut_all, honeycomb_in_rect
+            shape = cut_all(shape, honeycomb_in_rect(x0 + 12, x1 - 12, z0 + 8, z1 - 8, y - 1, t + 2, 'xz',
+                                                     pattern.hex_across_flats, pattern.hex_wall))
         else:
             # ファンの格子と同じ10mm間隔の縦溝で、前面の言葉をそろえる。
             pitch = q['slot_pitch']
@@ -120,7 +124,7 @@ def _panels(p, acc):
     return parts
 
 
-def accessory_parts(scene, p, acc):
+def accessory_parts(scene, p, acc, pattern=None):
     """部品一覧と、側枠の受け・支持面・ねじ候補を integrated_supports と同じ形式で返す。"""
     shelf, origin, size, laps, flange = _shelf(p, acc)
     parts = []
@@ -130,7 +134,7 @@ def accessory_parts(scene, p, acc):
         tiles.append(name)
         parts.append({'name': name, 'label': f'遠隔操作機器の棚・{row + 1}列目・{col + 1}分割目',
                       'shape': shape, 'role': 'accessory_shelf'})
-    panels = _panels(p, acc)
+    panels = _panels(p, acc, pattern)
     parts += panels
     parts.append({'name': 'remote_kvm_sled', 'label': 'Comet Proの載せ台・棚から前へ延びる',
                   'shape': _sled(acc), 'role': 'accessory_shelf'})

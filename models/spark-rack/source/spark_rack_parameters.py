@@ -221,6 +221,28 @@ class FrontFinishParameters:
 
 
 @dataclass(frozen=True)
+class GrilleParameters:
+    """前面と天板の通気の模様。slotsは縦溝、honeycombは正六角形の穴。
+
+    壁1.6mmは0.4mmノズルの4本分。穴の対辺10mmで、角から角まで11.5mmとし、
+    直径12mmの指を通さない。
+    """
+    style: str = 'slots'
+    hex_across_flats: float = 10
+    hex_wall: float = 1.6
+    minimum_fragment_area: float = 12
+
+    def validate(self):
+        import math
+        if self.style not in ('slots', 'honeycomb'):
+            raise ValueError('通気の模様は slots か honeycomb です')
+        for key in ('hex_across_flats', 'hex_wall', 'minimum_fragment_area'):
+            value = getattr(self, key)
+            if not math.isfinite(value) or value <= 0:
+                raise ValueError('ハニカムの寸法は有限の正の値にしてください: ' + key)
+
+
+@dataclass(frozen=True)
 class Parameters:
     module_width: float = 210
     module_depth: float = 230

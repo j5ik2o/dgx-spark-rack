@@ -50,6 +50,10 @@ run = "python3 models/spark-rack/source/build_fixed_rack.py"
 description = "上枠を共有する上部専用段と中段の遠隔操作機器棚の形状候補・3案の比較・検査を生成（造形用ではない）"
 run = "python3 models/spark-rack/source/build_fixed_rack.py --switch-bay upper"
 
+[tasks."upper-bay-honeycomb:spark-rack"]
+description = "上部専用段の案を、前面と天板の通気をハニカムにして生成（造形用ではない）"
+run = "python3 models/spark-rack/source/build_fixed_rack.py --switch-bay upper --grille honeycomb"
+
 [tasks."compare-switch:spark-rack"]
 description = "スイッチの中央・上部・下部の配置と交換予約を比較（製造用ではない）"
 run = "python3 models/spark-rack/source/build_switch_placement_comparison.py"
