@@ -4,6 +4,8 @@
 
 | 場所 | 保管するもの |
 |---|---|
+| [spark-rack-independent-proposals-20261012](spark-rack-independent-proposals-20261012/README.md) | 別エージェントの独立案2つ（枠型と外装型）。採否は未決定の参考資料 |
+| [spark-rack-switch-support-20261011](spark-rack-switch-support-20261011/README.md) | 固定段ラックに置き換わった旧枠のスイッチ受け板案。ブランチの追加ファイルと差分 |
 | [spark-rack-overview-20261009-200723](spark-rack-overview-20261009-200723/README.md) | 電源を内蔵する前の全体構想。現行画面での比較用データ |
 | [spark-rack-structure-rejected-20261009-172152](spark-rack-structure-rejected-20261009-172152/README.md) | 不採用の136部品案。指定実行の生成物とレビュー受領時の作業コードを区別して保全 |
 | [spark-rack-modular-20261009](spark-rack-modular-20261009/README.md) | 4台専用ラックへの再設計前のリポジトリ一式。日付付き保存パッケージと内容照合の記録 |

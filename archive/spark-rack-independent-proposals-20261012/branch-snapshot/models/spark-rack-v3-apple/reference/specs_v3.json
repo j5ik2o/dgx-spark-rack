@@ -1,0 +1,169 @@
+{
+ "recorded_on": "2026-10-12",
+ "legend": {
+  "C": "確認済み(購入/ユーザー確定条件)",
+  "P": "公開資料の参考値",
+  "A": "仮定",
+  "M": "実測待ち"
+ },
+ "items": [
+  {
+   "item": "DGX Spark 台数",
+   "value": 4,
+   "class": "C",
+   "source": "ユーザー指定 2026-10-11"
+  },
+  {
+   "item": "DGX Spark 外形",
+   "value_mm": [
+    150,
+    150,
+    50.5
+   ],
+   "mass_kg": 1.2,
+   "class": "P",
+   "source": "https://docs.nvidia.com/dgx/dgx-spark/hardware.html",
+   "pending": "足・吸排気口の範囲・QSFP/USB-C/電源端子の位置(M)"
+  },
+  {
+   "item": "DGX Spark 吸排気方向",
+   "value": "前面吸気・背面排気として設計",
+   "class": "A",
+   "pending": "実機の吸排気口寸法と方向(M)。逆なら導風ダクトを背面側へ付け替える構造は要再設計"
+  },
+  {
+   "item": "純正240W電源アダプター",
+   "value_mm": [
+    99.05,
+    98.99,
+    35.17
+   ],
+   "mass_kg": 0.5423,
+   "cable_mm": 1800,
+   "class": "P",
+   "source": "models/adapter-rack/reference/adapter_spec.json (ChargerLab計測)"
+  },
+  {
+   "item": "CRS812-8DS-2DQ-2DDQ-RM 外形",
+   "value_mm": [
+    443,
+    268,
+    44
+   ],
+   "class": "P",
+   "source": "https://www.getic.com/product/mikrotik-crs812-8ds-2dq-2ddq-rm",
+   "conflict": "MikroTik取扱説明は 443x156x44mm https://help.mikrotik.com/docs/spaces/UM/pages/340492410/CRS812-8DS-2DQ-2DDQ-RM",
+   "design_basis": "長い268mmで収容(156mmでも成立)",
+   "pending": "実物奥行・取付耳/後部支持耳の穴位置・底面脚・吸排気方向・質量(M)"
+  },
+  {
+   "item": "CRS812 電源",
+   "value": "ホットスワップIEC AC電源2基 250W, 消費81W(無負荷)/最大134W",
+   "class": "P",
+   "source": "MikroTik取扱説明(同上)"
+  },
+  {
+   "item": "CRS812 ファン",
+   "value": "ホットスワップ4基",
+   "class": "P",
+   "source": "MikroTik取扱説明(同上)",
+   "pending": "交換方向・引出し寸法(M)"
+  },
+  {
+   "item": "CRS812 取付",
+   "value": "前面取付耳、筐体側面の小型後部支持耳、ラック側の長い後部支持耳。机上設置用ゴム脚も付属",
+   "class": "P",
+   "source": "MikroTik取扱説明(同上)"
+  },
+  {
+   "item": "Q2Q56-400G-CU2",
+   "value": "QSFP-DD 400G→2xQSFP56 200G 受動DAC 2m, PVC, 28-30AWG, 0-70℃",
+   "class": "P",
+   "source": "https://www.naddod.com/products/103563.html"
+  },
+  {
+   "item": "Q2Q56-400G-CU2 最小曲げ半径",
+   "value": "37-42mm(シリーズ値)。2m型は未確定 → 42mmを仮条件",
+   "class": "A",
+   "pending": "2m型の指定値・分岐位置・幹/枝長・公称2mの測定基準・コネクター/ラッチ外形(M)。データシートPDF要入手"
+  },
+  {
+   "item": "Q2Q56-400G-CU2 注文本数",
+   "value": "未提示(本設計は2本必要として数量表に記載)",
+   "class": "M"
+  },
+  {
+   "item": "リング用 QSFP112 DAC 40cm",
+   "value": "4本所有。メーカー型番・曲げ条件不明(ELSA TS000111候補)",
+   "class": "C/M",
+   "source": "models/spark-rack/reference/prepared-fans-and-cable.json"
+  },
+  {
+   "item": "Noctua NF-A14x25 G2 PWM",
+   "value_mm": [
+    140,
+    140,
+    27
+   ],
+   "pitch_mm": 124.5,
+   "qty": 4,
+   "class": "P",
+   "source": "https://www.noctua.at/en/products/nf-a14x25-g2-pwm/specifications",
+   "pending": "全数手元か(M)・質量"
+  },
+  {
+   "item": "Noctua NF-A12x25 G2 PWM PPA/PPB",
+   "value_mm": [
+    120,
+    120,
+    27
+   ],
+   "pitch_mm": 105,
+   "qty": 2,
+   "class": "P",
+   "source": "https://www.noctua.at/en/products/nf-a12x25-g2-pwm-sx2-pp/specifications"
+  },
+  {
+   "item": "ファンコントローラー",
+   "value": "基板76x25, ケース長100(耳込み)x幅39.4x厚29.5, ドック込み約100x44x43。共通ドックM4ピッチ28",
+   "qty_required": 6,
+   "class": "P(既存コード)",
+   "source": "models/fan-controller/source/freecad_fan_controller.py, tools/cad/controller_mount.py"
+  },
+  {
+   "item": "コントローラー電源",
+   "value": "12V3A x3, DC二股x3, DCジャック付きケーブルx6",
+   "class": "A",
+   "pending": "外形・据置/プラグ一体・極性・ケーブル長・コントローラー消費電力(M)。仮範囲110x50x35"
+  },
+  {
+   "item": "電源タップ",
+   "value": "9口使用(Spark4+制御電源3+スイッチ2)。10口以上・上向き口・420x45x45の仮範囲",
+   "class": "A",
+   "pending": "プラグ形状・隣接干渉・容量15A(M)"
+  },
+  {
+   "item": "外装・シャーシ板材",
+   "value": "A5052 2mm(外装,陽極酸化) / 3mm(側壁・天板・受け板) / 6mm(底板)",
+   "class": "A",
+   "pending": "外注先の曲げR40可否・最大曲げ長さ・陽極酸化色"
+  },
+  {
+   "item": "前面ラティス",
+   "value": "千鳥丸穴φ5/P6.5 板厚(見付け)6mm, 開口率0.537(計算)",
+   "class": "A"
+  },
+  {
+   "item": "NF-A14x25 G2 最大静圧",
+   "value": "数mmH2O級(要確認)",
+   "class": "P(要確認)",
+   "source": "https://www.noctua.at/en/products/nf-a14x25-g2-pwm/specifications"
+  },
+  {
+   "item": "マグネット",
+   "value": "ネオジムφ10x3 8個(前面), 鋼製受け座",
+   "class": "A"
+  }
+ ],
+ "note": "案D(Apple風)用に複製。購入品の仕様は案Aと共通。外装・シャーシ関連を追記。"
+}

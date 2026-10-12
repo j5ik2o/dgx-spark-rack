@@ -1,0 +1,32 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>DGX Spark 4台ラック 案A 3Dビューア</title>
+<style>body{margin:0;font-family:sans-serif}#ui{position:absolute;top:8px;left:8px;background:#fffd;padding:8px;font-size:12px;max-width:330px}#info{margin-top:6px;white-space:pre-wrap}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body><div id="ui"><b>案A 3Dビューア</b>（ドラッグ回転・ホイール拡大・クリックで部品情報）<br>
+<label><input type="radio" name="st" value="switch" checked>スイッチ運用(完成形)</label>
+<label><input type="radio" name="st" value="ring">リング運用</label><br>
+<label><input type="checkbox" id="zones" checked>確保範囲(作業・吸排気)</label>
+<label><input type="checkbox" id="frame" checked>枠・板</label>
+<label><input type="checkbox" id="printed" checked>印刷部品</label><div id="info"></div></div>
+<script type="module">
+import * as THREE from 'three';import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const DATA=__PARTS__;
+const COL={frame:0x555b63,plate:0x9aa3ad,printed:0x333333,device:0xc9a227,fan:0xc8b08a,psu:0x3d7ab8,ctrl:0x7a4fb3,zone:0x2ca02c};
+const r=new THREE.WebGLRenderer({antialias:true});r.setSize(innerWidth,innerHeight);document.body.appendChild(r.domElement);
+const s=new THREE.Scene();s.background=new THREE.Color(0xf0f0f0);
+const c=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,1,10000);c.up.set(0,0,1);c.position.set(-700,-900,800);
+const ctl=new OrbitControls(c,r.domElement);ctl.target.set(245,200,270);ctl.update();
+s.add(new THREE.AmbientLight(0xffffff,0.7));const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(-500,-800,1200);s.add(dl);
+let g=new THREE.Group();s.add(g);
+function load(st){s.remove(g);g=new THREE.Group();for(const p of DATA[st]){const [x,y,z,dx,dy,dz]=p.box;
+ const zone=p.kind==='zone';const col=zone?(p.group==='airflow'?0xd62728:0x2ca02c):COL[p.kind];
+ const m=new THREE.Mesh(new THREE.BoxGeometry(dx,dy,dz),new THREE.MeshStandardMaterial({color:col,transparent:zone||p.kind==='plate'||p.kind==='printed',opacity:zone?0.15:(p.kind==='plate'?0.45:(p.kind==='printed'?0.6:1))}));
+ m.position.set(x+dx/2,y+dy/2,z+dz/2);m.userData=p;if(!zone){m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry),new THREE.LineBasicMaterial({color:0x000000})));}
+ g.add(m);}s.add(g);vis();}
+function vis(){for(const m of g.children){const k=m.userData.kind;m.visible=!((k==='zone'&&!zones.checked)||((k==='frame'||k==='plate')&&!frame.checked)||(k==='printed'&&!printed.checked));}}
+document.querySelectorAll('input[name=st]').forEach(e=>e.onchange=()=>load(e.value));['zones','frame','printed'].forEach(i=>document.getElementById(i).onchange=vis);
+const rc=new THREE.Raycaster(),mv=new THREE.Vector2();r.domElement.addEventListener('click',e=>{mv.x=e.clientX/innerWidth*2-1;mv.y=-e.clientY/innerHeight*2+1;rc.setFromCamera(mv,c);
+ const h=rc.intersectObjects(g.children.filter(m=>m.visible),false)[0];if(h){const p=h.object.userData;info.textContent=`${p.name}\n種別:${p.kind} 材料:${p.material||'-'}\n位置/寸法:${p.box.map(v=>v.toFixed(1)).join(', ')}\n質量:${p.mass.toFixed(2)}kg\n${p.note}`;}});
+const ax=new THREE.AxesHelper(100);s.add(ax);load('switch');
+addEventListener('resize',()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight)});
+(function a(){requestAnimationFrame(a);r.render(s,c)})();
+</script></body></html>

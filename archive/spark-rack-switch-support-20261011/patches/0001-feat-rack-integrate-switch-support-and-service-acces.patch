@@ -1,0 +1,868 @@
+From 5b92307cf689c864776d7315a9baaadf82bcfc18 Mon Sep 17 00:00:00 2001
+From: Junichi Kato <j5ik2o@gmail.com>
+Date: Sun, 11 Oct 2026 23:55:21 +0900
+Subject: [PATCH 1/2] feat(rack): integrate switch support and service access
+
+---
+ models/spark-rack/README.md                   |   2 +-
+ .../docs/4台専用ラックの設計条件.md           |   2 +-
+ .../docs/スイッチ支持部と交換経路.md          |  42 ++++
+ .../spark-rack/docs/凹凸の接合試験片と次案.md |   8 +-
+ .../reference/pending-mount-measurements.json |  13 +-
+ .../source/build_rack_candidate_overview.py   |  29 ++-
+ .../source/build_switch_support_cad.py        | 181 ++++++++++++++++++
+ .../source/freecad_switch_support.py          | 146 ++++++++++++++
+ .../source/rack_candidate_overview.html       |  35 ++--
+ .../source/switch_support_parameters.py       |  79 ++++++++
+ tests/check_rack_candidate_overview.cjs       |   6 +-
+ tests/test_compact_rack_overview.py           |   4 +-
+ tests/test_switch_support_freecad.py          |  39 ++++
+ 13 files changed, 555 insertions(+), 31 deletions(-)
+ create mode 100644 models/spark-rack/docs/スイッチ支持部と交換経路.md
+ create mode 100644 models/spark-rack/source/build_switch_support_cad.py
+ create mode 100644 models/spark-rack/source/freecad_switch_support.py
+ create mode 100644 models/spark-rack/source/switch_support_parameters.py
+ create mode 100644 tests/test_switch_support_freecad.py
+
+diff --git a/models/spark-rack/README.md b/models/spark-rack/README.md
+index 1ffeb23..5da3698 100644
+--- a/models/spark-rack/README.md
++++ b/models/spark-rack/README.md
+@@ -1,6 +1,6 @@
+ # Spark本体ラック
+ 
+-**136部品案は不採用です。** 現在は[枠を小型化し、電源4個も内蔵する全体構想](docs/凹凸の接合試験片と次案.md)を検討しています。`mise run overview:spark-rack`で新旧比較の画面を生成します。試験片の印刷は後回しです。`joint:spark-rack`または`structure:spark-rack`は短い試験片だけを生成し、全体の造形用データは生成しません。
++**136部品案は不採用です。** 現在は[スイッチ支持部と交換経路](docs/スイッチ支持部と交換経路.md)を含め、[枠を小型化し、電源4個も内蔵する全体構想](docs/凹凸の接合試験片と次案.md)を検討しています。`mise run overview:spark-rack`で新旧比較の画面を生成します。試験片の印刷は後回しです。`joint:spark-rack`または`structure:spark-rack`は短い試験片だけを生成し、全体の造形用データは生成しません。
+ 
+ [設計条件](docs/4台専用ラックの設計条件.md)と[配置参考](docs/仮配置の確認.md)を参照してください。配置参考の下段高さと制御ケース位置は次案の共通定義へそろえ、未測定の横ずれは製造穴に採用しません。
+ 
+diff --git a/models/spark-rack/docs/4台専用ラックの設計条件.md b/models/spark-rack/docs/4台専用ラックの設計条件.md
+index f1406d7..31b9e77 100644
+--- a/models/spark-rack/docs/4台専用ラックの設計条件.md
++++ b/models/spark-rack/docs/4台専用ラックの設計条件.md
+@@ -8,7 +8,7 @@ DGX Sparkが4台になったため、最初から4台を支える共通フレー
+ 
+ 2026年10月9日に、ユーザーから「方針は問題なさそうです」と確認を受けました。4台専用の2列×2段、本体用140mmファン4個、電源用120mmファン2個、将来の交換可能なスイッチ置き場を基本案として採用します。電源は当初別置きでしたが、その後のユーザー指定で枠内への統合を検討する方針へ変わりました。同じ4台用フレーム内で支持段を移動し、リング運用とスイッチ接続に対応する方針です。
+ 
+-構成の方針は維持します。2026年10月9日17:21の136部品案は採用せず、[部材の凹凸と段差を持つ次案](凹凸の接合試験片と次案.md)へ進みます。下段高さと制御ケース位置は共通定義にそろえ、未測定の端子位置から梁へ取付穴を固定しません。スイッチ支持板は耳込み幅と奥行が確定してから設計します。
++構成の方針は維持します。2026年10月9日17:21の136部品案は採用せず、[部材の凹凸と段差を持つ次案](凹凸の接合試験片と次案.md)へ進みます。下段高さと制御ケース位置は共通定義にそろえ、未測定の端子位置から梁へ取付穴を固定しません。2026年10月10日の追加指定により、スイッチの支持と交換経路を全体へ組み込んで仮設計します。製造寸法は取付耳・奥行・底面の確認後に確定します。
+ 
+ ## 確定した条件
+ 
+diff --git a/models/spark-rack/docs/スイッチ支持部と交換経路.md b/models/spark-rack/docs/スイッチ支持部と交換経路.md
+new file mode 100644
+index 0000000..c3db89d
+--- /dev/null
++++ b/models/spark-rack/docs/スイッチ支持部と交換経路.md
+@@ -0,0 +1,42 @@
++# スイッチを受け梁で支え、板ごと後ろへ交換する
++
++2026年10月10日のユーザー指定により、支持部を全体から外さず設計します。CRS804とCRS812の仮外形を使い、受け板、梁、柱の受け穴、固定具、交換経路まで参照CADへ組み込みました。実寸が未確認のため、製造用データと耐荷重の保証には進みません。試験片の印刷も後回しのままです。
++
++## 荷重を板、横梁、奥行梁、柱へ伝える
++
++第一候補は452×423×3mmのアルミ受け板です。幅456mmの柱間を通るよう左右各2mmの隙間を設けました。受け板の裏面高さは182.25mm、上面は185.25mm。参考の底面脚を2mmとし、スイッチ筐体の底面を187.25mmへ置きます。脚の高さと位置は実測値ではありません。
++
++受け板を支える横梁は前後2本です。その根元に段差を付け、左右の奥行梁の受け面へ載せます。奥の突起は位置を決め、受け穴の底から2mm浮かせます。奥行梁も四隅の柱の段差で受けます。別部品の外板を継ぎ手として追加しません。
++
++| 支持部 | 仮設計の寸法・位置 |
++|---|---|
++| 奥行梁 | 28mm角。内のり464mmを180・142・142mmへ分割し、端の二股でつなぐ |
++| 横梁 | 幅28×高さ20mm。前側の中心は−322mm、後ろ側は16mm。左右に分割し、中央を二股でつなぐ |
++| 柱の分割 | 支持段の182.25mmで上下を分ける。下側に12×6×高さ24mmの位置決め突起を付け、上側に受け穴を設ける |
++| 受け板 | 452×423×3mm。前端−395mm、後端28mm。スイッチ取付耳を外す条件 |
++
++柱の下側は突起込みで206.25mm、上側は237.75mmです。組み合わせた柱の高さは420mmです。枠の外形512×520×420mm、本体4台、140mmファン4個、電源用120mmファン2個は維持します。
++
++## 梁を先に入れ、上側の柱で閉じる
++
++下側の柱を置き、奥行梁を前・中・後の順に上から入れます。横梁も左・右の順に入れ、最後に上側の柱を載せます。柱と梁の抜け止め、二股の固定は内側か下面のねじです。参照CADでは20箇所のM4固定具を置き、相手のナットを貫通する長さまで確認しました。ねじ山は外形の円柱で表した仮モデルで、購入品の実寸や締付け力は未検証です。
++
++リング時から受け梁を組みます。リングの上段ファンは受け板と重なるため、板は載せません。スイッチ導入時は上段を220mm間隔へ移し、板とスイッチを追加します。柱を組み直す必要はありません。
++
++## 受け板を支えながら後ろへ取り出す
++
++通常時は後ろ側の固定ねじ2本で受け板を横梁へ留め、スイッチを保持バンド2本で板へ留めます。バンドは幅20・厚さ1mmの仮外形です。実物の吸排気口と重ならない位置、材質と耐熱性は確認が必要です。
++
++交換時は、電源・通信ケーブル、保持バンド、受け板の固定ねじ2本を外します。板と本体を下から手で支えながら後方へ引き出します。後方500mmで板の前端がフレームの外へ抜けます。取り出し経路に加え、作業場所の確保も必要です。
++
++この板は全開時の荷重を自立して支える引出しではありません。途中からは作業者が荷重を受けます。柱やファンを外さず通過できることと、作業者が支えずに引き出せることを混同しません。
++
++## 検査は形状と接触まで
++
++支持部の閉じた形状、部品間の干渉、水平な受け面、ねじとナットの到達、504点の上からの挿入経路を検査しました。受け面は柱と奥行梁が各224mm²、横梁と奥行梁が各約208mm²です。
++
++CRS804とCRS812の配置では、全体の参考機器との干渉、101点の後方交換経路、短い工具の仮外形の経路、保存後の再読込を確認しました。5kgの仮荷重の静力学分配も記録しています。材料強度、たわみ、長期の変形、振動、冷却の検証ではなく、5kgを耐荷重として表示しません。
++
++購入品の根拠は[MikroTikのCRS812取扱説明](https://help.mikrotik.com/docs/spaces/UM/pages/340492410/CRS812-8DS-2DQ-2DDQ-RM)と[CRS804寸法図](https://cdn.mikrotik.com/web-assets/product_files/CRS804_dimensionsR0_260152.pdf)です。CRS812には机上設置の案内もあります。奥行268mmと156mmの食い違い、取付耳、底面脚、吸排気口、実コネクターは未確定のままです。
++
++生成は`mise run overview:spark-rack`です。同じ実行に、支持部を含む全体図、3配置のFreeCAD文書、スイッチ配置のSTEP、`switch-support-validation.json`、生成記録を保存します。支持部の正本は[寸法定義](../source/switch_support_parameters.py)、[形状](../source/freecad_switch_support.py)、[検査と保存](../source/build_switch_support_cad.py)です。造形用ファイルは出力しません。
+diff --git a/models/spark-rack/docs/凹凸の接合試験片と次案.md b/models/spark-rack/docs/凹凸の接合試験片と次案.md
+index f4888a1..bffd79f 100644
+--- a/models/spark-rack/docs/凹凸の接合試験片と次案.md
++++ b/models/spark-rack/docs/凹凸の接合試験片と次案.md
+@@ -4,7 +4,7 @@
+ 
+ 今回造形用に出力するのは短い接合試験片5種類だけです。全体の72個案、ファン保持部、トレー、スイッチ支持板の造形データは作りません。
+ 
+-2026年10月9日のユーザー指定で、試験片の印刷は後回しにします。現物の適合、段差の当たり、ガタは未確認のままです。その間は部材の凹凸と全体の組立順を図面上で検討し、実測が必要な梁の取付穴とスイッチ支持板は保留します。印刷を再開するときは短い試験片から確認します。
++2026年10月9日のユーザー指定で、試験片の印刷は後回しにします。現物の適合、段差の当たり、ガタは未確認のままです。その間は部材の凹凸と全体の組立順を図面上で検討し、本体の梁穴は実測を待ちます。スイッチ支持部は2026年10月10日の追加指定で全体へ組み込んで仮設計し、製造用データは実測後に確定します。印刷を再開するときは短い試験片から確認します。
+ 
+ ## 設計変更後の全体像を見る
+ 
+@@ -14,7 +14,7 @@ mise run overview:spark-rack
+ 
+ `build/spark-rack/candidate-overview/<実行ID>/rack-candidate-overview.html`に全体構想図を生成します。リング接続、CRS812、CRS804の配置を切り替え、斜め・前面・背面・側面・上面から確認できます。斜め表示はドラッグで回転します。
+ 
+-柱と梁は別部品の継ぎ手を取り除いた外形で示し、造形分割の候補線を残しています。角と直線部の接合は、検査済みの短い形状の拡大図を添えました。全長部材への凹凸の統合、全体の組立経路、梁の取付穴、スイッチ支持板は未完成です。この図から造形用ファイルは生成しません。
++柱と梁は別部品の継ぎ手を取り除いた外形で示し、造形分割の候補線を残しています。角と直線部の接合は、検査済みの短い形状の拡大図を添えました。スイッチ支持部は柱と梁の凹凸、受け面、固定具、交換経路までCADへ組み込みました。本体用の梁穴と残りのフレーム接合は未確定です。この図から造形用ファイルは生成しません。
+ 
+ 最新のユーザー指定は、両スイッチの収容を検討しながら余白を詰め、ACアダプターも枠内へ収めることです。共通枠を512×520×420mm、柱の間の幅を456mm、奥行を464mmへ変更しました。枠の短縮は幅8mm・奥行10mmですが、制御ケース6個を内側へ移すため設置幅は618mmから512mmになります。脚は底面から8mm下に示します。リング用の段間隔160mmとスイッチ用220mmは維持します。
+ 
+@@ -63,7 +63,7 @@ mise run joint:spark-rack
+ 
+ 未測定の30mm横ずれを梁のファン・トレー取付穴へ固定しません。[未確定値の記録](../reference/pending-mount-measurements.json)に、端子、足、採用する横ずれ、ケーブル条件、スイッチの耳込み幅と奥行を記録する欄を設けました。必要な値が空の間は、製造用の梁穴とスイッチ支持板を生成しない方針です。
+ 
+-CRS812の資料上の本体幅443mmは、耳込み幅ではありません。耳が482.6mmまで伸びる場合、最新案の内のり456mmには入りません。筐体を下から支え、取付耳を外す構想ですが、耳と支持方法が確定するまで支持板を生成しません。奥行268mmと156mmの食い違いも残しています。163.25mmの旧予約穴は次案に使いません。CRS804の公式寸法図は再確認し、筐体奥行360mmと後部の突出を含む387mmを区別しました。収容奥行387mmは維持します。
++CRS812の資料上の本体幅443mmは、耳込み幅ではありません。耳が482.6mmまで伸びる場合、最新案の内のり456mmには入りません。筐体を下から支え、取付耳を外す構想ですが、耳と底面の寸法が確定するまで製造用の支持板は生成しません。形状検討用の板と支持部は全体CADへ含めます。奥行268mmと156mmの食い違いも残しています。163.25mmの旧予約穴は次案に使いません。CRS804の公式寸法図は再確認し、筐体奥行360mmと後部の突出を含む387mmを区別しました。収容奥行387mmは維持します。
+ 
+ ## 下段高さと制御ケース位置は共通の定義へそろえる
+ 
+@@ -78,3 +78,5 @@ CRS812の資料上の本体幅443mmは、耳込み幅ではありません。耳
+ 本体前面の通気口は未測定です。この形状は保持部との一体化、取付、風向、圧力損失、冷却を検証したものではなく、造形用ファイルに含めていません。出口を実際の通気口へ合わせてから保持部へ統合します。
+ 
+ 用語：段差は梁の重さを受ける水平な面、ほぞは奥へ入る位置決めの突起、二股は相手の差し込みを両側から案内する部材の端です。試作で合わない場合は、試験片名、材料、生成実行ID、段差の当たりとガタの測定値をこの会話へ記録してください。
++
++最新の[スイッチ支持部と交換経路](スイッチ支持部と交換経路.md)では、リング時から受け梁を組み、後で板とスイッチを追加する構成を確認できます。柱は支持段で上下に分割する案へ変えました。
+diff --git a/models/spark-rack/reference/pending-mount-measurements.json b/models/spark-rack/reference/pending-mount-measurements.json
+index 0bd3fd7..04c02d4 100644
+--- a/models/spark-rack/reference/pending-mount-measurements.json
++++ b/models/spark-rack/reference/pending-mount-measurements.json
+@@ -23,14 +23,20 @@
+         268,
+         156
+       ],
+-      "note": "小型化案の内のりは456mm。取付耳が482.6mmまで伸びる場合は収まらない。筐体を下から支え、耳を外す構想だが、耳と奥行が確定するまで支持板は生成しない。旧163.25mmの予約穴は使わない。"
++      "note": "小型化案の内のりは456mm。取付耳が482.6mmまで伸びる場合は収まらない。筐体を下から支え、耳を外す構想だが、耳と奥行が確定するまで支持板は生成しない。旧163.25mmの予約穴は使わない。",
++      "bottom_feet_mm": null,
++      "vent_regions_mm": null,
++      "support_reference": "支持梁・板・固定具・交換経路をCADで仮検証。底面脚2mm、3mmアルミ板、固定具とバンドは仮外形。"
+     },
+     "crs804": {
+       "overall_width_with_ears_mm": null,
+       "adopted_depth_mm": null,
+       "mass_kg": null,
+       "support_interface": null,
+-      "note": "耳と突出部を含む収容寸法、支持方法を確認してから支持板を設計する。"
++      "note": "耳と突出部を含む収容寸法、支持方法を確認してから支持板を設計する。",
++      "bottom_feet_mm": null,
++      "vent_regions_mm": null,
++      "support_reference": "支持梁・板・固定具・交換経路をCADで仮検証。底面脚2mm、3mmアルミ板、固定具とバンドは仮外形。"
+     }
+   },
+   "adapter": {
+@@ -39,5 +45,6 @@
+     "cable_bend_space_mm": null,
+     "mount_interface": null,
+     "note": "候補図では既存の正本寸法99.05×98.99×35.17mmと端子側30mmの設計予約を使用。実物の適合と冷却は未検証。"
+-  }
++  },
++  "support_design_status": "2026年10月10日：支持部を全体へ組み込む追加指定で仮設計を前倒し。製造用データは実測後。"
+ }
+diff --git a/models/spark-rack/source/build_rack_candidate_overview.py b/models/spark-rack/source/build_rack_candidate_overview.py
+index 78d2b40..f6de4e6 100644
+--- a/models/spark-rack/source/build_rack_candidate_overview.py
++++ b/models/spark-rack/source/build_rack_candidate_overview.py
+@@ -7,12 +7,15 @@ import json
+ from math import cos, sin, pi
+ from pathlib import Path
+ import shutil
++import subprocess
++import os
+ import uuid
+ from zoneinfo import ZoneInfo
+ import sys
+ 
+ from four_node_layout import LayoutParameters, box, evaluate, overlaps
+ from rack_candidate_datums import DATUMS
++from switch_support_parameters import SUPPORT, support_outline
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ SOURCE = Path(__file__).parent
+@@ -70,7 +73,7 @@ def adapter_layout():
+ 
+ def scene(mode):
+     p = replace(LayoutParameters(), row_pitch=DATUMS.ring_pitch if mode == 'ring' else DATUMS.switch_pitch,
+-                shelf_thickness=8)
++                shelf_thickness=8, switch_z_offset=SUPPORT.foot_allowance)
+     report = evaluate(p, 'crs804' if mode == 'crs804' else 'crs812', include_switch=mode != 'ring')
+     members = []
+ 
+@@ -83,7 +86,7 @@ def scene(mode):
+     for x in (-256, 228):
+         for y in (-428, 64):
+             z = 0
+-            for length in (105, 222, 93):
++            for length in (SUPPORT.rail_top, DATUMS.frame_height-SUPPORT.rail_top):
+                 member('柱・分割位置は候補', [x, y, z], [28, 28, length], 'column')
+                 z += length
+ 
+@@ -149,14 +152,15 @@ def scene(mode):
+     if mode != 'ring':
+         equipment.append(report['switch'])
+     counts = dict(Counter(item['family'] for item in members))
+-    assert counts == {'column': 12, 'cross': 16, 'side': 24}
++    assert counts == {'column': 8, 'cross': 16, 'side': 24}
++    support = support_outline(mode, report['switch'])
+     return {'mode': mode, 'members': members, 'equipment': equipment, 'holders': holders,
+             'trays': trays, 'ducts': ducts, 'feet': feet, 'cables': cables,
+             'frame_outer_mm': [512, 520, 420], 'controller_width_mm': 512,
+-            'frame_inner_width_mm': 456, 'adapter_layout': power,
++            'frame_inner_width_mm': 456, 'adapter_layout': power, 'switch_support': support,
+             'member_counts': counts, 'lower_base_mm': p.lower_base, 'row_pitch_mm': p.row_pitch,
+             'manufacturing_geometry': False, 'whole_assembly_validated': False,
+-            'switch_support_generated': False, 'mount_holes_committed': False,
++            'switch_support_generated': True, 'mount_holes_committed': False,
+             'switch_note': report['switch_spec']['dimension_note']}
+ 
+ 
+@@ -164,6 +168,10 @@ def check_scene(value):
+     # 枠と機器は外形箱で検査。円形開口、導風内部、実端子・操作空間は対象外。
+     boxes = value['members'] + value['feet'] + value['equipment'] + value['trays'] + value['holders']
+     boxes += value['adapter_layout']['mounts'] + [value['adapter_layout']['separator']]
++    support = value['switch_support']
++    boxes += support['supports']
++    if support['tray_installed']:
++        boxes += [support['tray']] + support['reference_feet']
+     collisions = [[a['name'], b['name']] for i, a in enumerate(boxes) for b in boxes[i+1:] if overlaps(a, b)]
+     outside = [b['name'] for b in boxes if any(b['origin'][i] < [-256, -428, -8][i] - 1e-8
+                or b['origin'][i] + b['size'][i] > [256, 92, 420][i] + 1e-8 for i in range(3))]
+@@ -209,7 +217,8 @@ def build():
+         coupon = ROOT / 'models/spark-rack/reference/joint-illustrations-20261009'
+         pictures = ('corner-assembled.png', 'corner-insertion-order.png', 'straight-assembled.png')
+         paths = [SOURCE / name for name in ('build_rack_candidate_overview.py', 'rack_candidate_overview.html',
+-                                           'four_node_layout.py', 'rack_candidate_datums.py')]
++                                           'four_node_layout.py', 'rack_candidate_datums.py', 'switch_support_parameters.py',
++                                           'freecad_switch_support.py', 'build_switch_support_cad.py')]
+         paths += [ROOT / 'models/spark-rack/reference/pending-mount-measurements.json',
+                   ROOT / 'models/spark-rack/reference/four-node-layout-assumptions.json',
+                   ROOT / 'models/spark-rack/reference/prepared-fans-and-cable.json',
+@@ -230,11 +239,17 @@ def build():
+         write_json(out / 'overview-report.json', data)
+         write_json(out / 'comparison.json', comparison)
+         shutil.copyfile(PREVIOUS / 'overview-report.json', out / 'previous-overview-report.json')
++        env = os.environ.copy(); env['PYTHONPATH'] = os.environ.get('FREECAD_LIB', '/Applications/FreeCAD.app/Contents/Resources/lib')
++        python = os.environ.get('FREECAD_PYTHON', '/Applications/FreeCAD.app/Contents/Resources/bin/python')
++        result = subprocess.run([python, str(SOURCE/'build_switch_support_cad.py'), str(out)], env=env, cwd=ROOT, capture_output=True, text=True)
++        (out/'switch-support-cad.log').write_text(result.stdout+result.stderr, encoding='utf-8')
++        if result.returncode:
++            raise RuntimeError('支持部のCAD検査に失敗しました: '+str(out/'switch-support-cad.log'))
+         template = (SOURCE / 'rack_candidate_overview.html').read_text(encoding='utf-8')
+         assert template.count('__OVERVIEW_DATA__') == 1
+         (out / 'rack-candidate-overview.html').write_text(
+             template.replace('__OVERVIEW_DATA__', json.dumps({'current': data, 'previous': previous,
+-                                                             'comparison': comparison}, ensure_ascii=False).replace('<', '\\u003c')),
++                                                             'comparison': comparison, 'support_cad': json.loads((out/'switch-support-cad-scene.json').read_text())}, ensure_ascii=False).replace('<', '\\u003c')),
+             encoding='utf-8')
+         for name in pictures:
+             shutil.copyfile(coupon / name, out / name)
+diff --git a/models/spark-rack/source/build_switch_support_cad.py b/models/spark-rack/source/build_switch_support_cad.py
+new file mode 100644
+index 0000000..032137a
+--- /dev/null
++++ b/models/spark-rack/source/build_switch_support_cad.py
+@@ -0,0 +1,181 @@
++"""支持部と柱の接合を参照CADへ保存し、全体配置との干渉・交換経路を検査する。"""
++import json
++import os
++from pathlib import Path
++import sys
++
++import FreeCAD as App
++import FreeCADGui as Gui
++import Part
++from freecad_switch_support import build_shapes, box
++from switch_support_parameters import SUPPORT
++
++
++def write_json(path, data):
++    path.write_text(json.dumps(data, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
++
++
++def overlap_bounds(a, b):
++    aa, bb = a.BoundBox, b.BoundBox
++    return min(aa.XMax,bb.XMax)-max(aa.XMin,bb.XMin)>1e-7 and min(aa.YMax,bb.YMax)-max(aa.YMin,bb.YMin)>1e-7 and min(aa.ZMax,bb.ZMax)-max(aa.ZMin,bb.ZMin)>1e-7
++
++
++def contact(a, b, z):
++    left=[f for f in a.Faces if abs(f.BoundBox.ZMin-z)<1e-6 and abs(f.BoundBox.ZMax-z)<1e-6]
++    right=[f for f in b.Faces if abs(f.BoundBox.ZMin-z)<1e-6 and abs(f.BoundBox.ZMax-z)<1e-6]
++    return sum(x.common(y).Area for x in left for y in right)
++
++
++def band_shape(band):
++    points=band['section_xz'];outer=[];thickness=band['thickness']
++    for i,point in enumerate(points):
++        previous=points[i-1];following=points[(i+1)%len(points)]
++        a=[point[j]-previous[j] for j in range(2)];b=[following[j]-point[j] for j in range(2)]
++        la=(a[0]**2+a[1]**2)**.5;lb=(b[0]**2+b[1]**2)**.5
++        pa=[point[0]+a[1]/la*thickness,point[1]-a[0]/la*thickness]
++        pb=[point[0]+b[1]/lb*thickness,point[1]-b[0]/lb*thickness]
++        difference=[pb[j]-pa[j] for j in range(2)]
++        t=(difference[0]*b[1]-difference[1]*b[0])/(a[0]*b[1]-a[1]*b[0])
++        outer.append([pa[j]+a[j]*t for j in range(2)])
++    def solid(polygon):
++        vectors=[App.Vector(x,band['center_y']-band['width']/2,z) for x,z in polygon]
++        return Part.Face(Part.makePolygon(vectors+vectors[:1])).extrude(App.Vector(0,band['width'],0))
++    return solid(outer).cut(solid(points)).removeSplitter()
++
++
++def validate(shapes, fixtures):
++    for name,s in shapes.items():
++        if not s.isValid() or not s.isClosed() or len(s.Solids)!=1:
++            raise ValueError('支持部が閉じた一部品になっていません: '+name)
++    pairs=list(shapes.items()); collisions=[]
++    for i,(name,a) in enumerate(pairs):
++        for other,b in pairs[i+1:]:
++            if overlap_bounds(a,b) and a.common(b).Volume>1e-5:
++                collisions.append([name,other])
++    if collisions: raise ValueError('支持部の干渉: '+json.dumps(collisions))
++    bearings={}
++    for side in ('left','right'):
++        for end,index in (('front',0),('rear',2)):
++            bearings[f'{side}_{end}_rail_to_column']=contact(shapes[f'rail_{side}_{index}'],shapes[f'column_{side}_{end}_lower'],SUPPORT.rail_top-28)
++            bearings[f'{side}_{end}_column_cap']=contact(shapes[f'column_{side}_{end}_lower'],shapes[f'column_{side}_{end}_upper'],SUPPORT.rail_top)
++        for i,y in enumerate(SUPPORT.cross_centers_y):
++            index=0 if y<-220 else 2
++            bearings[f'cross_{i}_{side}_to_rail']=contact(shapes[f'cross_{i}_{side}'],shapes[f'rail_{side}_{index}'],SUPPORT.rail_top-10)
++    for i in range(2):
++        bearings[f'cross_{i}_to_tray']=sum(contact(shapes[f'cross_{i}_{side}'],shapes['tray'],SUPPORT.rail_top) for side in ('left','right'))
++    if min(bearings.values())<150: raise ValueError('支持部の受け面を確認できません: '+str(bearings))
++    # ナットのねじ穴を横切る長さと、その先の突出量まで確認する。
++    fasteners=[]
++    for f in fixtures:
++        axis=f['axis'];sign=f['sign'];nut=shapes[f['name']+'_nut'];screw=shapes[f['name']+'_screw']
++        minimum=['XMin','YMin','ZMin'];maximum=['XMax','YMax','ZMax']
++        nut_start=getattr(nut.BoundBox,minimum[axis] if sign>0 else maximum[axis])
++        nut_end=getattr(nut.BoundBox,maximum[axis] if sign>0 else minimum[axis])
++        tip=getattr(screw.BoundBox,maximum[axis] if sign>0 else minimum[axis])
++        thickness=sign*(nut_end-nut_start)
++        engagement=max(0,min(thickness,sign*(tip-nut_start)))
++        projection=sign*(tip-nut_end)
++        direction=[sign if j==axis else 0 for j in range(3)]
++        centerline=Part.makeCylinder(.5,f['length'],App.Vector(*f['start']),App.Vector(*direction))
++        nut_line_start=list(f['start']);nut_line_start[axis]=nut_start
++        nut_line=Part.makeCylinder(.5,thickness,App.Vector(*nut_line_start),App.Vector(*direction))
++        centered=all(abs((getattr(nut.BoundBox,minimum[j])+getattr(nut.BoundBox,maximum[j]))/2-f['start'][j])<1e-6 for j in range(3) if j!=axis)
++        if engagement<thickness-1e-7 or projection<0 or not centered or centerline.cut(screw).Volume>1e-5 or nut_line.common(nut).Volume>1e-5:
++            raise ValueError('ねじが相手のナットを貫通しません: '+f['name'])
++        fasteners.append({'name':f['name'],'engagement_mm':engagement,'tip_projection_mm':round(projection,3)})
++    # 下柱→奥行梁の前・中・後→横梁の左・右→上柱。ねじは最後に入れる。
++    fixed=[shapes[n] for n in shapes if n.startswith('column_') and n.endswith('_lower')]
++    sequence=[f'rail_{side}_{i}' for side in ('left','right') for i in range(3)]
++    sequence += [f'cross_{i}_{side}' for i in range(2) for side in ('left','right')]
++    sequence += [n for n in shapes if n.startswith('column_') and n.endswith('_upper')]
++    samples=0
++    for name in sequence:
++        for dz in range(70,-1,-2):
++            moved=shapes[name].copy();moved.translate(App.Vector(0,0,dz));samples+=1
++            if any(overlap_bounds(moved,s) and moved.common(s).Volume>1e-5 for s in fixed):
++                raise ValueError('上からの挿入が途中で塞がります: '+name+' / '+str(dz))
++        fixed.append(shapes[name])
++    return {'status':'passed','bearing_contact_mm2':bearings,'fasteners':fasteners,
++            'insertion_samples':samples,'insertion_order':sequence,
++            'scope':'支持部の接合・受け面・仮ねじとナットの到達・離散的な組立経路。強度と実物の適合は未検証。'}
++
++
++def build(folder):
++    Gui.showMainWindow()
++    data=json.loads((folder/'overview-report.json').read_text());shapes,fixtures=build_shapes()
++    validation=validate(shapes,fixtures); scenes={};checks={}
++    for mode,layout in data.items():
++        installed=mode!='ring'
++        active={n:s for n,s in shapes.items() if installed or (n!='tray' and not n.startswith('tray_lock_'))}
++        for band in layout['switch_support']['bands']:
++            strap=band_shape(band)
++            if any(overlap_bounds(strap,s) and strap.common(s).Volume>1e-5 for s in active.values()):raise ValueError('保持バンドが支持部へ重なります')
++            active[band['name']]=strap
++        refs={}
++        for b in layout['members']+layout['feet']+layout['equipment']+layout['trays']+layout['holders']+layout['adapter_layout']['mounts']+[layout['adapter_layout']['separator']]:
++            if b.get('family')=='column':continue
++            refs[b['name']]=box(*b['origin'],*b['size'])
++        if installed:
++            for b in layout['switch_support']['reference_feet']:refs[b['name']]=box(*b['origin'],*b['size'])
++        collisions=[]
++        for name,s in active.items():
++            for label,r in refs.items():
++                if overlap_bounds(s,r) and s.common(r).Volume>1e-5:collisions.append([name,label])
++        if collisions:raise ValueError(mode+'の全体配置と支持部が干渉: '+json.dumps(collisions))
++        exchange=[]
++        if installed:
++            # 保持ねじとバンドを外し、受け板と本体を手で下から支えて引き出す。
++            moving=Part.makeCompound([active['tray'],refs['switch'],*[refs[b['name']] for b in layout['switch_support']['reference_feet']]])
++            obstacles=[s for n,s in active.items() if n!='tray' and not n.startswith(('tray_lock_','switch_band_'))]
++            obstacles += [s for n,s in refs.items() if n!='switch' and not n.startswith('switch_reference_foot')]
++            for dy in range(0,501,5):
++                moved=moving.copy();moved.translate(App.Vector(0,dy,0))
++                if any(overlap_bounds(moved,s) and moved.common(s).Volume>1e-5 for s in obstacles):
++                    raise ValueError(mode+'の後方取り出しが塞がります: '+str(dy))
++                exchange.append(dy)
++        tool_failures=[]
++        for f in fixtures:
++            if f['name'].startswith('tray_lock_') and not installed:continue
++            start=list(f['start']);start[f['axis']]-=f['sign']*4
++            tool=Part.makeCylinder(3,30,App.Vector(*start),App.Vector(*[(-f['sign'] if j==f['axis'] else 0) for j in range(3)]))
++            obstacles=[s for n,s in active.items() if n!=f['name']+'_screw']+list(refs.values())
++            if any(overlap_bounds(tool,s) and tool.common(s).Volume>1e-5 for s in obstacles):tool_failures.append(f['name'])
++        if tool_failures:raise ValueError(mode+'の工具経路が塞がります: '+str(tool_failures))
++        force=SUPPORT.reference_mass_kg*9.80665
++        center_y=-next(b for b in layout['equipment'] if b['kind']=='switch')['size'][1]/2 if installed else -183.5
++        front_y,rear_y=SUPPORT.cross_centers_y
++        front_force=force*(rear_y-center_y)/(rear_y-front_y);rear_force=force-front_force
++        rear_post=(front_force/2*(front_y+414)+rear_force/2*(rear_y+414))/492
++        front_post=force/2-rear_post
++        if min(front_force,rear_force,front_post,rear_post)<0:raise ValueError('仮荷重の重心が支持点の外にあります')
++        checks[mode]={'status':'passed','tool_reference_collisions':tool_failures,
++                      'reference_load_distribution':{'additional_mass_kg':SUPPORT.reference_mass_kg,'front_cross_N':round(front_force,3),'rear_cross_N':round(rear_force,3),'front_post_each_N':round(front_post,3),'rear_post_each_N':round(rear_post,3),'scope':'仮荷重の静力学分配。材料の強度・たわみ・クリープ解析ではない。'},'whole_layout_collisions':collisions,'exchange_samples':len(exchange),
++                      'exchange_travel_mm':500 if installed else 0,'operator_support_required':True,
++                      'tray_to_switch_feet_contact_mm2':sum(contact(active['tray'],refs[b['name']],SUPPORT.rail_top+SUPPORT.tray_thickness) for b in layout['switch_support']['reference_feet']) if installed else 0}
++        doc=App.newDocument('SwitchSupportAssembly');doc.Label='支持部を含む設計参照・'+mode
++        scene=[]
++        for name,s in active.items():
++            obj=doc.addObject('Part::Feature',name);obj.Shape=s
++            kind='switch_band' if name.startswith('switch_band_') else 'switch_tray' if name=='tray' else 'frame' if name.startswith('column_') else 'fastener' if name.endswith(('_screw','_nut','_washer')) else 'switch_support'
++            obj.Label={'switch_band':'保持バンド・購入品の仮外形','switch_tray':'アルミ受け板・寸法仮','frame':'支持穴と上からの柱接合','fastener':'仮のM4固定具','switch_support':'荷重を段差で受ける支持梁'}[kind]+' / '+name
++            obj.ViewObject.ShapeColor=(.46,.65,.48) if kind=='switch_support' else (.63,.68,.72) if kind=='switch_tray' else (.32,.43,.51) if kind=='frame' else (.65,.58,.42)
++            vertices,faces=s.tessellate(.3)
++            scene.append({'name':name,'kind':kind,'vertices':[[v.x,v.y,v.z] for v in vertices],'faces':faces,'label':obj.Label})
++        for name,s in refs.items():
++            obj=doc.addObject('Part::Feature','Reference_'+name);obj.Shape=s;obj.Label='参考外形・'+name;obj.ViewObject.Transparency=65
++        doc.recompute();path=folder/('switch-support-'+mode+'.FCStd');doc.saveAs(str(path))
++        if installed:Part.makeCompound(list(active.values())).exportStep(str(folder/('switch-support-'+mode+'.step')))
++        expected={o.Name:o.Shape.Volume for o in doc.Objects};App.closeDocument(doc.Name);doc=App.openDocument(str(path))
++        if any(abs(doc.getObject(n).Shape.Volume-v)>1e-6 for n,v in expected.items()):raise ValueError('保存後の再読込が不一致です')
++        App.closeDocument(doc.Name);scenes[mode]=scene;checks[mode]['reopened']=True
++    write_json(folder/'switch-support-cad-scene.json',scenes)
++    write_json(folder/'switch-support-validation.json',{'status':'passed','support_parts':validation,'layouts':checks,'manufacturing_release':False})
++
++
++if __name__=='__main__':
++    try:
++        build(Path(sys.argv[1]))
++    except Exception:
++        import traceback
++        traceback.print_exc();sys.stderr.flush();os._exit(1)
++    sys.stdout.flush();os._exit(0)
+diff --git a/models/spark-rack/source/freecad_switch_support.py b/models/spark-rack/source/freecad_switch_support.py
+new file mode 100644
+index 0000000..8113e86
+--- /dev/null
++++ b/models/spark-rack/source/freecad_switch_support.py
+@@ -0,0 +1,146 @@
++"""支持段の接合、受け面、固定ねじを実形状で確認する。造形用には出力しない。"""
++import math
++import FreeCAD as App
++import Part
++
++from switch_support_parameters import SUPPORT
++
++
++def box(x, y, z, a, b, c):
++    return Part.makeBox(a, b, c, App.Vector(x, y, z))
++
++
++def bore(center, radius, length, axis, sign=1):
++    direction = [0, 0, 0]; direction[axis] = sign
++    return Part.makeCylinder(radius, length, App.Vector(*center), App.Vector(*direction))
++
++
++def hex_nut(center, axis, sign=1):
++    # 仮外形：二面幅7mm、厚さ3.2mm。購入品の実寸は未確認。
++    u, v = [i for i in range(3) if i != axis]
++    vertices = []
++    for i in range(6):
++        point = list(center); t = math.pi*i/3
++        point[u] += 7/math.sqrt(3)*math.cos(t)
++        point[v] += 7/math.sqrt(3)*math.sin(t)
++        vertices.append(App.Vector(*point))
++    direction = [0, 0, 0]; direction[axis] = sign*3.2
++    solid = Part.Face(Part.makePolygon(vertices+vertices[:1])).extrude(App.Vector(*direction))
++    return solid.cut(bore(center, 2.05, 3.2, axis, sign))
++
++
++def build_shapes(p=SUPPORT):
++    p.validate(); c=p.clearance; top=p.rail_top; bottom=top-28
++    shapes = {}; fixtures = []; receiver_info = []
++
++    def hardware(name, start, axis, length, nut_start, sign=1, washer=False):
++        head_start = list(start); head_start[axis] -= sign*4
++        shapes[name+'_screw'] = bore(start, 2, length, axis, sign).fuse(bore(head_start, 4, 4, axis, sign))
++        shapes[name+'_nut'] = hex_nut(nut_start, axis, sign)
++        fixtures.append({'name': name, 'axis': axis, 'start': start, 'length': length,
++                         'nut_start': nut_start, 'nut_thickness': 3.2, 'sign': sign})
++        if washer:
++            wstart=list(start); wstart[axis]+=sign*0
++            shapes[name+'_washer']=bore(wstart,4.5,1,axis,sign).cut(bore(wstart,2.25,1,axis,sign))
++
++    # 下側の柱は上へ開いた受け穴。上側は梁の後から載せ、12×6mmの突起で位置決め。
++    for side, x in (('left', -256), ('right', 228)):
++        for end, y in (('front', -428), ('rear', 64)):
++            name=f'column_{side}_{end}'
++            lower=box(x,y,0,28,28,top)
++            cap=box(x,y,top,28,28,420-top)
++            peg_y=y+1 if end=='front' else y+21
++            peg=box(x+8,peg_y,top,12,6,24)
++            lower=lower.fuse(peg)
++            cap=cap.cut(box(x+8-c,peg_y-c,top-1,12+2*c,6+2*c,25.3))
++            root_y=y+20 if end=='front' else y
++            tenon_y=y+8 if end=='front' else y+8
++            lower=lower.cut(box(x-c,root_y-c,bottom,28+2*c,8+2*c,29))
++            lower=lower.cut(box(x+8-c,tenon_y-c,bottom+8,12+2*c,12+2*c,21))
++            # 柱と奥行梁を固定するねじ。頭は枠の内側、ナットは柱の中。
++            sign=-1 if side=='left' else 1; inside=x+28 if side=='left' else x
++            lock_y=tenon_y+6; lock_z=bottom+14
++            start=[inside,lock_y,lock_z]; hole=[inside-sign,lock_y,lock_z]
++            lower=lower.cut(bore(hole,2.25,30,0,sign))
++            nut_x=inside+sign*20
++            access_y=y-1 if end=='front' else y+9.7
++            lower=lower.cut(box(min(nut_x,nut_x+sign*3.2)-c,access_y,lock_z-4.1,
++                                 3.2+2*c,20,8.2))
++            hardware(name+'_rail_lock',start,0,25,[nut_x,lock_y,lock_z],sign)
++            # 上側の柱の抜け止めも内側から1本。受け板が通る高さを避ける。
++            lock_y=peg_y+3; lock_z=top+18
++            for label,shape in [('lower',lower),('upper',cap)]:
++                shape=shape.cut(bore([inside-sign,lock_y,lock_z],2.25,30,0,sign))
++                if label=='upper':
++                    shape=shape.cut(box(min(nut_x,nut_x+sign*3.2)-c,access_y,lock_z-4.1,3.2+2*c,20,8.2))
++                shapes[name+'_'+label]=shape.removeSplitter()
++            hardware(name+'_cap_lock',[inside,lock_y,lock_z],0,25,[nut_x,lock_y,lock_z],sign)
++            receiver_info.append((side,end,name))
++
++    for side,x in (('left',-256),('right',228)):
++        segments=[]; y=-400
++        for i,length in enumerate((180,142,142)):
++            s=box(x,y,bottom,28,length,28)
++            if i<2:
++                s=s.cut(box(x+8-c,y+length-24-c,bottom+4.3,12+2*c,25+c,29))
++            if i>0:
++                s=s.fuse(box(x+8,y-24,bottom+4.3,12,24,28-4.3-c))
++            if i==0:
++                s=s.fuse(box(x,-408,bottom,28,8,28-c)).fuse(box(x+8,-420,bottom+10,12,12,8))
++            if i==2:
++                s=s.fuse(box(x,64,bottom,28,8,28-c)).fuse(box(x+8,72,bottom+10,12,12,8))
++            for yc in p.cross_centers_y:
++                if side=='left':
++                    s=s.cut(box(-236-c,yc-14-c,top-10,9+c,28+2*c,11))
++                    s=s.cut(box(-248-c,yc-6-c,top-8,12+2*c,12+2*c,9))
++                else:
++                    s=s.cut(box(228-c,yc-14-c,top-10,8+2*c,28+2*c,11))
++                    s=s.cut(box(236-c,yc-6-c,top-8,12+2*c,12+2*c,9))
++            sign=-1 if side=='left' else 1; inside=x+28 if side=='left' else x
++            for lock_y in (-414,78):
++                s=s.cut(bore([inside-sign,lock_y,bottom+14],2.25,30,0,sign))
++            segments.append(s.removeSplitter()); y+=length
++        for i,s in enumerate(segments): shapes[f'rail_{side}_{i}']=s
++        for i,junction in enumerate((-220,-78)):
++            cx=x+14; cy=junction-12; start=[cx,cy,bottom-1]
++            for index in (i,i+1):
++                key=f'rail_{side}_{index}'
++                shapes[key]=shapes[key].cut(bore([cx,cy,bottom-2],2.25,32,2))
++                shapes[key]=shapes[key].cut(box(cx-4.1 if side=='left' else x-1,cy-4.1,bottom+12.7,19.1,8.2,3.8)).removeSplitter()
++            hardware(f'rail_{side}_{i}_splice_lock',start,2,20,[cx,cy,bottom+13],washer=True)
++
++    for i,yc in enumerate(p.cross_centers_y):
++        z=top-p.cross_height; floor=z+4.3
++        left=box(-220,yc-14,z,220,28,p.cross_height)
++        right=box(0,yc-14,z,220,28,p.cross_height)
++        left=left.fuse(box(-236,yc-14,top-10,16,28,10-c)).fuse(box(-248,yc-6,top-6,12,12,4))
++        right=right.fuse(box(220,yc-14,top-10,16,28,10-c)).fuse(box(236,yc-6,top-6,12,12,4))
++        left=left.cut(box(-24-c,yc-6-c,floor,25+c,12+2*c,p.cross_height))
++        right=right.fuse(box(-24,yc-6,floor,24,12,p.cross_height-4.3-c))
++        center_start=[0,yc,z-1]; center_nut=[0,yc,z+13]
++        for side,s in [('left',left),('right',right)]:
++            s=s.cut(bore([0,yc,z-2],2.25,p.cross_height+4,2))
++            if side=='right':
++                s=s.cut(box(-4.1,yc-15,z+12.7,8.2,19.1,3.8))
++            if i==1:
++                for fx in (-205,205):
++                    s=s.cut(bore([fx,yc,z-1],2.25,p.cross_height+5,2))
++                    s=s.cut(box(fx-4.1,yc-4.1,z+3.7,8.2,19.1,3.8))
++            shapes[f'cross_{i}_{side}']=s.removeSplitter()
++        hardware(f'cross_{i}_lock',center_start,2,20,center_nut,washer=True)
++    for i,yc in enumerate(p.cross_centers_y):
++        index=0 if yc<-220 else 2
++        for side,cx in (('left',-234),('right',234)):
++            rail_key=f'rail_{side}_{index}'; cross_key=f'cross_{i}_{side}'
++            for key in (rail_key,cross_key):
++                shapes[key]=shapes[key].cut(bore([cx,yc,bottom-1],2.25,31,2))
++            access_x=-239 if side=='left' else 219
++            shapes[cross_key]=shapes[cross_key].cut(box(access_x,yc-4.1,top-7.3,20,8.2,3.8)).removeSplitter()
++            hardware(f'cross_{i}_{side}_end_lock',[cx,yc,bottom],2,25,[cx,yc,top-7])
++    tray=box(-p.tray_width/2,p.tray_front_y,top,p.tray_width,p.tray_depth,p.tray_thickness)
++    for x in (-205,205):
++        y=p.cross_centers_y[1]
++        tray=tray.cut(bore([x,y,top-1],2.25,p.tray_thickness+2,2))
++        hardware('tray_lock_'+str(x),[x,y,top+p.tray_thickness],2,20,[x,y,top-p.cross_height+7.2],-1)
++    shapes['tray']=tray.removeSplitter()
++    return shapes,fixtures
+diff --git a/models/spark-rack/source/rack_candidate_overview.html b/models/spark-rack/source/rack_candidate_overview.html
+index 2fae23b..7876600 100644
+--- a/models/spark-rack/source/rack_candidate_overview.html
++++ b/models/spark-rack/source/rack_candidate_overview.html
+@@ -7,18 +7,18 @@
+ <div class="layout"><div><section class="card stage" id="stage"><svg id="drawing" viewBox="0 0 940 640" role="img" aria-label="4台ラックの全体構想図"></svg><div class="caption" id="caption"></div></section>
+ <div class="legend"><span><i class="swatch" style="background:#54748a"></i>28mm角の柱・梁</span><span><i class="swatch" style="background:#c7a663"></i>DGX Spark</span><span><i class="swatch" style="background:#847363"></i>140mmファン</span><span><i class="swatch" style="background:#72b7c9"></i>導風の参考外形</span><span><i class="swatch" style="background:#55616b"></i>電源4個</span><span><i class="swatch" style="background:#a390b7"></i>将来のスイッチ収容範囲</span></div>
+ <div class="facts"><div><small>共通枠の外形・脚を除く</small><strong id="frame-fact">512 × 520 × 420mm</strong></div><div><small>制御ケースまで含む幅</small><strong id="width-fact">512mm</strong></div><div><small>下段の本体底面</small><strong>高さ72mm</strong></div></div></div>
+-<aside class="side"><section class="card"><h2>表示を調整</h2><label><input id="equipment" type="checkbox" checked> 本体・140mmファン・制御ケース</label><label><input id="adapters" type="checkbox" checked> 電源4個・120mmファン・支持範囲</label><label><input id="ducts" type="checkbox" checked> 導風の参考外形</label><label><input id="cables" type="checkbox" checked> 40cmケーブルの仮経路</label><label><input id="labels" type="checkbox" checked> 部品の説明</label><p class="muted">斜め表示はドラッグで回転。枠の細い線は造形分割の候補です。線をまたぐ外板や別部品の継ぎ手は置きません。</p><p id="comparison-note"></p><p id="mode-note"></p><p id="cable-note"></p></section>
+-<section class="card"><h2>組立順の考え方</h2><div class="step"><strong>下側の柱と受けを用意</strong><small>梁の段差を載せる水平面を確保。</small></div><div class="step"><strong>低いほぞの梁を先に入れる</strong><small>続いて高いほぞの梁を上から入れる。</small></div><div class="step"><strong>上側の柱を後から載せる</strong><small>上から入れる接合を、柱で塞ぐ前に組む。</small></div><p class="muted">これは角の接合から展開する順序の候補です。全体の分割位置と、最後の梁まで入る経路はこれから詰めます。</p></section></aside></div>
+-<div class="note">全体は外形の構想図です。端の凹凸を全長部材へ統合した製造形状ではありません。梁の取付穴、スイッチ支持板、止めねじは未確定。外形箱と仮配線の干渉を確認しました。全長部材の凹凸、実端子、組立経路、強度・冷却は未検証です。</div>
+-<div class="details"><section class="card"><h2>角は、柱の穴と梁のほぞ</h2><img src="corner-assembled.png" alt="検査済みの短い形状：柱の受けへ梁2本を入れた状態"><p>荷重は根元の段差で受け、奥のほぞで位置を決めます。28mm角の外形に収め、角の固定板をなくします。</p></section><section class="card"><h2>差す方向を、上からにそろえる</h2><img src="corner-insertion-order.png" alt="低いほぞを先に、高いほぞを後に上から入れる順序"><p>角の短い形状では、低いほぞ→高いほぞの順で挿入できます。全体の順序はこの条件を守って検討します。</p></section><section class="card"><h2>直線の途中は、二股と差し込み</h2><img src="straight-assembled.png" alt="二股の溝へ差し込みを上から入れた短い形状"><p>部材の分割線は残ります。外へかぶせる継ぎ手をなくし、二股の底面で相手を受けます。</p></section></div>
+-<p class="muted" style="font-size:13px">本体枠の72個は前の案の数量目標です。電源の支持部、120mmファンの保持部、追加ドック、仕切りを統合した部品数は未確定です。スイッチ支持板は寸法確定後に設計し、試験片の印刷は後回しのままです。</p>
++<aside class="side"><section class="card"><h2>表示を調整</h2><label><input id="equipment" type="checkbox" checked> 本体・140mmファン・制御ケース</label><label><input id="adapters" type="checkbox" checked> 電源4個・120mmファン・支持範囲</label><label><input id="supports" type="checkbox" checked> スイッチの受け梁・受け板・固定具</label><label><input id="ducts" type="checkbox" checked> 導風の参考外形</label><label><input id="cables" type="checkbox" checked> 40cmケーブルの仮経路</label><label><input id="labels" type="checkbox" checked> 部品の説明</label><p class="muted">斜め表示はドラッグで回転。枠の細い線は造形分割の候補です。線をまたぐ外板や別部品の継ぎ手は置きません。</p><p id="comparison-note"></p><p id="mode-note"></p><p id="cable-note"></p></section>
++<section class="card"><h2>組立順の考え方</h2><div class="step"><strong>下側の柱と受けを用意</strong><small>梁の段差を載せる水平面を確保。</small></div><div class="step"><strong>奥行梁、横梁の順に入れる</strong><small>奥行梁は前・中・後。横梁は左・右の順に上から入れる。</small></div><div class="step"><strong>上側の柱を後から載せる</strong><small>上から入れる接合を、柱で塞ぐ前に組む。</small></div><p class="muted">スイッチ支持部は504点の挿入検査で順序を確認。本体側の残るフレーム接合はこれから詰めます。</p></section></aside></div>
++<div class="note">スイッチ支持部は柱・梁の接合、固定具、後方交換経路まで参照CADへ含めています。本体側の取付穴と残る接合、実機の適合・強度・冷却は未確定です。造形用データは出力していません。</div>
++<section class="card" style="margin-top:18px"><h2>スイッチの支持と交換</h2><p>452×423×3mmのアルミ受け板を、横梁2本で下から支えます。横梁の段差を奥行梁へ載せ、奥行梁も柱の段差で受ける構造です。ねじは内側か下面へ収めます。</p><p>柱は支持段で分割し、梁を上から入れた後に上側の柱を載せます。リング時から受け梁を組むため、スイッチ導入時の柱の組み直しは不要です。</p><p>交換時は電源・通信ケーブルと保持バンド、受け板の固定ねじ2本を外します。受け板と本体を下から支えながら、後方へ500mm引き出します。自立して全開できる引出し機構ではありません。</p><div class="links"><a href="switch-support-crs804.FCStd">CRS804の支持部を確認</a><a href="switch-support-crs812.FCStd">CRS812の支持部を確認</a><a href="switch-support-validation.json">受け面・ねじ・組立・交換の検査</a></div></section><div class="details"><section class="card"><h2>角は、柱の穴と梁のほぞ</h2><img src="corner-assembled.png" alt="検査済みの短い形状：柱の受けへ梁2本を入れた状態"><p>荷重は根元の段差で受け、奥のほぞで位置を決めます。28mm角の外形に収め、角の固定板をなくします。</p></section><section class="card"><h2>差す方向を、上からにそろえる</h2><img src="corner-insertion-order.png" alt="低いほぞを先に、高いほぞを後に上から入れる順序"><p>角の短い形状では、低いほぞ→高いほぞの順で挿入できます。全体の順序はこの条件を守って検討します。</p></section><section class="card"><h2>直線の途中は、二股と差し込み</h2><img src="straight-assembled.png" alt="二股の溝へ差し込みを上から入れた短い形状"><p>部材の分割線は残ります。外へかぶせる継ぎ手をなくし、二股の底面で相手を受けます。</p></section></div>
++<p class="muted" style="font-size:13px">本体枠の72個は前の案の数量目標です。電源の支持部、120mmファンの保持部、追加ドック、仕切りを統合した部品数は未確定です。スイッチの受け梁はリング時から取り付けます。受け板と購入品は実寸確認後に確定し、試験片の印刷は後回しのままです。</p>
+ <div class="links"><a href="comparison.json">寸法の比較</a><a href="overview-report.json">構想図の寸法データ</a><a href="validation.json">確認範囲</a><a href="manifest.json">生成元と保存記録</a></div>
+ </main><script>
+ const overview=__OVERVIEW_DATA__;
+ let revision='current';
+-let mode='ring',view='iso',yaw=-0.72,tilt=0.34;
++let mode='crs804',view='iso',yaw=-0.72,tilt=0.34;
+ const el=id=>document.getElementById(id);
+-const colors={adapter:'#55616b',adapter_mount:'#88a0af',separator:'#72b7c9',cable_space:'#d6b888',frame:'#54748a',spark:'#c7a663',fan:'#847363',holder:'#6e7d87',controller:'#435b6b',tray:'#a7c6d7',foot:'#435b6b',switch:'#a390b7'};
++const colors={switch_band:'#b98a55',switch_support:'#7eac86',switch_tray:'#a2abb4',switch_foot:'#45535d',fastener:'#a09069',adapter:'#55616b',adapter_mount:'#88a0af',separator:'#72b7c9',cable_space:'#d6b888',frame:'#54748a',spark:'#c7a663',fan:'#847363',holder:'#6e7d87',controller:'#435b6b',tray:'#a7c6d7',foot:'#435b6b',switch:'#a390b7'};
+ const corners=b=>[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]].map(c=>c.map((v,i)=>b.origin[i]+v*b.size[i]));
+ function camera(p){const[x,y,z]=p;if(view==='front')return[x,-z,-y];if(view==='back')return[-x,-z,y];if(view==='side')return[y,-z,x];if(view==='top')return[x,y,z];const a=x*Math.cos(yaw)+y*Math.sin(yaw),b=-x*Math.sin(yaw)+y*Math.cos(yaw);return[a,-b*Math.sin(tilt)-z*Math.cos(tilt),-b*Math.cos(tilt)+z*Math.sin(tilt)];}
+ function draw(){
+@@ -26,7 +26,8 @@ function draw(){
+  const isPower=b=>b.kind==='adapter'||b.name.startsWith('adapter_');
+  const activeEquipment=s.equipment.filter(b=>isPower(b)?visiblePower:visibleEquipment);
+  const activeHolders=s.holders.filter(b=>isPower(b)?visiblePower:visibleEquipment);
+- const all=[...s.members,...s.feet,...(visibleEquipment?s.trays:[]),...activeEquipment,...(visiblePower?[...s.adapter_layout.mounts,s.adapter_layout.separator]:[])];
++ const cad=revision==='current'?(overview.support_cad?.[mode]||[]):[];
++ const all=[...s.members.filter(b=>!cad.length||b.family!=='column'),...s.feet,...(visibleEquipment?s.trays:[]),...activeEquipment,...(visiblePower?[...s.adapter_layout.mounts,s.adapter_layout.separator]:[]),...(visibleEquipment&&s.switch_support?.tray_installed?s.switch_support.reference_feet:[])];
+  const bounds=[[-325,-450,-8],[325,120,430]].flatMap((a,i)=>i===0?[[a[0],a[1],a[2]],[325,a[1],a[2]],[-325,120,a[2]],[325,120,a[2]]]:[[a[0],a[1],a[2]],[-325,a[1],a[2]],[325,-450,a[2]],[-325,-450,a[2]]]).map(camera);
+  const min=[Math.min(...bounds.map(p=>p[0])),Math.min(...bounds.map(p=>p[1]))],max=[Math.max(...bounds.map(p=>p[0])),Math.max(...bounds.map(p=>p[1]))];
+  const scale=Math.min(770/(max[0]-min[0]),485/(max[1]-min[1]));
+@@ -36,6 +37,14 @@ function draw(){
+  function polygon(ps,color,opacity,stroke,label){const depth=ps.reduce((a,p)=>a+camera(p)[2],0)/ps.length;shapes.push({depth,markup:`<polygon points="${points(ps)}" fill="${color}" fill-opacity="${opacity}" stroke="${stroke}" stroke-width=".8"><title>${label}</title></polygon>`});}
+  const faces=[[0,3,2,1],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]];
+  for(const b of all){const c=corners(b);for(const f of faces){const ps=f.map(i=>c[i]),q=ps.map(camera);const area=(q[1][0]-q[0][0])*(q[2][1]-q[0][1])-(q[1][1]-q[0][1])*(q[2][0]-q[0][0]);if(area>=0)continue;polygon(ps,colors[b.kind],b.kind==='switch'?.28:b.kind==='separator'?.25:b.kind==='tray'?.65:1,b.kind==='switch'?'#88799a':'#eef3f5',b.label);}}
++ for(const item of cad){
++  if(item.kind!=='frame'&&!el('supports').checked)continue;
++  for(const face of item.faces){
++   const ps=face.map(i=>item.vertices[i]),q=ps.map(camera);
++   const area=(q[1][0]-q[0][0])*(q[2][1]-q[0][1])-(q[1][1]-q[0][1])*(q[2][0]-q[0][0]);
++   if(area<0)polygon(ps,colors[item.kind],1,colors[item.kind],item.label);
++  }
++ }
+  if(showDuct)for(const d of s.ducts)for(let i=0;i<32;i++){const j=(i+1)%32;polygon([d.inlet[i],d.inlet[j],d.outlet[j],d.outlet[i]],'#72b7c9',.32,'#8ac2d0',d.label);}
+  // 保持板の円形開口。120mmファンは側面に向ける。
+  for(const h of activeHolders){
+@@ -77,7 +86,7 @@ function draw(){
+    label('別部品の継ぎ手をなくす',current?[242,78,392]:[246,96,392],30,-30);
+    if(current&&visiblePower){label('電源4個・左右へ排気',[-224,-319,94],-25,85);if(visibleEquipment)label('制御ケースも内側へ',[-205,-216,317.25],-5,-38);}
+    else if(visibleEquipment)label('本体の前にファンと導風',[90,-190,97.25],38,72);
+-   if(mode!=='ring'&&visibleEquipment)label('スイッチ：支持板は未設計',[0,-220,207.25],-30,-20);
++   if(mode!=='ring'&&visibleEquipment)label('底面 → 受け板 → 梁 → 柱',[0,-270,182.25],-35,50);
+   }else if(view==='back'){
+    if(visibleEquipment&&el('cables').checked)label('40cmの仮経路',[0,50,177.25],0,-25);
+    label('28mm角の共通枠',current?[242,78,392]:[246,96,392],-35,-20);
+@@ -85,11 +94,11 @@ function draw(){
+  }
+  markup+='<text x="24" y="36" fill="#687c8e" font-size="14">'+({iso:'前面側から見る・ドラッグで回転',front:'前面：ファンと本体は同じ中心に仮配置',back:'背面：端子位置とケーブルの曲げ条件は仮定',side:'側面：電源と120mmファンは手前下側、本体と配線は後側',top:'上面：左右2列と、四隅の共通柱'}[view])+'</text>';
+  el('drawing').innerHTML=markup;
+- el('caption').textContent=mode==='ring'?'リング接続：段間隔160mm。4台は左右対称に仮配置。スイッチはまだ載せません。':'スイッチ配置：段間隔220mmへ変更し、上下の本体の間に収容範囲を確保します。';
++ el('caption').textContent=mode==='ring'?'リング接続：段間隔160mm。4台は左右対称に仮配置。受け梁を先に組み、受け板はスイッチ導入時に追加します。':'スイッチ配置：段間隔220mm。受け板を横梁2本で支え、左右の奥行梁から四隅の柱へ荷重を伝えます。';
+  el('frame-fact').textContent=s.frame_outer_mm.join(' × ')+'mm';
+  el('width-fact').textContent=s.controller_width_mm+'mm';
+  el('comparison-note').textContent=revision==='current'?'枠は幅8mm・奥行10mmを短縮。ケースの外への張り出しをなくし、設置幅は618→512mm。電源4個も枠内へ。':'前の構想：520×530×420mm。制御ケースは外側へ張り出し、設置幅618mm。電源は別置き。';
+- el('mode-note').textContent=mode==='ring'?(revision==='current'?'140mmファン4個は本体用、120mmファン2個は電源用。電源の温風を左右へ排気し、参考仕切りで本体の吸気と分ける案です。':'140mmファン4個は本体用。電源と120mmファン2個は別置き。'):s.switch_note+' 筐体を下から支持し、取付耳を外す構想です。耳・支持板・実端子の寸法は未確定。';
++ el('mode-note').textContent=mode==='ring'?(revision==='current'?'140mmファン4個は本体用、120mmファン2個は電源用。電源の温風を左右へ排気し、参考仕切りで本体の吸気と分ける案です。':'140mmファン4個は本体用。電源と120mmファン2個は別置き。'):s.switch_note+' 筐体を下から支持し、取付耳を外す構想です。支持部の接合・固定具・交換経路を仮設計しました。耳と底面の実寸、実端子、強度は未確認です。';
+  const required=Math.max(...s.cables.map(c=>c.required_length_mm));
+  el('cable-note').textContent='仮端子による最長の予約込み経路：'+required.toFixed(1)+'mm / 400mm。実物に届くことや、奥の梁との干渉は未確認です。';
+  window.overviewState={mode,view,revision,scene:s,shownEquipment:visibleEquipment,shownPower:visiblePower,shownEquipmentNames:activeEquipment.map(b=>b.name)};
+@@ -97,8 +106,8 @@ function draw(){
+ el('revision').addEventListener('change',()=>{revision=el('revision').value;draw()});
+ el('mode').addEventListener('change',()=>{mode=el('mode').value;draw()});
+ document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;yaw=-.72;tilt=.34;document.querySelectorAll('[data-view]').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));draw()}));
+-for(const id of ['equipment','adapters','ducts','cables','labels'])el(id).addEventListener('change',draw);
++for(const id of ['equipment','adapters','supports','ducts','cables','labels'])el(id).addEventListener('change',draw);
+ let drag=null;el('drawing').addEventListener('pointerdown',e=>{if(view!=='iso')return;drag=[e.clientX,e.clientY,yaw,tilt];el('drawing').setPointerCapture(e.pointerId)});
+ el('drawing').addEventListener('pointermove',e=>{if(!drag)return;yaw=drag[2]+(e.clientX-drag[0])*.005;tilt=Math.max(.08,Math.min(1.3,drag[3]+(e.clientY-drag[1])*.004));draw()});
+-el('drawing').addEventListener('pointerup',()=>drag=null);el('drawing').addEventListener('pointercancel',()=>drag=null);draw();
++el('drawing').addEventListener('pointerup',()=>drag=null);el('drawing').addEventListener('pointercancel',()=>drag=null);el('mode').value=mode;draw();
+ </script></body></html>
+diff --git a/models/spark-rack/source/switch_support_parameters.py b/models/spark-rack/source/switch_support_parameters.py
+new file mode 100644
+index 0000000..a4aa5fb
+--- /dev/null
++++ b/models/spark-rack/source/switch_support_parameters.py
+@@ -0,0 +1,79 @@
++"""中央段の支持部。実機寸法が未確定でも、荷重経路と交換経路を仮設計する。"""
++from dataclasses import asdict, dataclass
++
++from four_node_layout import box
++from rack_candidate_datums import DATUMS
++
++
++@dataclass(frozen=True)
++class SwitchSupportParameters:
++    rail_top: float = 182.25
++    rail_height: float = 28
++    cross_height: float = 20
++    cross_centers_y: tuple = (-322, 16)
++    tray_width: float = 452
++    tray_front_y: float = -395
++    tray_depth: float = 423
++    tray_thickness: float = 3
++    foot_allowance: float = 2
++    clearance: float = 0.3
++    reference_mass_kg: float = 5
++
++    def validate(self):
++        if self.rail_height != 28 or self.cross_height != 20:
++            raise ValueError('この支持部の梁断面は、奥行梁28mm・横梁20mmの固定形状です')
++        if min(self.tray_width,self.tray_depth,self.tray_thickness,self.foot_allowance,self.clearance) <= 0:
++            raise ValueError('支持部の寸法と隙間は正の値にしてください')
++        if self.tray_width >= DATUMS.frame_inner_width or self.tray_depth > 464:
++            raise ValueError('受け板が四隅の柱を通過する内のりに収まりません')
++        if self.rail_top + self.tray_thickness + self.foot_allowance + 44 > 236.25:
++            raise ValueError('上段ファンとの離隔が不足します。段間隔も見直してください')
++
++
++SUPPORT = SwitchSupportParameters()
++
++
++def support_outline(mode, switch, p=SUPPORT):
++    p.validate()
++    if mode != 'ring' and (switch['size'][0]+4 > p.tray_width or switch['size'][1] > p.tray_depth):
++        raise ValueError('スイッチの外形が受け板の収容範囲を超えています')
++    supports = []
++    z = p.rail_top - p.rail_height
++    for side, x in (('left', -256), ('right', 228)):
++        y = -400
++        for i, length in enumerate((180, 142, 142)):
++            supports.append(box(f'switch_rail_{side}_{i}', '中央段の奥行梁・柱の段差で受ける',
++                                [x, y, z], [28, length, 28], 'switch_support'))
++            y += length
++    for i, y in enumerate(p.cross_centers_y):
++        for side, x in (('left', -220), ('right', 0)):
++            supports.append(box(f'switch_cross_{i}_{side}', '受け板を下から支える横梁',
++                                [x, y-14, p.rail_top-p.cross_height], [220, 28, p.cross_height], 'switch_support'))
++    installed = mode != 'ring'
++    tray = box('switch_tray', '交換するアルミ受け板・452×423×3mmの仮設計',
++               [-p.tray_width/2, p.tray_front_y, p.rail_top],
++               [p.tray_width, p.tray_depth, p.tray_thickness], 'switch_tray')
++    feet = []
++    bands = []
++    if installed:
++        width, depth, _ = switch['size']
++        for i, x in enumerate((-width/2+15, width/2-30)):
++            for j, y in enumerate((-depth+15, -30)):
++                feet.append(box(f'switch_reference_foot_{i}_{j}', 'スイッチ底面の脚・位置と高さは仮定',
++                                [x, y, p.rail_top+p.tray_thickness], [15, 15, p.foot_allowance], 'switch_foot'))
++        case_top=switch['origin'][2]+switch['size'][2]
++        section=[[-p.tray_width/2,p.rail_top],[p.tray_width/2,p.rail_top],
++                 [p.tray_width/2,p.rail_top+p.tray_thickness],[width/2,case_top],
++                 [-width/2,case_top],[-p.tray_width/2,p.rail_top+p.tray_thickness]]
++        for i,y in enumerate((-depth*.65,-60)):
++            bands.append({'name':f'switch_band_{i}','section_xz':section,'center_y':y,
++                          'width':20,'thickness':1,'label':'保持バンド・位置と材質は仮定'})
++    return {'parameters': asdict(p), 'supports': supports, 'tray': tray, 'reference_feet': feet,
++            'bands':bands,
++            'tray_installed': installed, 'column_split_mm': [p.rail_top, DATUMS.frame_height-p.rail_top],
++            'installation': 'リング時から受け梁を組み、受け板は上段を220mm間隔へ移動した後に載せる。',
++            'load_path': ['仮の底面脚', 'アルミ受け板', '横梁2本', '左右の奥行梁', '四隅の柱', '脚'],
++            'retention': '後ろ側のM4ねじ2本で受け板を固定し、スイッチは保持バンド2本で受け板へ留める。',
++            'service': '電源と通信ケーブル、保持ねじを外し、受け板を下から支えながら後方へ取り出す。',
++            'reference_load_note': '5kgは接触点の荷重分配を確認する仮荷重。耐荷重の保証値ではない。',
++            'release_for_print': False}
+diff --git a/tests/check_rack_candidate_overview.cjs b/tests/check_rack_candidate_overview.cjs
+index 4f86b84..d7872f9 100644
+--- a/tests/check_rack_candidate_overview.cjs
++++ b/tests/check_rack_candidate_overview.cjs
+@@ -16,7 +16,7 @@ let browser;
+   for (const mode of ['ring', 'crs812', 'crs804']) {
+     await page.locator('#mode').selectOption(mode);
+     const actual = await page.evaluate(() => window.overviewState.scene);
+-    assert.equal(actual.members.length, 52);
++    assert.equal(actual.members.length, 48);
+     assert.equal(actual.equipment.filter(i => i.kind === 'spark').length, 4);
+     assert.equal(actual.equipment.filter(i => i.kind === 'fan' && i.size_mm === 140).length, 4);
+     assert.equal(actual.equipment.filter(i => i.kind === 'fan' && i.size_mm === 120).length, 2);
+@@ -24,7 +24,9 @@ let browser;
+     assert.equal(actual.equipment.filter(i => i.kind === 'controller').length, 6);
+     assert.equal(actual.equipment.filter(i => i.kind === 'switch').length, mode === 'ring' ? 0 : 1);
+     assert.equal(actual.mount_holes_committed, false);
+-    assert.equal(actual.switch_support_generated, false);
++    assert.equal(actual.switch_support_generated, true);
++    assert.equal(actual.switch_support.tray_installed, mode !== 'ring');
++    assert.ok(actual.switch_support.supports.length > 0);
+     for (const view of ['iso', 'front', 'back', 'side', 'top']) {
+       await page.locator(`[data-view="${view}"]`).click();
+       assert.equal(await page.evaluate(() => window.overviewState.view), view);
+diff --git a/tests/test_compact_rack_overview.py b/tests/test_compact_rack_overview.py
+index 654c71c..3c6f9ea 100644
+--- a/tests/test_compact_rack_overview.py
++++ b/tests/test_compact_rack_overview.py
+@@ -20,7 +20,9 @@ class CompactOverviewTest(unittest.TestCase):
+                 self.assertEqual(len(data['adapter_layout']['adapters']), 4)
+                 self.assertEqual(len(data['adapter_layout']['fans']), 2)
+                 self.assertEqual(sum(b['kind'] == 'controller' for b in data['equipment']), 6)
+-                self.assertFalse(data['switch_support_generated'])
++                self.assertTrue(data['switch_support_generated'])
++                self.assertEqual(data['switch_support']['tray_installed'], mode != 'ring')
++                self.assertFalse(data['switch_support']['release_for_print'])
+                 self.assertFalse(data['manufacturing_geometry'])
+ 
+     def test_power_moved_into_switch_is_rejected(self):
+diff --git a/tests/test_switch_support_freecad.py b/tests/test_switch_support_freecad.py
+new file mode 100644
+index 0000000..3640a52
+--- /dev/null
++++ b/tests/test_switch_support_freecad.py
+@@ -0,0 +1,39 @@
++"""支持部の受け面と、ねじが実際の相手へ届くことを検査する。"""
++from pathlib import Path
++import sys
++import unittest
++
++try:
++    import FreeCAD
++except ImportError:
++    FreeCAD=None
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'models/spark-rack/source'))
++
++
++@unittest.skipIf(FreeCAD is None,'FreeCAD同梱Pythonで実行してください')
++class SwitchSupportGeometryTest(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        from freecad_switch_support import build_shapes
++        cls.shapes,cls.fixtures=build_shapes()
++
++    def test_load_bearings_and_downward_insertion(self):
++        from build_switch_support_cad import validate
++        result=validate(self.shapes,self.fixtures)
++        self.assertGreater(min(result['bearing_contact_mm2'].values()),200)
++        self.assertEqual(result['insertion_samples'],504)
++        self.assertEqual(len(result['fasteners']),20)
++
++    def test_short_screw_cannot_be_accepted_as_reaching_nut(self):
++        from build_switch_support_cad import validate
++        from freecad_switch_support import bore
++        fixtures=[dict(f) for f in self.fixtures]
++        fixtures[0]['length']=10
++        f=fixtures[0];start=list(f['start']);start[f['axis']]-=f['sign']*4
++        shapes=dict(self.shapes)
++        shapes[f['name']+'_screw']=bore(f['start'],2,10,f['axis'],f['sign']).fuse(bore(start,4,4,f['axis'],f['sign']))
++        with self.assertRaisesRegex(ValueError,'ナットを貫通'):
++            validate(shapes,fixtures)
++
++
++if __name__=='__main__':unittest.main()
+-- 
+2.55.0
+
