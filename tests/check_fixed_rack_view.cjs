@@ -34,6 +34,13 @@ let browser;
   const z = await page.evaluate(() => fixedRackState.layout.nodes.map(n => n.origin[2]).sort());
   assert.equal(await page.locator('#variant').isVisible(), upperBay);
   if (upperBay) {
+    const lead = await page.locator('#lead').textContent();
+    const grilleName = validation.grille_pattern?.style === 'honeycomb' ? 'ハニカム' : '縦溝';
+    assert.ok(lead.includes('枠の高さは' + validation.switch_bay.frame_height_mm + 'mm'));
+    if (validation.finish) {
+      assert.ok(lead.includes(grilleName + 'の通気穴'));
+      assert.ok(lead.includes('天板を含む高さは' + validation.finish.overall_height_mm + 'mm'));
+    }
     assert.equal(await page.locator('#variant-rows tr').count(), 3);
     assert.equal(await page.locator('#variant-rows tr.chosen').count(), 1);
     await page.locator('#variant').screenshot({path: path.join(folder, 'upper-bay-variants.png')});
