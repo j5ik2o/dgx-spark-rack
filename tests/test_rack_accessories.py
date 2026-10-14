@@ -65,11 +65,18 @@ class RackAccessoriesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "'kvm_switch_removal', 'rear_obstacle'"):
             check_fixed_layout(scene)
 
-    def test_unmeasured_switcher_values_are_not_invented(self):
+    def test_reference_switcher_dimensions_do_not_imply_physical_measurement(self):
         info = devices()
         self.assertFalse(info['kvm_measured'])
-        self.assertIsNone(info['record']['kvm_switch']['body_mm'])
-        self.assertIn('仮の箱', self.by_name['kvm_switch']['label'])
+        self.assertTrue(info['kvm_body_known'])
+        self.assertEqual(info['kvm_size_basis'], 'user_supplied_search_summary')
+        self.assertEqual(info['record']['kvm_switch']['body_mm'], [300, 117, 30])
+        self.assertEqual(self.by_name['kvm_switch']['size'], [300, 117, 30])
+        self.assertEqual(self.by_name['kvm_switch']['origin'], [-150, -27, 310])
+        self.assertIn('参考寸法・未実測', self.by_name['kvm_switch']['label'])
+        self.assertEqual(info['kvm_model'], 'HKS401-P23')
+        self.assertEqual(info['kvm_selection_status'], 'planned')
+        self.assertIn('TESmart HKS401-P23', self.by_name['kvm_switch']['label'])
         self.assertEqual(info['record']['comet_pro']['operating_temperature_c'], [0, 40])
         self.assertIsNone(info['record']['spark_rear_ports']['hdmi_and_usb_positions_mm'])
         self.assertFalse(self.acc['physical_validation'])

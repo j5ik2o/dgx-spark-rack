@@ -26,6 +26,11 @@ let browser;
   page.on('pageerror', e => errors.push(e.message));
   await page.goto(pathToFileURL(path.join(folder, 'fixed-rack.html')).href);
   await page.waitForFunction(() => !!window.fixedRackState);
+  if (validation.accessories && validation.accessories.kvm_switch_body_known) {
+    const lead = await page.locator('#lead').textContent();
+    assert.ok(lead.includes(validation.accessories.kvm_switch_body_mm.join(' × ') + 'mm'));
+    if (!validation.accessories.kvm_switch_measured) assert.ok(lead.includes('実測はまだ'));
+  }
   const z = await page.evaluate(() => fixedRackState.layout.nodes.map(n => n.origin[2]).sort());
   assert.equal(await page.locator('#variant').isVisible(), upperBay);
   if (upperBay) {

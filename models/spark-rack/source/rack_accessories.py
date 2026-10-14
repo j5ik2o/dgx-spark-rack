@@ -21,7 +21,10 @@ def devices():
     kvm = record['kvm_switch']
     return {'comet': list(record['comet_pro']['body_mm']),
             'kvm': list(kvm['body_mm'] or kvm['provisional_envelope_mm']),
-            'kvm_measured': kvm['body_mm'] is not None, 'record': record}
+            'kvm_measured': kvm['body_mm'] is not None and kvm.get('body_measured', False),
+            'kvm_body_known': kvm['body_mm'] is not None,
+            'kvm_size_basis': kvm.get('body_size_basis', 'provisional_envelope'),
+            'kvm_model': kvm['model'], 'kvm_selection_status': kvm['selection_status'], 'record': record}
 
 
 def accessory_layout(p, scene, q=None):
@@ -65,7 +68,8 @@ def accessory_layout(p, scene, q=None):
     objects.append(box('remote_kvm_sled', 'Comet Proの載せ台・棚から前へ延びる',
                        [-sled_half, comet_y, top], [2 * sled_half, cd, q.sled_thickness], 'accessory_shelf'))
     ky0 = q.kvm_rear_face_y - kd
-    kvm = box('kvm_switch', '4入力1出力のHDMI・USB切替器' + ('' if info['kvm_measured'] else '・外形は仮の箱'),
+    size_note = '・外形は仮の箱' if not info['kvm_body_known'] else ('・参考寸法・未実測' if not info['kvm_measured'] else '')
+    kvm = box('kvm_switch', 'TESmart ' + info['kvm_model'] + '・4入力1出力の映像・キーボード・マウス切替器' + size_note,
               [-kw / 2, ky0, top], [kw, kd, kh], 'accessory')
     connectors = [
         box('remote_kvm_rear_cables', 'Comet Proの背面の配線と曲げ', [-cw / 2, comet_y + cd, comet_z],
@@ -89,10 +93,13 @@ def accessory_layout(p, scene, q=None):
             'screen_recess_mm': comet_y - (panel_y + q.panel_thickness),
             'objects': objects, 'equipment': [comet, kvm], 'connector_spaces': connectors,
             'service_spaces': services, 'kvm_measured': info['kvm_measured'],
+            'kvm_body_mm': info['kvm'], 'kvm_body_known': info['kvm_body_known'],
+            'kvm_size_basis': info['kvm_size_basis'],
+            'kvm_model': info['kvm_model'], 'kvm_selection_status': info['kvm_selection_status'],
             'window': {'center': [0, comet_z + ch / 2], 'size': [cw - 2 * q.window_margin, ch - 2 * q.window_margin]},
             'thermal_reason': 'Comet Proの動作温度は0〜40℃。Sparkと電源の排気が流れない前側へ置き、前面の窓と溝から室内の空気に触れさせる。温度は未測定。',
             'wifi_note': '炭素繊維入りの素材の前面板は電波を弱める可能性がある。有線接続を基本にする。',
-            'open_items': ['切替器の実寸・電源・端子の面', 'SparkのHDMIとUSBの端子位置とケーブル長',
+            'open_items': ['TESmart切替器の実寸・足・端子位置と電源アダプターの外形', 'SparkのHDMIとUSBの端子位置とケーブル長',
                            'Comet Proと切替器、CRS812の交流電源（電源タップの置き場）',
                            'Comet Proのキーボード入力で切替器を切り替えられるか'],
             'manufacturing_geometry': False, 'physical_validation': False}

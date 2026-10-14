@@ -103,6 +103,7 @@ def build(variant=None, grille='slots'):
                   ROOT / 'tests/test_rack_accessories.py', ROOT / 'tests/test_accessory_geometry.py',
                   ROOT / 'tests/test_rack_finish.py', ROOT / 'tests/test_finish_geometry.py',
                   ROOT / 'tests/test_grille_patterns.py']
+        files += [ROOT / 'models/spark-rack/reference/tesmart-hks401-p23-dimensions-20261014.png']
     hashes = {str(f.relative_to(ROOT)): digest(f) for f in files}
     manifest = {'status': 'running', 'purpose': purpose, 'grille': grille,
                 'sources_sha256': hashes, 'manufacturing_geometry': False, 'physical_validation': False}

@@ -168,7 +168,7 @@ class UpperSwitchBayParameters:
 class RemoteConsoleParameters:
     """上下のSparkの間に置く遠隔操作機器の棚と前面板。余裕の寸法は設計仮定。
 
-    機器の外形は未確定値の記録から読む。Comet Proは公式資料の値、切替器は仮の箱。
+    機器の外形は未確定値の記録から読む。Comet Proは公式資料の値、TESmart切替器はユーザー提供の参考寸法。
     """
     shelf_plate: float = 4
     shelf_rib: float = 8

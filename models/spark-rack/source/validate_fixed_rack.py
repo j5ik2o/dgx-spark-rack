@@ -263,7 +263,7 @@ def validate(model):
     accessories = model.get('accessories')
     accessory_summary = None
     if accessories is not None:
-        remaining += ['切替器の実寸・電源・端子の面に合わせた棚の位置',
+        remaining += ['TESmart切替器の実寸・足・端子位置に合わせた棚と配線',
                       'Comet Pro・切替器・CRS812の交流電源（電源タップの置き場）',
                       '切替器からSparkのHDMIとUSBへの配線の経路と保持']
         comet = next(i for i in model['references'] if i['name'] == 'remote_kvm')['shape'].BoundBox
@@ -279,6 +279,11 @@ def validate(model):
                              'screen_window_open_fraction': open_fraction,
                              'part_count': model['supports']['accessories']['part_count'],
                              'kvm_switch_measured': accessories['kvm_measured'],
+                             'kvm_switch_body_mm': accessories['kvm_body_mm'],
+                             'kvm_switch_body_known': accessories['kvm_body_known'],
+                             'kvm_switch_size_basis': accessories['kvm_size_basis'],
+                             'kvm_switch_model': accessories['kvm_model'],
+                             'kvm_switch_selection_status': accessories['kvm_selection_status'],
                              'thermal_reason': accessories['thermal_reason'], 'wifi_note': accessories['wifi_note'],
                              'open_items': accessories['open_items']}
     finish = model.get('finish')

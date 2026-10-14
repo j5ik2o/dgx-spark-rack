@@ -54,10 +54,11 @@
     "mount_interface": null,
     "note": "候補図では既存の正本寸法99.05×98.99×35.17mmと端子側30mmの設計予約を使用。実物の適合と冷却は未検証。"
   },
-  "updated_on": "2026-10-12",
+  "updated_on": "2026-10-14",
   "remote_console": {
     "recorded_on": "2026-10-12",
-    "decision_basis": "ユーザー指定：GL.iNet Comet Pro（GL-RM10）とKCEVEの4入力1出力HDMI・USB切替器をラック内へ置く。",
+    "updated_on": "2026-10-14",
+    "decision_basis": "2026年10月14日のユーザー指定：GL.iNet Comet Pro（GL-RM10）は維持する。KCEVEの切替器は問題があり使えないため、TESmart HKS401-P23（旧名HKS0401A3U）へ変更する予定。問題の詳細と新機種の実物適合は未確認。",
     "comet_pro": {
       "model": "GL.iNet Comet Pro GL-RM10",
       "datasheet_url": "https://static.gl-inet.com/www/images/products/datasheet/rm10_datasheet_20251209.pdf",
@@ -72,23 +73,58 @@
       "wifi": "2.4GHzと5GHzのWi-Fi 6。炭素繊維入りの素材の板は電波を弱める可能性があるため、有線接続を基本にする。"
     },
     "kvm_switch": {
-      "product_url": "https://ja.aliexpress.com/item/1005007070779662.html",
-      "title": "KCEVE 4 Ports HDMI KVM Switcher, 4 IN 1 Out HDMI USB Switch",
-      "model": null,
-      "body_mm": null,
+      "product_url": "https://tesmart.jp/products/hks0401a3u-kvm-switch",
+      "manual_url": "https://support.tesmart.com/hc/ja/article_attachments/30505703794457",
+      "manual_support_url": "https://support.tesmart.com/hc/ja/articles/23041794082841-HKS401-P23-%E6%97%A7%E5%90%8D-HKS0401A3U",
+      "checked_on": "2026-10-14",
+      "manufacturer": "TESmart",
+      "title": "TESmart HKS401-P23・4入力1出力の映像・キーボード・マウス切替器",
+      "model": "HKS401-P23",
+      "previous_model_name": "HKS0401A3U",
+      "product_code": "HKS401-P23-JPBK",
+      "selection_status": "planned",
+      "body_mm": [300, 117, 30],
+      "body_measured": false,
+      "body_size_basis": "user_supplied_search_summary",
+      "body_source": {
+        "recorded_on": "2026-10-14",
+        "kind": "user_supplied_search_summary_screenshot",
+        "reference": "models/spark-rack/reference/tesmart-hks401-p23-dimensions-20261014.png",
+        "dimension_order": "幅・奥行・高さ",
+        "reported_cm": [30, 11.7, 3],
+        "note": "ユーザー提供画像の検索の自動要約に、HKS0401A3UJ（現行HKS401-P23-JPBK）の寸法として掲載。要約はTESmart.JPとAmazon.com.auを引用しているが、寸法を記載した原ページは未特定。メーカー確認済みや実測済みの値として扱わない。",
+        "independently_verified": false
+      },
       "provisional_envelope_mm": [250, 120, 40],
-      "provisional_basis": "販売ページと説明書のページを取得できず外形は未確認。同種の4入力切替器を収める余裕を持たせた仮の箱。",
+      "provisional_basis": "本体寸法の情報がない場合に使う従来の仮の箱。現在はbody_mmの300×117×30mmを暫定採用して配置を検査する。",
       "mass_kg": null,
-      "power": null,
+      "power": "背面のDC 12V入力へ付属の電源アダプターを接続する。電源アダプターの外形、電流値、配置は未確認。",
       "port_faces_mm": null,
-      "switching": "同名製品の説明書の掲載では前面のボタンとキーボード操作で切り替える。購入品で同じか、Comet Proのキーボード入力から切り替えられるかは実機で確認する。"
+      "port_faces": {
+        "front": "データ転送・充電用USB Type-A、赤外線受信部、入力選択ボタンと表示、電源スイッチ。",
+        "rear": "DC 12V、HDMI出力、周辺機器用USB 3.0 Type-A、キーボード・マウス専用USB Type-A 2個、4組のHDMI入力とUSB Type-B、音声端子。",
+        "basis": "公式製品画像の背面写真と、日本語説明書の印刷ページ5〜6。端子中心とプラグの外形は未実測。"
+      },
+      "switching": "日本語説明書の印刷ページ21〜22では、右Ctrlを2秒以内に2回押し、3秒以内に1〜4を入力して切り替える。ホットキーはキーボード・マウス専用入力ポートでのみ動作する。Comet Proのキーボード・マウス信号を専用ポートへつなぐ想定で、認識と遠隔切替は実機で確認する。",
+      "signal_path": "Spark 4台のHDMI出力とUSBを各入力組へ接続し、切替器のHDMI出力をComet ProのHDMI入力へ接続する。Comet Proのキーボード・マウス用USB Type-Cから、切替器の専用USB Type-Aへ接続する。",
+      "included_computer_cable_length_mm": 1500,
+      "cable_length_source": "https://cdn.shopify.com/s/files/1/0595/2104/0521/files/10A3U.jpg?v=1770798991",
+      "physical_validation": false
     },
+    "rejected_kvm_switches": [
+      {
+        "rejected_on": "2026-10-14",
+        "product_url": "https://ja.aliexpress.com/item/1005007070779662.html",
+        "title": "KCEVE 4 Ports HDMI KVM Switcher, 4 IN 1 Out HDMI USB Switch",
+        "reason": "ユーザーから、問題があって使えないとの報告。具体的な症状と原因は未確認。"
+      }
+    ],
     "spark_rear_ports": {
       "hdmi_and_usb_positions_mm": null,
       "note": "切替器から各SparkのHDMIとUSBへ届くかは、端子位置とケーブル長の確認後に判定する。"
     },
     "ac_power": {
-      "required_outlets": "Comet Proの電源アダプター、切替器の電源（未確認）、CRS812の交流入力2個",
+      "required_outlets": "Comet Proの電源アダプター、TESmart切替器の12V電源アダプター、CRS812の交流入力2個。合計4口。",
       "design_status": "電源タップと配線の置き場は未設計。"
     }
   },
