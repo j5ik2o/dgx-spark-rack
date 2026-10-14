@@ -152,5 +152,16 @@ class GrillePatternTests(unittest.TestCase):
             GrilleParameters(style='honeycomb', hex_wall=0).validate()
 
 
+class BuildGrilleInputTests(unittest.TestCase):
+    def test_unsupported_grille_is_rejected_before_creating_outputs(self):
+        from tempfile import TemporaryDirectory
+        from unittest.mock import patch
+        import build_fixed_rack
+        with TemporaryDirectory() as folder, patch.object(build_fixed_rack, 'ROOT', Path(folder)):
+            with self.assertRaisesRegex(ValueError, '通気の模様'):
+                build_fixed_rack.build('upper', 'waves')
+            self.assertEqual(list(Path(folder).iterdir()), [])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -75,6 +75,8 @@ def worker(folder, variant=None, grille='slots'):
 
 
 def build(variant=None, grille='slots'):
+    from spark_rack_parameters import GrilleParameters
+    GrilleParameters(style=grille).validate()
     if grille != 'slots' and variant != 'upper':
         raise ValueError('通気の模様の切替は上部専用段の案（--switch-bay upper）でだけ使えます')
     folder, purpose = VARIANTS[variant]
