@@ -72,19 +72,27 @@ def _lid(p, finish, pattern=None):
     # 前後方向の溝かハニカム。継ぎ目のリブと縁の上は避ける。
     slots = []
     honeycomb = pattern is not None and pattern.style == 'honeycomb'
-    for ylo, yhi in ((y0 + 16, joint_y - 16), (joint_y + 16, y1 - 16)):
-        if honeycomb:
-            from grille_patterns import honeycomb_in_rect
-            for xlo, xhi in ((-inner + q['edge_margin'], -joint_x - 12), (-joint_x + 12, joint_x - 12),
-                             (joint_x + 12, inner - q['edge_margin'])):
-                slots += honeycomb_in_rect(xlo, xhi, ylo, yhi, z - 1, q['lid_plate'] + 2, 'xy',
-                                           pattern.hex_across_flats, pattern.hex_wall)
-            continue
-        x = -inner + q['edge_margin']
-        while x + p.vent_slot_width <= inner - q['edge_margin'] + 1e-9:
-            if not any(abs(x + p.vent_slot_width / 2 - j) < 12 for j in (-joint_x, joint_x)):
-                slots.append(_window(x, ylo, z - 1, p.vent_slot_width, yhi - ylo, q['lid_plate'] + 2, p.vent_slot_width / 2))
-            x += 10
+    for low, high in ((y0 + 16, joint_y - 16), (joint_y + 16, y1 - 16)):
+        length = min(q['lid_slot_length'], high - low)
+        gap = 2 * q['slot_margin']
+        rows = max(1, int((high - low + gap) / (length + gap)))
+        span = rows * length + (rows - 1) * gap
+        start = (low + high - span) / 2
+        for row in range(rows):
+            ylo = start + row * (length + gap)
+            yhi = ylo + length
+            if honeycomb:
+                from grille_patterns import honeycomb_in_rect
+                for xlo, xhi in ((-inner + q['edge_margin'], -joint_x - 12), (-joint_x + 12, joint_x - 12),
+                                 (joint_x + 12, inner - q['edge_margin'])):
+                    slots += honeycomb_in_rect(xlo, xhi, ylo, yhi, z - 1, q['lid_plate'] + 2, 'xy',
+                                               pattern.hex_across_flats, pattern.hex_wall)
+                continue
+            x = -inner + q['edge_margin']
+            while x + p.vent_slot_width <= inner - q['edge_margin'] + 1e-9:
+                if not any(abs(x + p.vent_slot_width / 2 - j) < 12 for j in (-joint_x, joint_x)):
+                    slots.append(_window(x, ylo, z - 1, p.vent_slot_width, length, q['lid_plate'] + 2, p.vent_slot_width / 2))
+                x += 10
     plate = plate.cut(Part.makeCompound(slots))
     lip = q['lid_lip']
     ribs = [_box((-inner, y0, rib_z), (lip, y1 - y0, q['lid_rib'])),

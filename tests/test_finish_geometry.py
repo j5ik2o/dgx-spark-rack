@@ -1,4 +1,5 @@
 """前面と天面の板の実形状をFreeCADで検査する。"""
+from copy import deepcopy
 from pathlib import Path
 import sys
 import unittest
@@ -79,6 +80,24 @@ class FinishGeometryTests(unittest.TestCase):
             filler = self.by_name[name]
             self.assertGreater(sum(horizontal_contact(tile, filler, 32) for tile in floor), 300)
             self.assertLess(sum(tile.common(filler).Volume for tile in floor), 1e-5)
+
+    def test_lid_slot_length_controls_both_vent_patterns(self):
+        from finish_geometry import _lid
+        from spark_rack_parameters import GrilleParameters
+        short = deepcopy(self.finish)
+        short['parameters']['lid_slot_length'] = 35
+        for pattern in (None, GrilleParameters(style='honeycomb')):
+            with self.subTest(pattern=pattern):
+                full = _lid(self.p, self.finish, pattern)[0]
+                reduced = _lid(self.p, short, pattern)[0]
+                self.assertGreater(reduced.Volume, full.Volume + 1000)
+                plate = Part.makeBox(self.p.width, self.p.depth, 4,
+                                     App.Vector(-self.p.width / 2, self.p.front_y, self.p.height))
+                self.assertGreater(1 - full.common(plate).Volume / plate.Volume, .15)
+                if pattern is None:
+                    openings = plate.cut(full).Solids
+                    self.assertTrue(any(abs(s.BoundBox.YLength - 70) < 1e-6 for s in openings))
+                    self.assertLessEqual(max(s.BoundBox.YLength for s in openings), 70 + 1e-6)
 
     def test_removable_cover_screws_are_recorded(self):
         screws = [f for f in self.metadata['fastener_candidates'] if f['assembly'] == 'bay_cover']
