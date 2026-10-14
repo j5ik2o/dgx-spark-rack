@@ -26,9 +26,21 @@ let browser;
   page.on('pageerror', e => errors.push(e.message));
   await page.goto(pathToFileURL(path.join(folder, 'fixed-rack.html')).href);
   await page.waitForFunction(() => !!window.fixedRackState);
+  if (validation.accessories && validation.accessories.kvm_switch_body_known) {
+    const lead = await page.locator('#lead').textContent();
+    assert.ok(lead.includes(validation.accessories.kvm_switch_body_mm.join(' × ') + 'mm'));
+    if (!validation.accessories.kvm_switch_measured) assert.ok(lead.includes('実測はまだ'));
+  }
   const z = await page.evaluate(() => fixedRackState.layout.nodes.map(n => n.origin[2]).sort());
   assert.equal(await page.locator('#variant').isVisible(), upperBay);
   if (upperBay) {
+    const lead = await page.locator('#lead').textContent();
+    const grilleName = validation.grille_pattern?.style === 'honeycomb' ? 'ハニカム' : '縦溝';
+    assert.ok(lead.includes('枠の高さは' + validation.switch_bay.frame_height_mm + 'mm'));
+    if (validation.finish) {
+      assert.ok(lead.includes(grilleName + 'の通気穴'));
+      assert.ok(lead.includes('天板を含む高さは' + validation.finish.overall_height_mm + 'mm'));
+    }
     assert.equal(await page.locator('#variant-rows tr').count(), 3);
     assert.equal(await page.locator('#variant-rows tr.chosen').count(), 1);
     await page.locator('#variant').screenshot({path: path.join(folder, 'upper-bay-variants.png')});

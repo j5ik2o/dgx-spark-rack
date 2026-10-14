@@ -25,13 +25,17 @@ class RackAccessoriesTests(unittest.TestCase):
         comet = self.by_name['remote_kvm']
         self.assertLess(comet['origin'][2] + comet['size'][2], self.acc['front_top_limit_mm'])
 
-    def test_comet_sits_behind_the_lower_fans_and_faces_the_window(self):
+    def test_comet_screen_sits_right_behind_the_window_on_a_sled(self):
         comet = self.by_name['remote_kvm']
-        self.assertGreater(comet['origin'][1], self.p.fan_front_y + self.p.fan_depth)
+        sled = self.by_name['remote_kvm_sled']
         self.assertEqual(comet['size'], [93, 84, 47])
+        self.assertLess(self.acc['screen_recess_mm'], 1)
         cx, cz = self.acc['window']['center']
         self.assertAlmostEqual(cz, comet['origin'][2] + comet['size'][2] / 2)
-        self.assertLess(self.acc['screen_recess_mm'], 40)
+        # 載せ台の前の部分は、下段ファン保持部の上を片持ちで延びる。
+        self.assertEqual(sled['origin'][2] + sled['size'][2], comet['origin'][2])
+        self.assertGreater(sled['origin'][2], self.acc['lower_carrier_top_mm'])
+        self.assertLess(sled['origin'][1], self.p.fan_front_y + self.p.fan_depth)
 
     def test_both_phases_pass_with_the_shelf(self):
         for mode in ('ring', 'crs812'):
@@ -50,7 +54,7 @@ class RackAccessoriesTests(unittest.TestCase):
         check_fixed_layout(self.scene)
         scene = deepcopy(self.scene)
         scene['accessories']['objects'].append({'name': 'front_obstacle', 'label': '前の障害物',
-                                                'origin': [-10, -330, 330], 'size': [6, 2, 6], 'kind': 'mid_panel'})
+                                                'origin': [-10, -346, 330], 'size': [6, 2, 6], 'kind': 'mid_panel'})
         with self.assertRaisesRegex(ValueError, "'remote_kvm_removal', 'front_obstacle'"):
             check_fixed_layout(scene)
 
@@ -61,11 +65,18 @@ class RackAccessoriesTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "'kvm_switch_removal', 'rear_obstacle'"):
             check_fixed_layout(scene)
 
-    def test_unmeasured_switcher_values_are_not_invented(self):
+    def test_reference_switcher_dimensions_do_not_imply_physical_measurement(self):
         info = devices()
         self.assertFalse(info['kvm_measured'])
-        self.assertIsNone(info['record']['kvm_switch']['body_mm'])
-        self.assertIn('仮の箱', self.by_name['kvm_switch']['label'])
+        self.assertTrue(info['kvm_body_known'])
+        self.assertEqual(info['kvm_size_basis'], 'user_supplied_search_summary')
+        self.assertEqual(info['record']['kvm_switch']['body_mm'], [300, 117, 30])
+        self.assertEqual(self.by_name['kvm_switch']['size'], [300, 117, 30])
+        self.assertEqual(self.by_name['kvm_switch']['origin'], [-150, -27, 310])
+        self.assertIn('参考寸法・未実測', self.by_name['kvm_switch']['label'])
+        self.assertEqual(info['kvm_model'], 'HKS401-P23')
+        self.assertEqual(info['kvm_selection_status'], 'planned')
+        self.assertIn('TESmart HKS401-P23', self.by_name['kvm_switch']['label'])
         self.assertEqual(info['record']['comet_pro']['operating_temperature_c'], [0, 40])
         self.assertIsNone(info['record']['spark_rear_ports']['hdmi_and_usb_positions_mm'])
         self.assertFalse(self.acc['physical_validation'])

@@ -31,8 +31,9 @@ def cross_beams(p, bay=None):
     return result
 
 
-def fixed_layout(mode='ring', parameters=None, bay=None, accessories=None):
-    """bayはupper_switch_bay.bay_layout、accessoriesはrack_accessories.accessory_layoutの結果。
+def fixed_layout(mode='ring', parameters=None, bay=None, accessories=None, finish=None):
+    """bayはupper_switch_bay.bay_layout、accessoriesはrack_accessories.accessory_layout、
+    finishはrack_finish.finish_layoutの結果。
 
     省略時は中央の暫定配置。遠隔操作機器の棚は、中段が空く上部専用段の案でだけ使える。
     """
@@ -44,6 +45,8 @@ def fixed_layout(mode='ring', parameters=None, bay=None, accessories=None):
         raise ValueError('上部専用段に必要な全高が不足しています')
     if accessories is not None and bay is None:
         raise ValueError('遠隔操作機器の棚は上部専用段の案でだけ使えます。中央配置ではスイッチと重なります。')
+    if finish is not None and (bay is None or accessories is None):
+        raise ValueError('前面と天面の板は、上部専用段と機器棚を持つ案でだけ使えます。')
     lp = replace(LayoutParameters(), lower_base=p.lower_base, row_pitch=p.row_pitch,
                  column_pitch=p.column_pitch, rack_width=p.width, rack_height=p.height,
                  rack_front_y=p.front_y, rear_space=p.rear_y, switch_face_y=100,
@@ -156,6 +159,9 @@ def fixed_layout(mode='ring', parameters=None, bay=None, accessories=None):
     if accessories is not None:
         scene['equipment'] = scene['equipment'] + deepcopy(accessories['equipment'])
         scene['accessories'] = deepcopy(accessories)
+    if finish is not None:
+        scene['finish'] = deepcopy(finish)
+        scene['frame_outer_mm'] = [p.width, p.depth, finish['overall_height_mm']]
     if bay is not None:
         scene['switch_bay'] = deepcopy(bay)
         scene['conditional_service_spaces'] = [deepcopy(bay['front_service'])] if mode == 'crs812' else []
@@ -167,6 +173,9 @@ def check_fixed_layout(scene):
     bay_objects = bay['objects'] if bay else []
     if scene.get('accessories'):
         bay_objects = bay_objects + scene['accessories']['objects']
+    finish = scene.get('finish')
+    if finish:
+        bay_objects = bay_objects + finish['objects']
     solids = scene['equipment'] + scene['carriers'] + scene['trays'] + scene['power_trays']
     solids += [scene['separator'], scene['control_panel']] + bay_objects
     def own_fan_and_holder(a, b):
@@ -189,8 +198,10 @@ def check_fixed_layout(scene):
                 service_conflicts.append([sweep['name'], obstacle['name']])
     storage_conflicts = [[a['name'], b['name']] for a in scene['cable_storage_spaces'] for b in solids if overlaps(a, b)]
     p = FixedRackParameters(**scene['parameters'])
+    # 天板を載せる案では、天板の厚さだけ上限を上げる。
+    top = finish['overall_height_mm'] if finish else p.height
     outside = [s['name'] for s in solids if any(s['origin'][axis] < low or s['origin'][axis] + s['size'][axis] > high
-               for axis, low, high in ((0, -p.width / 2, p.width / 2), (1, p.front_y, p.rear_y), (2, 0, p.height)))]
+               for axis, low, high in ((0, -p.width / 2, p.width / 2), (1, p.front_y, p.rear_y), (2, 0, top)))]
     result = {'equipment_collisions': collisions, 'fixed_air_obstructions': air_conflicts,
               'rear_service_obstructions': service_conflicts, 'storage_obstructions': storage_conflicts,
               'outside_frame': outside, 'scope': '参考外形・固定障害物・手の仮余裕12mmを含む背面交換経路。接続端子と配線の実操作は未検証。'}
@@ -199,7 +210,7 @@ def check_fixed_layout(scene):
             {'name': space['name'], 'required': bay['front_service_required'],
              'dependency': bay['front_service_dependency'],
              'obstructions': sorted({b['name'] for b in obstacles + scene['cross_beams'] + scene['cable_storage_spaces']
-                                     if b['name'] != 'switch' and overlaps(space, b)})}
+                                     if b['name'] != 'switch' and b['kind'] != 'removable_cover' and overlaps(space, b)})}
             for space in scene.get('conditional_service_spaces', [])]
         if any(row['required'] and row['obstructions'] for row in result['conditional_front_service']):
             raise ValueError(str(result))
@@ -207,6 +218,11 @@ def check_fixed_layout(scene):
         from rack_accessories import check_accessories
         result.update(check_accessories(scene))
         if result['accessory_service_obstructions'] or result['accessory_connector_obstructions']:
+            raise ValueError(str(result))
+    if finish:
+        from rack_finish import check_finish
+        result.update(check_finish(scene))
+        if result['finish_service_obstructions'] or result['control_door_sweep_obstructions']:
             raise ValueError(str(result))
     if collisions or air_conflicts or service_conflicts or storage_conflicts or outside:
         raise ValueError(str(result))

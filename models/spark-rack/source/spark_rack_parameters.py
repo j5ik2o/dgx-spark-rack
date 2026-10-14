@@ -168,7 +168,7 @@ class UpperSwitchBayParameters:
 class RemoteConsoleParameters:
     """上下のSparkの間に置く遠隔操作機器の棚と前面板。余裕の寸法は設計仮定。
 
-    機器の外形は未確定値の記録から読む。Comet Proは公式資料の値、切替器は仮の箱。
+    機器の外形は未確定値の記録から読む。Comet Proは公式資料の値、TESmart切替器はユーザー提供の参考寸法。
     """
     shelf_plate: float = 4
     shelf_rib: float = 8
@@ -187,6 +187,7 @@ class RemoteConsoleParameters:
     front_gap: float = 4
     flange_thickness: float = 4
     flange_overlap: float = 20
+    sled_thickness: float = 4
 
     @property
     def shelf_thickness(self):
@@ -197,6 +198,48 @@ class RemoteConsoleParameters:
         for key, value in asdict(self).items():
             if not math.isfinite(value) or (key != 'kvm_rear_face_y' and value <= 0):
                 raise ValueError('遠隔操作機器の棚の寸法は有限の正の値にしてください: ' + key)
+
+
+@dataclass(frozen=True)
+class FrontFinishParameters:
+    """上部専用段の案の前面と天面を閉じる板。溝の寸法は前面のファン格子にそろえる。"""
+    panel_thickness: float = 4
+    flange_thickness: float = 4
+    lid_plate: float = 4
+    lid_rib: float = 8
+    lid_lip: float = 6
+    lid_slot_length: float = 70
+    filler_flange_depth: float = 12
+    slot_margin: float = 8
+    edge_margin: float = 12
+
+    def validate(self):
+        import math
+        for key, value in asdict(self).items():
+            if not math.isfinite(value) or value <= 0:
+                raise ValueError('前面と天面の板の寸法は有限の正の値にしてください: ' + key)
+
+
+@dataclass(frozen=True)
+class GrilleParameters:
+    """前面、天板、側枠の通気の模様。slotsは縦溝、honeycombは正六角形の穴。
+
+    壁1.6mmは0.4mmノズルの4本分。穴の対辺10mmで、角から角まで11.5mmとし、
+    直径12mmの指を通さない。
+    """
+    style: str = 'slots'
+    hex_across_flats: float = 10
+    hex_wall: float = 1.6
+    minimum_fragment_area: float = 12
+
+    def validate(self):
+        import math
+        if self.style not in ('slots', 'honeycomb'):
+            raise ValueError('通気の模様は slots か honeycomb です')
+        for key in ('hex_across_flats', 'hex_wall', 'minimum_fragment_area'):
+            value = getattr(self, key)
+            if not math.isfinite(value) or value <= 0:
+                raise ValueError('ハニカムの寸法は有限の正の値にしてください: ' + key)
 
 
 @dataclass(frozen=True)

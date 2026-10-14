@@ -22,7 +22,8 @@ ROLE_COLORS = {'spark': (.77, .61, .30), 'fan': (.79, .70, .56), 'adapter': (.30
                'controller_face': (.62, .65, .67), 'case_reference': (.19, .21, .23),
                'controller_display_reference': (.12, .19, .22),
                'controller_knob_reference': (.18, .19, .20),
-               'accessory': (.20, .22, .25), 'mid_panel': (.62, .65, .67)}
+               'accessory': (.20, .22, .25), 'mid_panel': (.62, .65, .67),
+               'removable_cover': (.62, .65, .67), 'top_lid': (.69, .71, .73), 'lower_filler': (.62, .65, .67)}
 
 
 def box(origin, size):
@@ -39,7 +40,12 @@ def rounded_window(x, y, z, depth, width, height, radius=8):
     return shape.makeFillet(min(radius, width / 4, height / 4), edges)
 
 
-def vent_grid(x, y0, y1, z0, z1, depth, p):
+def vent_grid(x, y0, y1, z0, z1, depth, p, pattern=None):
+    """側枠の通気穴。patternを省くと角丸の縦長穴、honeycombなら同じ余白の内側を六角形の穴で抜く。"""
+    if pattern is not None and pattern.style == 'honeycomb':
+        from grille_patterns import honeycomb_in_rect
+        return honeycomb_in_rect(y0 + 6, y1 - 6, z0 + 5, z1 - 5, x, depth, 'yz',
+                                 pattern.hex_across_flats, pattern.hex_wall)
     tools = []
     y = y0 + 6
     while y + p.vent_slot_width <= y1 - 6:
@@ -51,7 +57,7 @@ def vent_grid(x, y0, y1, z0, z1, depth, p):
     return tools
 
 
-def side_pattern(p, right, support_metadata=None, bay=None, accessories=None):
+def side_pattern(p, right, support_metadata=None, bay=None, accessories=None, pattern=None):
     if support_metadata is None:
         scene = fixed_layout(parameters=p, bay=bay, accessories=accessories)
         _, support_metadata = integrated_supports(scene, p)
@@ -87,7 +93,7 @@ def side_pattern(p, right, support_metadata=None, bay=None, accessories=None):
     vents = []
     for y0, y1 in ys:
         for z0, z1 in zs:
-            vents.extend(vent_grid(x - 1, y0, y1, z0, z1, p.section + 2, p))
+            vents.extend(vent_grid(x - 1, y0, y1, z0, z1, p.section + 2, p, pattern))
     # 内側を開放したポケット。受けの下面と分割境界は全厚で外壁へつなぐ。
     inner_x = x - 1 if right else x + p.skin
     pocket = rounded_window(inner_x, p.front_y + 28, 4,
@@ -111,8 +117,8 @@ def side_pattern(p, right, support_metadata=None, bay=None, accessories=None):
                 for y0, y1, z0, z1 in protected]
     pocket = pocket.cut(Part.makeCompound(keepouts))
     s = s.cut(pocket).cut(Part.makeCompound(vents))
-    lower_vents = vent_grid(x - 1, -310, -210, 45, 140, p.section + 2, p)
-    lower_vents += vent_grid(x - 1, -25, 72, 45, 140, p.section + 2, p)
+    lower_vents = vent_grid(x - 1, -310, -210, 45, 140, p.section + 2, p, pattern)
+    lower_vents += vent_grid(x - 1, -25, 72, 45, 140, p.section + 2, p, pattern)
     s = s.cut(Part.makeCompound(lower_vents))
     # 保持板を外面の4mmの座へ収め、120mm角のファンが外へ通る開口を残す。
     s = s.cut(rounded_window(x - 1, -183, 25, p.section + 2, 126, 126, 6))
@@ -136,8 +142,8 @@ def side_pattern(p, right, support_metadata=None, bay=None, accessories=None):
     return s.removeSplitter()
 
 
-def side_tiles(p, right, support_metadata=None, bay=None, accessories=None):
-    pattern = side_pattern(p, right, support_metadata, bay, accessories)
+def side_tiles(p, right, support_metadata=None, bay=None, accessories=None, pattern=None):
+    frame = side_pattern(p, right, support_metadata, bay, accessories, pattern)
     h = p.lap_length / 2
     ys = [(p.front_y, p.panel_split_y - h, (0,)),
           (p.panel_split_y - h, p.panel_split_y + h, (0, 1)),
@@ -162,7 +168,7 @@ def side_tiles(p, right, support_metadata=None, bay=None, accessories=None):
                     x = p.width / 2 - (layer + 1) * thick if right else -p.width / 2 + layer * thick
                     masks.append(box([x, ylo, zlo], [thick, yhi - ylo, zhi - zlo]))
             # 重ね継ぎの各層を領域ごとに切り出して一体化する。
-            fragments = [pattern.common(mask) for mask in masks]
+            fragments = [frame.common(mask) for mask in masks]
             fragments = [fragment for fragment in fragments if fragment.Volume > 1e-7]
             shape = fragments[0].multiFuse(fragments[1:]).removeSplitter()
             result.append({'name': f'side_{"right" if right else "left"}_{row}_{col}',
@@ -200,13 +206,16 @@ def ring_tray(b, rim=9):
     return s.removeSplitter()
 
 
-def fan_carrier(node, p):
+def fan_carrier(node, p, pattern=None):
+    """patternを省くと従来の縦の格子。honeycombなら円の内側を六角形の穴で抜く。"""
     x = node['origin'][0] + p.spark_width / 2
     z = node['origin'][2] + p.spark_height / 2
     y = p.front_face_y
     xlo = -p.inner_width / 2 if x < 0 else 0
     s = box([xlo, y, z - 76], [p.inner_width / 2, 4, 152])
-    s = s.cut(cylinder([x, y - 1, z], p.fan_opening / 2, 6, [0, 1, 0]))
+    honeycomb = pattern is not None and pattern.style == 'honeycomb'
+    if not honeycomb:
+        s = s.cut(cylinder([x, y - 1, z], p.fan_opening / 2, 6, [0, 1, 0]))
     for sx in (-1, 1):
         for sz in (-1, 1):
             s = s.cut(cylinder([x + sx * p.fan_pitch / 2, y - 1, z + sz * p.fan_pitch / 2],
@@ -214,6 +223,11 @@ def fan_carrier(node, p):
         s = s.fuse(box([x + sx * 78 - 6, y, z - 76], [12, 24, 10]))
     # 外へ張り出す持ち手を廃止し、下縁の指掛かりを前面内へ収める。
     s = s.cut(box([x - 16, y - 1, z - 76 + 2], [32, 3, 3]))
+    if honeycomb:
+        from grille_patterns import cut_all, honeycomb_clipped_to_circle
+        holes = honeycomb_clipped_to_circle(x, z, p.fan_opening / 2, y - 1, 6, 'xz', pattern.hex_across_flats,
+                                            pattern.hex_wall, pattern.minimum_fragment_area)
+        return cut_all(s, holes).removeSplitter()
     return grille(s, x, z, y, 4, p.fan_opening / 2, 'y', p)
 
 
@@ -233,14 +247,22 @@ def grille(shape, u_center, z_center, plane, depth, radius, axis, p):
     return shape.multiFuse(strips).removeSplitter()
 
 
-def power_carrier(p, right):
+def power_carrier(p, right, pattern=None):
+    """patternを省くと従来の縦の格子。honeycombなら円の内側を六角形の穴で抜く。"""
     x = p.width / 2 - 4 if right else -p.width / 2
     s = box([x, -192, 16], [4, 144, 144])
-    s = s.cut(cylinder([x - 1, -120, 88], 57, 6, [1, 0, 0]))
+    honeycomb = pattern is not None and pattern.style == 'honeycomb'
+    if not honeycomb:
+        s = s.cut(cylinder([x - 1, -120, 88], 57, 6, [1, 0, 0]))
     for sy in (-1, 1):
         for sz in (-1, 1):
             s = s.cut(cylinder([x - 1, -120 + sy * p.power_fan_pitch / 2,
                                 88 + sz * p.power_fan_pitch / 2], 2.25, 6, [1, 0, 0]))
+    if honeycomb:
+        from grille_patterns import cut_all, honeycomb_clipped_to_circle
+        holes = honeycomb_clipped_to_circle(-120, 88, 57, x - 1, 6, 'yz', pattern.hex_across_flats,
+                                            pattern.hex_wall, pattern.minimum_fragment_area)
+        return cut_all(s, holes).removeSplitter()
     return grille(s, -120, 88, x, 4, 57, 'x', p)
 
 
@@ -310,10 +332,10 @@ def merge_bay(support_metadata, bay_metadata, key_name='switch_bay'):
     return support_metadata
 
 
-def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
+def shapes(parameters=None, mode='crs812', bay=None, accessories=None, finish=None, pattern=None):
     """bayを渡すと上部専用段、accessoriesを渡すと中段の機器棚を持つ案を作る。省略時は中央の暫定配置。"""
     p = parameters or FixedRackParameters()
-    scene = fixed_layout(mode, p, bay, accessories)
+    scene = fixed_layout(mode, p, bay, accessories, finish)
     supports, support_metadata = integrated_supports(scene, p)
     bay_parts = []
     if bay is not None:
@@ -322,15 +344,20 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
         support_metadata = merge_bay(support_metadata, bay_metadata)
     if accessories is not None:
         from accessory_geometry import accessory_parts
-        accessory_items, accessory_metadata = accessory_parts(scene, p, accessories)
+        accessory_items, accessory_metadata = accessory_parts(scene, p, accessories, pattern)
         bay_parts = bay_parts + accessory_items
         support_metadata = merge_bay(support_metadata, accessory_metadata, 'accessories')
+    if finish is not None:
+        from finish_geometry import finish_parts
+        finish_items, finish_metadata = finish_parts(scene, p, finish, pattern)
+        bay_parts = bay_parts + finish_items
+        support_metadata = merge_bay(support_metadata, finish_metadata, 'finish')
     case_model = load_case_model()
     face = controller_front_face(p, case_model)
     if abs(face['metadata']['face_front_y_mm'] - p.front_face_y) > 1e-6:
         raise ValueError('共通前面の基準と既存の制御器蓋が一致しません。寸法定義を更新してください。')
-    parts = (side_tiles(p, False, support_metadata, bay, accessories)
-             + side_tiles(p, True, support_metadata, bay, accessories))
+    parts = (side_tiles(p, False, support_metadata, bay, accessories, pattern)
+             + side_tiles(p, True, support_metadata, bay, accessories, pattern))
     parts.extend(supports)
     parts.extend(bay_parts)
     for b in scene['cross_beams']:
@@ -339,11 +366,11 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
         parts.append({'name': b['name'], 'label': b['label'], 'shape': ring_tray(b), 'role': b['kind']})
     for node in scene['nodes']:
         parts.append({'name': node['name'] + '_carrier', 'label': '共通前面にそろえた保護格子一体のファン保持部',
-                      'shape': fan_carrier(node, p), 'role': 'carrier'})
+                      'shape': fan_carrier(node, p, pattern), 'role': 'carrier'})
     for right in (False, True):
         parts.append({'name': 'power_carrier_' + ('right' if right else 'left'),
                       'label': '外へ取り出す電源用ファン保持板・留め具は未設計',
-                      'shape': power_carrier(p, right), 'role': 'power_carrier'})
+                      'shape': power_carrier(p, right, pattern), 'role': 'power_carrier'})
     parts.extend(control_panel_halves(scene, p, face))
     parts.extend(face['parts'])
     parts.extend(ceiling_tiles(scene))
@@ -363,11 +390,11 @@ def shapes(parameters=None, mode='crs812', bay=None, accessories=None):
         refs.append({'name': b['name'], 'label': b['label'], 'shape': s, 'role': b['kind']})
     return {'parameters': p, 'scene': scene, 'parts': parts, 'references': refs,
             'supports': support_metadata, 'controller_face': face, 'switch_bay': bay,
-            'accessories': accessories}
+            'accessories': accessories, 'finish': finish, 'pattern': pattern}
 
 
-def create(parameters=None, mode='crs812', bay=None, accessories=None):
-    model = shapes(parameters, mode, bay, accessories)
+def create(parameters=None, mode='crs812', bay=None, accessories=None, finish=None, pattern=None):
+    model = shapes(parameters, mode, bay, accessories, finish, pattern)
     doc = App.newDocument('FixedFourNodeRack')
     doc.Label = ('上部専用段を持つ4台ラック・形状候補' if bay is not None
                  else '固定段・独立電源区画の4台ラック・形状候補')

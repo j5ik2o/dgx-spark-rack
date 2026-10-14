@@ -2,6 +2,7 @@
 
 上部専用段の案では中央用の受け梁を外したため、上下段の間が空く。そこへ棚を差し込み、
 前にComet Pro、後ろに4入力の切替器を置く。前面の隙間は窓付きの板でふさぐ。
+Comet Proは棚から前へ延ばした薄い載せ台に置き、画面を前面板の窓のすぐ後ろへ出す。
 中央配置ではスイッチがこの高さを使うため、この棚は置けない。
 """
 from dataclasses import asdict
@@ -20,7 +21,10 @@ def devices():
     kvm = record['kvm_switch']
     return {'comet': list(record['comet_pro']['body_mm']),
             'kvm': list(kvm['body_mm'] or kvm['provisional_envelope_mm']),
-            'kvm_measured': kvm['body_mm'] is not None, 'record': record}
+            'kvm_measured': kvm['body_mm'] is not None and kvm.get('body_measured', False),
+            'kvm_body_known': kvm['body_mm'] is not None,
+            'kvm_size_basis': kvm.get('body_size_basis', 'provisional_envelope'),
+            'kvm_model': kvm['model'], 'kvm_selection_status': kvm['selection_status'], 'record': record}
 
 
 def accessory_layout(p, scene, q=None):
@@ -40,7 +44,8 @@ def accessory_layout(p, scene, q=None):
     # 棚はファンの後ろから始める。上面は下段ファン保持部より上に置き、機器を前へ通せる高さにする。
     top = math.ceil(max(lower_top + p.fit_clearance, storage_top + p.fit_clearance + q.shelf_thickness) - 1e-9)
     shelf_z = top - q.shelf_thickness
-    if top + ch + q.comet_top_margin > front_top - p.fit_clearance:
+    comet_z = top + q.sled_thickness
+    if comet_z + ch + q.comet_top_margin > front_top - p.fit_clearance:
         raise ValueError('Comet Proと手の余裕が上段ファンの横梁へ届きます')
     upper_shelf_bottom = p.upper_base - p.tray_thickness - 12
     if top + kh + q.kvm_hand_margin > upper_shelf_bottom:
@@ -56,13 +61,18 @@ def accessory_layout(p, scene, q=None):
                                 ('mid_panel_center', 'Comet Proの画面を見せる窓付きの前面板・外して交換', -half, half),
                                 ('mid_panel_right', '上下のファンの間を閉じる前面板・右', half, inner)):
         objects.append(box(name, label, [x0, panel_y, z0], [x1 - x0, q.panel_thickness, z1 - z0], 'mid_panel'))
-    comet_y = front + p.fit_clearance
-    comet = box('remote_kvm', 'GL.iNet Comet Pro・前面にタッチ画面', [-cw / 2, comet_y, top], [cw, cd, ch], 'accessory')
+    # 画面を窓のすぐ後ろへ出す。載せ台の前の部分は下段ファン保持部の上を片持ちで延びる。
+    comet_y = panel_y + q.panel_thickness + p.fit_clearance
+    comet = box('remote_kvm', 'GL.iNet Comet Pro・前面にタッチ画面', [-cw / 2, comet_y, comet_z], [cw, cd, ch], 'accessory')
+    sled_half = cw / 2 + 1
+    objects.append(box('remote_kvm_sled', 'Comet Proの載せ台・棚から前へ延びる',
+                       [-sled_half, comet_y, top], [2 * sled_half, cd, q.sled_thickness], 'accessory_shelf'))
     ky0 = q.kvm_rear_face_y - kd
-    kvm = box('kvm_switch', '4入力1出力のHDMI・USB切替器' + ('' if info['kvm_measured'] else '・外形は仮の箱'),
+    size_note = '・外形は仮の箱' if not info['kvm_body_known'] else ('・参考寸法・未実測' if not info['kvm_measured'] else '')
+    kvm = box('kvm_switch', 'TESmart ' + info['kvm_model'] + '・4入力1出力の映像・キーボード・マウス切替器' + size_note,
               [-kw / 2, ky0, top], [kw, kd, kh], 'accessory')
     connectors = [
-        box('remote_kvm_rear_cables', 'Comet Proの背面の配線と曲げ', [-cw / 2, comet_y + cd, top],
+        box('remote_kvm_rear_cables', 'Comet Proの背面の配線と曲げ', [-cw / 2, comet_y + cd, comet_z],
             [cw, q.comet_rear_cable_space, ch], 'connector_space'),
         box('kvm_switch_front_connectors', '切替器の前面の端子と配線', [-kw / 2, ky0 - q.kvm_front_connector_space, top],
             [kw, q.kvm_front_connector_space, kh], 'connector_space'),
@@ -70,23 +80,26 @@ def accessory_layout(p, scene, q=None):
             [kw, q.kvm_rear_connector_space, kh], 'connector_space')]
     services = [
         dict(box('remote_kvm_removal', '中央の前面板を外し、Comet Proを前へ引き出す',
-                 [-cw / 2 - q.comet_side_margin, p.front_y - 110, top],
+                 [-cw / 2 - q.comet_side_margin, p.front_y - 110, comet_z],
                  [cw + 2 * q.comet_side_margin, comet_y + cd - (p.front_y - 110), ch + q.comet_top_margin], 'service'),
              moving=['remote_kvm', 'mid_panel_center']),
         dict(box('kvm_switch_removal', '切替器を背面へ引き出す',
                  [-kw / 2 - q.kvm_hand_margin, ky0, top],
                  [kw + 2 * q.kvm_hand_margin, p.rear_y + kd - ky0, kh + q.kvm_hand_margin], 'service'),
              moving=['kvm_switch'])]
-    return {'parameters': asdict(q), 'shelf_z': shelf_z, 'support_z': top,
+    return {'parameters': asdict(q), 'shelf_z': shelf_z, 'support_z': top, 'comet_z': comet_z,
             'lower_carrier_top_mm': lower_top, 'front_top_limit_mm': front_top,
             'storage_top_mm': storage_top, 'front_y': front, 'panel_y': panel_y, 'panel_z': [z0, z1],
             'screen_recess_mm': comet_y - (panel_y + q.panel_thickness),
             'objects': objects, 'equipment': [comet, kvm], 'connector_spaces': connectors,
             'service_spaces': services, 'kvm_measured': info['kvm_measured'],
-            'window': {'center': [0, top + ch / 2], 'size': [cw - 2 * q.window_margin, ch - 2 * q.window_margin]},
+            'kvm_body_mm': info['kvm'], 'kvm_body_known': info['kvm_body_known'],
+            'kvm_size_basis': info['kvm_size_basis'],
+            'kvm_model': info['kvm_model'], 'kvm_selection_status': info['kvm_selection_status'],
+            'window': {'center': [0, comet_z + ch / 2], 'size': [cw - 2 * q.window_margin, ch - 2 * q.window_margin]},
             'thermal_reason': 'Comet Proの動作温度は0〜40℃。Sparkと電源の排気が流れない前側へ置き、前面の窓と溝から室内の空気に触れさせる。温度は未測定。',
             'wifi_note': '炭素繊維入りの素材の前面板は電波を弱める可能性がある。有線接続を基本にする。',
-            'open_items': ['切替器の実寸・電源・端子の面', 'SparkのHDMIとUSBの端子位置とケーブル長',
+            'open_items': ['TESmart切替器の実寸・足・端子位置と電源アダプターの外形', 'SparkのHDMIとUSBの端子位置とケーブル長',
                            'Comet Proと切替器、CRS812の交流電源（電源タップの置き場）',
                            'Comet Proのキーボード入力で切替器を切り替えられるか'],
             'manufacturing_geometry': False, 'physical_validation': False}
@@ -97,8 +110,9 @@ def check_accessories(scene):
     acc = scene['accessories']
     solids = scene['equipment'] + scene['carriers'] + scene['trays'] + scene['power_trays']
     solids += [scene['separator'], scene['control_panel']] + scene['cross_beams'] + acc['objects']
-    if scene.get('switch_bay'):
-        solids += scene['switch_bay']['objects']
+    for key in ('switch_bay', 'finish'):
+        if scene.get(key):
+            solids += scene[key]['objects']
     from four_node_layout import overlaps
     service = [[s['name'], b['name']] for s in acc['service_spaces'] for b in solids + scene['cable_storage_spaces']
                if b['name'] not in s['moving'] and overlaps(s, b)]

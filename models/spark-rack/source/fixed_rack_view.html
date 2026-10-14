@@ -53,13 +53,14 @@ function draw(){
 }
 el('size').textContent=data.layout.frame_outer_mm.join(' × ')+'mm';
 if(data.variants){
- const bay=data.validation.switch_bay,labels={passed:'確保',blocked:'上段ファン保持部に当たる'},causes={switch_front_service_over_fan_carriers:'前側の作業空間を上段ファン保持部の上へ通す',upper_spark_rear_exchange:'上段Sparkを背面へ出す空間の直上',};
+ const grilleName=data.validation.grille_pattern?.style==='honeycomb'?'ハニカム':'縦溝';
+ const bay=data.validation.switch_bay,accessories=data.validation.accessories,kvmName=accessories?'TESmart '+accessories.kvm_switch_model:'',kvmSize=accessories?accessories.kvm_switch_body_mm.join(' × '):'',kvmSizeNote=accessories?(!accessories.kvm_switch_body_known?'切替器の外形は寸法確認前の仮の箱です。':accessories.kvm_switch_measured?'切替器は実測寸法'+kvmSize+'mmで配置しています。':'切替器は参考寸法'+kvmSize+'mmで配置しています。実測はまだです。'):'',labels={passed:'確保',blocked:'上段ファン保持部に当たる'},causes={switch_front_service_over_fan_carriers:'前側の作業空間を上段ファン保持部の上へ通す',upper_spark_rear_exchange:'上段Sparkを背面へ出す空間の直上',};
  el('headline').textContent='上部専用段を持つ4台ラック。';
- el('lead').textContent='上枠を専用段の上へ移し、スイッチを載せる床を左右の側枠へ差し込みました。本体の段位置と電源区画は変えず、全高は'+bay.frame_height_mm+'mmです。スイッチは左右のトレーに載せて背面へ引き出します。'+(data.validation.accessories?'上下のSparkの間には遠隔操作機器の棚を置き、前にComet Pro、後ろに4入力の切替器を載せました。上下のファンの間は、画面の窓を持つ前面板で閉じています。':'');
+ el('lead').textContent='上枠を専用段の上へ移し、スイッチを載せる床を左右の側枠へ差し込みました。本体の段位置と電源区画は変えず、枠の高さは'+bay.frame_height_mm+'mmです。スイッチは左右のトレーに載せて背面へ引き出します。'+(data.validation.accessories?'上下のSparkの間には遠隔操作機器の棚を置き、前にComet Pro（GL-RM10）、後ろに'+kvmName+'を置く予定です。'+kvmSizeNote+'上下のファンの間は、画面の窓を持つ前面板で閉じています。':'')+(data.validation.finish?'最上段の前面と最下段の左右も'+grilleName+'の通気穴のある板で閉じ、枠の上に同じ模様の通気天板を載せました。天板を含む高さは'+data.validation.finish.overall_height_mm+'mmです。':'');
  el('variant').hidden=false;el('variants-link').hidden=false;
  el('variant-rows').innerHTML=data.variants.rows.map(r=>`<tr class="${r.key===data.variants.recommendation?'chosen':''}"><td>${r.label}${r.key===data.variants.recommendation?'（推奨）':''}</td><td class="num">${r.height_mm}mm</td><td class="num">${r.switch_bottom_mm}mm</td><td>${labels[r.front_service]}</td><td>${causes[r.binding_constraint]||r.binding_constraint}</td></tr>`).join('');
  el('variant-reason').textContent=data.variants.reason;
- el('warning').textContent='形状候補です。スイッチ本体をトレーへ留める金具は、後方支持耳の穴位置を実測してから設計します。トレー抜け止めねじの床側の雌ねじ、専用段前面の開口の覆い、制御器扉のヒンジ、トレーのガイドと抜け止め（本体と電源）、仕切りの固定、余長収納の保持部、脚は未完成です。スイッチの吸排気方向、質量、実奥行は未確認です。'+(data.validation.accessories?'切替器の外形は仮の箱で、電源の取り方、SparkのHDMIとUSBへの配線、電源タップの置き場は未設計です。':'')+'実物の適合・強度・冷却は未検証で、造形用のファイルは生成していません。';
+ el('warning').textContent='形状候補です。スイッチ本体をトレーへ留める金具は、後方支持耳の穴位置を実測してから設計します。トレー抜け止めねじの床側の雌ねじ、'+(data.validation.finish?'専用段前面の板の配線の引き出し口':'専用段前面の開口の覆い')+'、制御器扉のヒンジ、トレーのガイドと抜け止め（本体と電源）、仕切りの固定、余長収納の保持部、脚は未完成です。スイッチの吸排気方向、質量、実奥行は未確認です。'+(data.validation.accessories?kvmName+'は変更予定の機種です。'+kvmSizeNote+'足・端子・プラグを含む実物の適合、Comet Proからの切替操作、12V電源アダプターと電源タップの置き場は確認前です。':'')+'実物の適合・強度・冷却は未検証で、造形用のファイルは生成していません。';
 }
 el('validation-summary').textContent='形状候補'+data.validation.candidate_part_instances+'個の有効性と外形、静止した形状の干渉、本体とスイッチの背面交換予約、前後の固定障害物、保存後の再読込を確認しました。支持面の接触と共通操作面の視線・指の仮空間も検査済みです。扉を開く予約と、電源・ファンの交換方向にも固定障害物がないことを確認しました。接続線、留め具、実際の手の操作と全体組立は未検証です。';
 el('mode').addEventListener('change',()=>{mode=el('mode').value;draw()});

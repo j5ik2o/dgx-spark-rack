@@ -1,4 +1,6 @@
 """参考形状の干渉と交換経路を検査し、未完成の機構は別に記録する。"""
+from dataclasses import asdict
+
 import FreeCAD as App
 from fixed_rack_geometry import box, cylinder
 from fixed_rack_layout import fixed_layout, check_fixed_layout
@@ -25,7 +27,7 @@ def support_contacts(model):
         name = assembly['name']
         parts = [i['shape'] for i in items if i['name'].startswith(name + '_')]
         for tray in model['scene']['trays'] + model['scene']['power_trays']:
-            if abs(tray['origin'][2] - assembly['support_z']) > 1e-6:
+            if assembly['support_z'] is None or abs(tray['origin'][2] - assembly['support_z']) > 1e-6:
                 continue
             shape = next(i['shape'] for i in items if i['name'] == tray['name'])
             area = sum(horizontal_contact(s, shape, assembly['support_z']) for s in parts)
@@ -56,8 +58,13 @@ def support_contacts(model):
             if entry['target'] == 'switch' and model['scene']['mode'] == 'ring':
                 continue
             shape = everything[entry['target']]
-            areas = {support: horizontal_contact(everything[support], shape, entry['z'])
-                     for support in entry['supports']}
+            # 上から吊る部品は、支えを上側にして接触面を数える。
+            if entry.get('support_above'):
+                areas = {support: horizontal_contact(shape, everything[support], entry['z'])
+                         for support in entry['supports']}
+            else:
+                areas = {support: horizontal_contact(everything[support], shape, entry['z'])
+                         for support in entry['supports']}
             low = [n for n, a in areas.items() if a < entry['minimum_area_mm2']] if entry['each'] else []
             if low or sum(areas.values()) < entry['minimum_area_mm2']:
                 raise ValueError('載せる物と支持面の接触が不足しています: ' + entry['target'])
@@ -156,6 +163,11 @@ def exchange_envelopes(model):
     if accessories is not None:
         for space in accessories['service_spaces']:
             inspect(space['label'], box(space['origin'], space['size']), set(space['moving']), fixed)
+    finish = model.get('finish')
+    removable = set(finish['removable_covers']) if finish else set()
+    if finish is not None:
+        for space in finish['service_spaces']:
+            inspect(space['moving'][0] + 'を前へ外す', box(space['origin'], space['size']), set(space['moving']), fixed)
     front_service = None
     bay = model.get('switch_bay')
     # リング接続の段階はスイッチがないため、前側の作業空間も検査しない。
@@ -163,7 +175,9 @@ def exchange_envelopes(model):
     if bay is not None and spaces:
         space = spaces[0]
         envelope = box(space['origin'], space['size'])
-        blocked = sorted({name for name, shape in fixed if name != 'switch' and overlap(envelope, shape) > .001})
+        # 外せる前面の板は、作業の前に外すため障害物に数えない。
+        blocked = sorted({name for name, shape in fixed if name != 'switch' and name not in removable
+                          and overlap(envelope, shape) > .001})
         front_service = {'name': space['name'], 'required': bay['front_service_required'],
                          'dependency': bay['front_service_dependency'], 'obstructions': blocked,
                          'status': 'passed' if not blocked else 'blocked'}
@@ -206,7 +220,7 @@ def validate(model):
         raise ValueError('形状干渉: ' + str(collisions))
     results = {}
     for mode in ('ring', 'crs812'):
-        scene = fixed_layout(mode, p, model.get('switch_bay'), model.get('accessories'))
+        scene = fixed_layout(mode, p, model.get('switch_bay'), model.get('accessories'), model.get('finish'))
         results[mode] = check_fixed_layout(scene)
     reference = model['scene']
     service_failures, air_failures = [], []
@@ -249,7 +263,7 @@ def validate(model):
     accessories = model.get('accessories')
     accessory_summary = None
     if accessories is not None:
-        remaining += ['切替器の実寸・電源・端子の面に合わせた棚の位置',
+        remaining += ['TESmart切替器の実寸・足・端子位置に合わせた棚と配線',
                       'Comet Pro・切替器・CRS812の交流電源（電源タップの置き場）',
                       '切替器からSparkのHDMIとUSBへの配線の経路と保持']
         comet = next(i for i in model['references'] if i['name'] == 'remote_kvm')['shape'].BoundBox
@@ -265,8 +279,22 @@ def validate(model):
                              'screen_window_open_fraction': open_fraction,
                              'part_count': model['supports']['accessories']['part_count'],
                              'kvm_switch_measured': accessories['kvm_measured'],
+                             'kvm_switch_body_mm': accessories['kvm_body_mm'],
+                             'kvm_switch_body_known': accessories['kvm_body_known'],
+                             'kvm_switch_size_basis': accessories['kvm_size_basis'],
+                             'kvm_switch_model': accessories['kvm_model'],
+                             'kvm_switch_selection_status': accessories['kvm_selection_status'],
                              'thermal_reason': accessories['thermal_reason'], 'wifi_note': accessories['wifi_note'],
                              'open_items': accessories['open_items']}
+    finish = model.get('finish')
+    finish_summary = None
+    if finish is not None:
+        remaining[remaining.index('専用段前面の開口の覆いと配線の引き出し口')] = '専用段前面の板の配線の引き出し口'
+        remaining += ['前面と天面の板の溝による風量と騒音の実物確認', '最下段の左右の板を前面へそろえるかの判断（扉の軸を変える場合）']
+        finish_summary = {'overall_height_mm': finish['overall_height_mm'], 'cover_z_mm': finish['cover_z'],
+                          'filler_recess_mm': finish['filler_recess_mm'],
+                          'part_count': model['supports']['finish']['part_count'],
+                          'removable_covers': finish['removable_covers'], 'notes': finish['notes']}
     volumes = {}
     for record in records.values():
         role = record['role']
@@ -287,6 +315,8 @@ def validate(model):
                                 'scope': '参考部品を除いた形状体積。充填率・支持材・印刷損失を含む材料使用量ではない。'},
             **({'switch_bay': bay_summary} if bay_summary else {}),
             **({'accessories': accessory_summary} if accessory_summary else {}),
+            **({'finish': finish_summary} if finish_summary else {}),
+            **({'grille_pattern': asdict(model['pattern'])} if model.get('pattern') is not None else {}),
             'scope': '形状候補の妥当性、246mm外形、静止干渉、機器の交換予約、前後の固定障害物。',
             'manufacturing_geometry': False, 'physical_validation': False,
             'whole_assembly_path_validated': False,

@@ -4,7 +4,7 @@ DGX Spark本体と電源アダプターを置く、3Dプリント用ラックで
 
 `mise run redesign:spark-rack`で[固定段と独立電源区画の形状候補](models/spark-rack/docs/固定段ラックの再設計.md)を生成します。左右の構造面と内側のリブで支持し、ファンと制御器の前面をそろえました。支持梁30部品は固定棚・支持床12部品へ統合し、本体の段位置、電源の平置き、交換方向を維持しています。固定機構と実測は未完成で、造形用のファイルは生成しません。試験片の印刷は後回しです。
 
-スイッチの中央・上部・下部は[専用段の配置比較](models/spark-rack/docs/スイッチ専用段の配置比較.md)へ整理しました。`mise run compare-switch:spark-rack`で外形と交換空間を比較できます。固定段を保つ条件では上部追加を推奨候補とし、現行の中央配置の詳細形状は保持しています。上部専用段は[上枠を共有する案](models/spark-rack/docs/上部専用段の具体化.md)へ具体化しました。`mise run upper-bay:spark-rack`で、本体の段位置を保った全高618mmの形状候補と3案の比較を生成します。この案では上下のSparkの間に[遠隔操作機器の棚](models/spark-rack/docs/遠隔操作機器の配置.md)を置き、Comet Proと4入力の切替器を載せます。既定の中央配置は変えていません。
+スイッチの中央・上部・下部は[専用段の配置比較](models/spark-rack/docs/スイッチ専用段の配置比較.md)へ整理しました。`mise run compare-switch:spark-rack`で外形と交換空間を比較できます。固定段を保つ条件では上部追加を推奨候補とし、現行の中央配置の詳細形状は保持しています。上部専用段は[上枠を共有する案](models/spark-rack/docs/上部専用段の具体化.md)へ具体化しました。`mise run upper-bay:spark-rack`で、本体の段位置を保った全高618mmの形状候補と3案の比較を生成します。この案では上下のSparkの間に[遠隔操作機器の棚](models/spark-rack/docs/遠隔操作機器の配置.md)を置き、Comet Proと4入力の切替器を載せます。前面と天面の隙間は[ファン格子と同じ縦溝の板](models/spark-rack/docs/前面と天面の仕上げ.md)で閉じ、天板を含む高さは622mmです。既定の中央配置は変えていません。
 
 136部品案は不採用です。`mise run overview:spark-rack`は[再設計前の全体構想の比較](models/spark-rack/docs/凹凸の接合試験片と次案.md)、`mise run layout:spark-rack`は[再設計前の配置比較](models/spark-rack/docs/仮配置の確認.md)です。旧40cm／50cmのスイッチ配線は最終構成へ採用しません。`mise run joint:spark-rack`は短い接合試験片だけ、`mise run build`は従来の3モデル用です。正本は引き続き各モデルの`source/`です。
 
