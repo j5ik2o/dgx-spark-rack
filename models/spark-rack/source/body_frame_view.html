@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spark本体を骨格にする配置候補</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#26343c;font:15px/1.7 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}main{max-width:1240px;margin:auto;padding:28px 20px}h1{font-size:27px;line-height:1.4;margin:6px 0 12px}h2{font-size:18px}button{font:inherit;border:1px solid #ccd5dc;border-radius:8px;background:white;padding:9px 14px;color:inherit;min-height:44px;cursor:pointer}button[aria-pressed=true]{color:white;background:#28576a}.toolbar,.options,.links{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}.options label{display:flex;gap:7px;align-items:center;min-height:44px}.stage{background:white;border:1px solid #d4dde4;border-radius:10px;overflow:hidden}canvas{display:block;width:100%;aspect-ratio:1.3;touch-action:none;cursor:grab}.caption{padding:12px 16px;border-top:1px solid #d4dde4;font-size:13px}.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.facts strong{display:block;font-size:21px}.muted{color:#60717d}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px}.notice{background:#f9ecd3;border-radius:8px;padding:15px}.links a{color:#1a647e}.small{font-size:13px}ul{padding-left:22px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{text-align:left;padding:7px 5px;border-bottom:1px solid #d9e1e7}#axis-list{margin:0}.lead{max-width:920px}@media(max-width:720px){.split{grid-template-columns:1fr}.facts{grid-template-columns:1fr 1fr}main{padding:20px 12px}h1{font-size:23px}.facts strong{font-size:18px}}
+</style>
+<style>
+#assembly-controls{padding:14px;background:#e9f0f4;border:1px solid #c6d5df;border-radius:10px;margin:14px 0}#assembly-step{display:block;width:100%;max-width:100%;min-width:0;font:inherit;padding:8px;border:1px solid #b7c9d5;border-radius:6px;background:white}#assembly-progress{width:100%;margin:8px 0}#assembly-caption{margin:6px 0;font-size:14px}.assembly-navigation{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}button:disabled{opacity:.45;cursor:default}
+#print-controls{padding:14px;background:#e9f0f4;border:1px solid #c6d5df;border-radius:10px;margin:14px 0}#print-part{display:block;width:100%;min-width:0;font:inherit;padding:8px}#print-caption{font-size:14px}#support-step{width:100%;min-width:0;font:inherit;padding:8px}#support-progress{width:100%}
+</style>
+<main>
+<div class="small muted">正本の寸法と形状から生成・実物の荷重と冷却は確認前</div>
+<h1>Spark本体をつなぐ、2台積み × 2列。</h1>
+<p class="lead">筐体の角に局所接続部を置き、本体の側面と上下の面を使ってつなぐ案です。長い外側の柱で囲わず、周辺機器の支持は上部へまとめます。ファンは前後面・側面に平行な正立固定です。表示は生成した参考形状そのものです。</p>
+<div class="toolbar" aria-label="視点">
+<button data-view="iso" aria-pressed="true">斜めから見る</button>
+<button data-view="front" aria-pressed="false">前面</button>
+<button data-view="back" aria-pressed="false">背面</button>
+<button data-view="side" aria-pressed="false">側面</button>
+<button data-view="top" aria-pressed="false">上面</button>
+</div>
+<div class="options">
+<label><input type="checkbox" id="core-only">本体と接続部だけを見る</label>
+<label><input type="checkbox" id="fans" checked>ファンを表示</label>
+<label><input type="checkbox" id="cables" checked>配線経路を表示</label>
+<label><input type="checkbox" id="storage" checked>余長の予約を表示</label>
+<label><input type="checkbox" id="external" checked>机上タップの予約を表示</label>
+<label><input type="checkbox" id="routing-only">配線と保持部だけを見る</label>
+<label><input type="checkbox" id="switch-only">スイッチと固定部だけを見る</label>
+<label><input type="checkbox" id="joint-only">ほぞと角栓の接合を拡大</label>
+<label><input type="checkbox" id="assembly-only">組立順を見る</label>
+<label><input type="checkbox" id="release-space">バンド解除部の前の予約を見る</label>
+<label><input type="checkbox" id="print-only">部品の造形方向を見る</label>
+</div>
+<section id="assembly-controls" hidden>
+<label for="assembly-step">確認する工程</label><select id="assembly-step"></select>
+<div class="assembly-navigation"><button id="assembly-prev">前の工程</button><button id="assembly-next">次の工程</button><button id="assembly-complete">配線後の全体を見る</button></div>
+<label for="assembly-progress">差し込み位置：左が開始、右が完了</label><input id="assembly-progress" type="range" min="0" max="100" value="100">
+<label><input type="checkbox" id="access-only">指の空間を拡大</label>
+<p id="assembly-caption" aria-live="polite"></p>
+<p class="small muted">青：動かす部品や小組み。灰：先に組んだ部分。橙：今回差す角栓。緑の箱：指の仮外形。差し込み位置を動かすと、位置合わせ・差し込み・角栓の順を確認できます。拡大中はつまみを中心に表示します。</p>
+</section>
+<section id="print-controls" hidden>
+<label for="print-part">造形姿勢を確認する部品</label><select id="print-part"></select>
+<p id="print-caption" aria-live="polite"></p>
+<label><input type="checkbox" id="support-view">支持材の領域と除去手順を見る</label>
+<div id="support-controls" hidden><label for="support-step">除去する順序</label><select id="support-step"></select>
+<label for="support-progress">引き出す位置：左が開始、右が外へ取り出した状態</label><input id="support-progress" type="range" min="0" max="100" value="0">
+<p id="support-caption" class="small" aria-live="polite"></p></div>
+<p class="small muted">灰色の面は造形台の参考です。ここでの上方向が積層方向です。表示は単品の造形姿勢の候補で、組立時のファンの取付角度は変わりません。支持材と印刷経路は未生成です。</p>
+</section>
+<section class="stage">
+<canvas id="drawing" width="1100" height="850" role="img" aria-label="全機器と局所接続部を含む本体連結案の立体図"></canvas>
+<div class="caption" id="caption" aria-live="polite"></div>
+</section>
+<div class="facts">
+<div><span class="small muted">機器と保持部の参考外形</span><strong id="size"></strong></div>
+<div><span class="small muted">別置きタップ・配線を含む設置予約</span><strong id="installation-size"></strong></div>
+<div><span class="small muted">接続・取付部品の候補</span><strong id="parts"></strong></div>
+</div>
+<section><h2>組立用のビス・ナットは使いません</h2>
+<p id="screwless-summary"></p>
+<p>骨組みは、段差で重さを受ける「ほぞ」と横から差す「角栓」でつなぎます。印刷範囲に収まる接触部は一体にし、分割箇所を減らしています。ファンはねじ山のない樹脂割りピン、制御器ケースは蓋一体の基板押さえと解除式バンドで保持します。</p>
+<p class="small muted">「ほぞと角栓の接合を拡大」は、実部品の一部を切り出し、説明用に離した表示です。角栓のはめ合いと脱落防止、割りピンの弾性、手で支える操作は実物で確認前です。造形用のファイルはまだ生成しません。</p>
+</section>
+<section><h2>組み立てる順序</h2><p id="assembly-summary"></p><ol id="assembly-phases"></ol>
+<p>ファンは保持部と樹脂割りピン4本で先に1組にします。制御器は基板を入れて蓋を合わせてから搭載します。角栓は接合ごとに差し、完成後にまとめて入れる手順にはしません。ベルトと配線の本固定は最後です。</p>
+<p class="small muted">剛体の移動途中を押出し形状で検査しています。曲面の一部は保守的な外形で覆います。割りピンのたわみ、バンドの通し方、実機の足・配線、作業台で手で支える操作は別途確認が必要です。</p>
+</section>
+<section><h2>指で操作するための空間</h2><p id="access-summary"></p>
+<p>角栓は幅10mm・長さ6mmのつまみを付け、必要箇所ではつまみを8mmずらします。前面ファンと本体の間隔は30mmへ広げました。ファンの割りピンは、保持部ごと取り外してから作業台で扱います。制御器のバンドの解除頭は外向き、スイッチのバックルは上向きにします。</p>
+<p class="small muted">指1本は12×10×12mmの箱を仮定しています。人体寸法の規格値ではありません。手のひら・関節・手袋・操作力と実際のはめ合いは未確認です。解除部の予約も購入品の選定後に照合します。通常の角栓の分解は組立の逆順です。</p></section>
+<section><h2>肉厚と部品別の造形方向</h2><div class="notice"><p id="print-summary"></p>
+<p id="support-summary"></p>
+<p>角栓の中央断面は1.8mm以上、ほぞの角栓穴の周囲には指定断面で1mm以上の肉を残します。角栓と割りピンには全長を接地できる平面を設け、軸を寝かせます。割りピンは二股を12mmへ長くし、切り込みの根元を丸めました。本体間の上下の隙間は20mmへ広げています。</p>
+<p class="small muted">本番素材は既定の黒の炭素繊維入り耐熱ナイロンです。本番のノズル・積層厚・外周数・充填率・乾燥条件は未設定です。支持材の除去、強度、長期荷重、繰り返し解除は確認前で、造形用ファイルはまだ生成しません。</p></div></section>
+<section><h2>CRS812の簡単な滑り止め</h2>
+<p>支持レールに前後左右の低い抜け止めを付け、ベルト2本で本体と支持レールを一緒に抱く案です。普段の横滑りと浮き上がりを抑え、取り出す際はバックルを開いて少し持ち上げます。青い帯とバックルは購入品の参考形状です。</p>
+<p class="small muted">抜け止めは高さ8mm、筐体との仮の隙間は0.5mmです。参考外形を水平4方向・上方向へ動かしたとき保持部に当たることを形状で確認しました。実機の足・通気口、ベルトとバックルの適合や強度は未確認です。特定の震度への適合を確認したものではありません。</p>
+</section>
+<section><h2>配線を含めた配置候補</h2>
+<p>水色はネットワーク、紫は映像とUSB、橙は直流電源、赤は交流電源、緑はファン制御の経路予約です。円形の表示は余長を置く空間で、接続済みの実ケーブルではありません。ネットワークは左右、映像とUSBは本体下の背面側に分けます。配線固定は解除式の結束バンドを標準とし、受けと留め板の穴へ通します。切断せずに緩めて外せるよう、解除レバーを操作できる向きに配置します。製品と操作空間は選定後に確認します。太い分岐線は緩く保持し、面ファスナーも併用できます。</p>
+<p id="cable-summary"></p>
+<p class="notice">端子位置・プラグ・実線径は未採寸です。表示する管は束の通過領域で、束同士の重なりと束の内部配置は未判定です。端末の周囲15mmは接続用の仮領域として検査から除きます。2m分岐ケーブルの主線と各分岐線が届くか、実際の余長が収まるかはまだ確定していません。</p>
+<p>CRS812は通信端子面を背面へ向ける候補です。電源タップは右側の机上へ別置きし、8口以上と補助電源の領域を予約します。製品と電気容量は未選定です。中央に設けた幅80mmの仮の排気通路を配線が塞がないことを検査し、実際の通気口と冷却性能は実物で確認します。</p>
+<h2>ファンを外す順序</h2><ol id="service-sequence"></ol>
+</section>
+<div class="split">
+<section><h2>維持する機器</h2><table><tbody id="inventory"></tbody></table>
+<p class="small muted">制御器ケースは正本に追加したねじ不要案を使い、受け台へバンドで留めます。他の機器は参考外形です。CRS812の奥行と足、TESmartの寸法、Sparkの足・外装への荷重許容は実物の確認が必要です。</p></section>
+<section><h2>斜めにしないファン取付</h2><ul id="axis-list"></ul>
+<p>配線と角栓を外し、取付面に垂直な方向へまっすぐ外す案です。ファン単体は樹脂割りピンを解除して保持部から外します。ヒンジで斜めに開く姿勢は使いません。</p>
+<p class="small muted">ファンの参考形状は外枠・ハブ・支持桟です。羽根や実際の流れを再現した冷却解析ではありません。</p></section>
+</div>
+<section><h2>配置検査の結果</h2><p id="validation"></p>
+<div class="notice">形状と接触関係の候補です。接触していることは強度の立証ではありません。Sparkの下段を交換する際は、上部機器と上段を先に外す分解手順が必要です。印刷用のファイルはまだ生成しません。</div>
+<ul id="remaining"></ul></section>
+<div class="links small">
+<a href="body-frame-reference.FCStd">FreeCADで参考形状を見る</a>
+<a href="body-frame-reference.step">参考形状の交換ファイル</a>
+<a href="layout.json">寸法と配置</a>
+<a href="cable-routing.json">配線経路と未確定値</a>
+<a href="switch-retention.json">スイッチの固定方法と検査</a>
+<a href="screwless-assembly.json">ねじ不要の接合と検査</a>
+<a href="assembly-plan.json">組立順と移動経路の検査</a>
+<a href="finger-access.json">指の仮外形と解除部の予約</a>
+<a href="print-plan.json">部品別の肉厚と造形方向</a>
+<a href="support-plan.json">支持材の領域と除去経路</a>
+<a href="validation.json">検査結果</a>
+<a href="manifest.json">生成元と出力の記録</a>
+</div>
+</main>
+<script>
+let data;
+try{data=__BODY_FRAME_DATA__;}catch(error){if(error.name!=='ReferenceError')throw error;}
+if(!data){
+ const target=new URL('../../../build/spark-rack/body-frame/latest/body-frame.html',location.href);
+ target.hash=location.hash;
+ document.querySelector('main').innerHTML='<h1>生成済みのモデルを開きます</h1><p>自動で切り替わらない場合は、<a href="'+target.href+'">最新のモデルを開く</a>を選んでください。初回は先にモデルを生成してください。</p>';
+ location.replace(target.href);
+}else{
+const el=id=>document.getElementById(id),canvas=el('drawing');
+const gl=canvas.getContext('webgl',{antialias:true,alpha:false,preserveDrawingBuffer:true});
+if(!gl)throw new Error('立体表示に必要なWebGLを利用できません。参考形状をFreeCADで開いてください。');
+function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+const program=gl.createProgram();
+gl.attachShader(program,shader(gl.VERTEX_SHADER,'attribute vec3 position;attribute vec3 color;varying vec3 shaded;void main(){gl_Position=vec4(position,1.0);shaded=color;}'));
+gl.attachShader(program,shader(gl.FRAGMENT_SHADER,'precision mediump float;varying vec3 shaded;void main(){gl_FragColor=vec4(shaded,1.0);}'));
+gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program));
+gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
+for(const [name,offset]of [['position',0],['color',12]]){const loc=gl.getAttribLocation(program,name);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,24,offset);}
+gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
+let view='iso',yaw=-.72,tilt=.37,supportOwner=null;
+const assemblySteps=[...data.assembly.bench_steps,...data.assembly.mount_steps];
+const access=data.validation.assembly_order.finger_access;
+const printPlan=data.printPlan;
+const supportPlan=data.supportPlan;
+for(const [i,part]of printPlan.parts.entries()){const option=document.createElement('option');option.value=i;option.textContent=(i+1)+' / '+printPlan.parts.length+' '+part.label;el('print-part').appendChild(option);}
+function boxMesh(name,low,high){const[x,y,z]=low,[a,b,c]=high;return{name,label:'指または解除部の前の仮空間',kind:'operation_space',members:[],bounds:[low,high],color:[.35,.78,.52],vertices:[[x,y,z],[a,y,z],[a,b,z],[x,b,z],[x,y,c],[a,y,c],[a,b,c],[x,b,c]],faces:[[0,2,1],[0,3,2],[4,5,6],[4,6,7],[0,1,5],[0,5,4],[1,2,6],[1,6,5],[2,3,7],[2,7,6],[3,0,4],[3,4,7]]};}
+const fingerMeshes=new Map(access.operations.map(o=>[o.key,o.finger_boxes.map((b,i)=>boxMesh(o.key+'_finger_'+i,b.origin,b.origin.map((v,a)=>v+b.size[a])))]));
+const releaseMeshes=access.release_reservations.map(r=>boxMesh(r.name,...r.bounds_mm));
+function positionOnPath(path,ratio){const f=Math.max(0,Math.min(1,ratio))*(path.length-1),i=Math.min(path.length-2,Math.floor(f)),t=f-i;return path[i].map((v,a)=>v+(path[i+1][a]-v)*t);}
+for(const [i,step]of assemblySteps.entries()){const option=document.createElement('option');option.value=i;option.textContent=(i+1)+' / '+assemblySteps.length+' '+(step.stage==='bench'?'作業台：':'搭載：')+step.title;el('assembly-step').appendChild(option);}
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function camera(p){const[x,y,z]=p;if(view==='front')return[x,-z,-y];if(view==='back')return[-x,-z,y];if(view==='side')return[y,-z,x];if(view==='top')return[x,y,z];const a=x*Math.cos(yaw)+y*Math.sin(yaw),b=-x*Math.sin(yaw)+y*Math.cos(yaw);return[a,-b*Math.sin(tilt)-z*Math.cos(tilt),-b*Math.cos(tilt)+z*Math.sin(tilt)];}
+function draw(){
+ const core=el('core-only').checked,routingOnly=el('routing-only').checked,switchOnly=el('switch-only').checked,jointOnly=el('joint-only').checked,assemblyOnly=el('assembly-only').checked,printOnly=el('print-only').checked;
+ el('core-only').disabled=jointOnly||assemblyOnly||printOnly;el('joint-only').disabled=core||assemblyOnly||printOnly;el('assembly-only').disabled=core||jointOnly||printOnly;el('print-only').disabled=core||jointOnly||assemblyOnly;
+ for(const id of ['fans','cables','storage','external','routing-only','switch-only','release-space'])el(id).disabled=core||jointOnly||assemblyOnly||printOnly;
+ el('assembly-controls').hidden=!assemblyOnly;
+ el('print-controls').hidden=!printOnly;
+ const printedPart=printPlan.parts[Number(el('print-part').value)];
+ const supportMode=printOnly&&el('support-view').checked,supportPart=supportPlan.parts.find(p=>p.name===printedPart.name);
+ el('support-controls').hidden=!supportMode;
+ if(supportOwner!==printedPart.name){supportOwner=printedPart.name;el('support-step').replaceChildren();
+  for(const [value,label]of [['all','支持材の全領域'],...supportPart.steps.map((step,i)=>[String(i),(i+1)+' / '+supportPart.steps.length+' 番目の領域を引き出す'])]){const option=document.createElement('option');option.value=value;option.textContent=label;el('support-step').appendChild(option);}
+  el('support-progress').value=0;
+ }
+ const supportIndex=el('support-step').value==='all'?null:Number(el('support-step').value),supportStep=supportIndex===null?null:supportPart.steps[supportIndex],supportProgress=Number(el('support-progress').value)/100;
+ el('support-progress').disabled=!supportStep;
+ if(supportMode)el('support-caption').textContent='支持材の領域は'+supportPart.region_count+'個。'+(supportStep?'先に外す領域は非表示です。部品を造形台から外して支え、領域ごとにほぐしてから引き出します。緑はペンチ先端の仮外形です。':'橙は支持材を置く領域、輪郭は部品です。支持構造や印刷経路は表していません。')+' 精密面の橋渡し・小穴・丸みはスライサーで確認します。';
+ if(printOnly)el('print-caption').textContent=printedPart.label+'。単品の参考寸法 '+printedPart.size_mm.map(n=>Math.round(n*10)/10).join(' × ')+'mm。'+printedPart.reason+' '+printedPart.support_review;
+ const assemblyIndex=Number(el('assembly-step').value),step=assemblySteps[assemblyIndex],progress=Number(el('assembly-progress').value)/100,poses=new Map(),assemblyNames=new Set(),movingNames=new Set(step.moving);
+ const accessOnly=assemblyOnly&&step.stage==='bench'&&el('access-only').checked;
+ el('access-only').disabled=step.stage!=='bench';
+ if(assemblyOnly){
+  for(const name of [...step.fixed,...step.moving])assemblyNames.add(name);
+  const matingRatio=step.stage==='bench'?Math.min(1,progress/.7):progress;
+  for(const name of step.moving)poses.set(name,positionOnPath(step.offsets,matingRatio));
+  if(step.stage==='bench'&&progress>=.7){assemblyNames.add(step.key);poses.set(step.key,positionOnPath(step.key_offsets,(progress-.7)/.3));}
+  el('assembly-prev').disabled=assemblyIndex===0;el('assembly-next').disabled=assemblyIndex===assemblySteps.length-1;
+  el('assembly-caption').textContent=step.title+'。'+(step.stage==='bench'?(progress<.7?'青い小組みを相手へ差し込む段階です。':'接合を合わせた後、橙色の角栓を入れる段階です。'):'先に組んだ部分へ、青い部品やユニットを搭載します。');
+ }
+ const visible=data.meshes.filter(m=>{
+  if(printOnly)return false;
+  if(assemblyOnly)return assemblyNames.has(m.name);
+  if(jointOnly)return m.kind.startsWith('joint_detail_');
+  if(m.kind.startsWith('joint_detail_'))return false;
+  if(core)return ['spark','body_connector'].includes(m.kind);
+  if(switchOnly)return m.name==='crs812'||m.members.some(n=>n.startsWith('network_rail_'))||['switch_band','switch_buckle'].includes(m.kind);
+  if(m.kind==='external_reservation')return el('external').checked;
+  if(m.kind==='cable_storage')return el('storage').checked;
+  if(m.kind.startsWith('cable_')&&m.kind!=='cable_mount')return el('cables').checked;
+  if(routingOnly)return m.kind==='cable_mount'||m.members.some(n=>n.startsWith('cable_tie_'));
+  return el('fans').checked||(!['fan','fan_holder','fan_pin'].includes(m.kind)&&!m.unlockBefore);
+ });
+ const currentFingers=accessOnly?fingerMeshes.get(step.key):[];
+ if(accessOnly&&progress>=.7){visible.push(...currentFingers);for(const mesh of currentFingers)poses.set(mesh.name,poses.get(step.key));}
+ if(!assemblyOnly&&!core&&!jointOnly&&!printOnly&&el('release-space').checked)visible.push(...releaseMeshes);
+ if(printOnly){const original=data.meshes.find(m=>m.name===printedPart.name),matrix=printedPart.transform;
+  visible.push({...original,kind:'print_part',vertices:original.vertices.map(v=>matrix.map(r=>r[3]+r[0]*v[0]+r[1]*v[1]+r[2]*v[2])),bounds:[[0,0,0],printedPart.size_mm]});
+  if(!supportMode||!supportStep){const bed=boxMesh('print_bed',[-5,-5,-.5],[printedPart.size_mm[0]+5,printedPart.size_mm[1]+5,0]);bed.kind='print_bed';bed.color=[.82,.85,.87];visible.push(bed);}
+  if(supportMode){const removed=new Set(supportIndex===null?[]:supportPart.steps.slice(0,supportIndex).map(s=>s.region));
+   for(const mesh of data.supportMeshes.filter(m=>m.owner===printedPart.name&&!removed.has(m.region))){visible.push({...mesh,color:!supportStep||mesh.region===supportStep.region?[.88,.54,.20]:[.75,.72,.66]});
+    if(supportStep&&mesh.region===supportStep.region)poses.set(mesh.name,positionOnPath(supportStep.offsets_mm,supportProgress));}
+   if(supportStep){const tip=boxMesh('support_tool',...supportStep.tool_bounds_mm);tip.kind='print_support_tool';visible.push(tip);poses.set(tip.name,positionOnPath(supportStep.offsets_mm,supportProgress));}
+  }
+ }
+ const low=[Infinity,Infinity],high=[-Infinity,-Infinity];let minimumDepth=Infinity,maximumDepth=-Infinity;
+ function include(point){const p=camera(point);for(let i=0;i<2;i++){low[i]=Math.min(low[i],p[i]);high[i]=Math.max(high[i],p[i]);}minimumDepth=Math.min(minimumDepth,p[2]);maximumDepth=Math.max(maximumDepth,p[2]);}
+ const boundsMeshes=accessOnly?currentFingers:assemblyOnly&&step.stage==='bench'?data.meshes.filter(m=>assemblyNames.has(m.name)||m.name===step.key):visible;
+ for(const mesh of boundsMeshes){
+  if(supportMode&&supportStep&&poses.has(mesh.name)){for(const offset of supportStep.offsets_mm)for(let mask=0;mask<8;mask++)include([0,1,2].map(i=>mesh.bounds[(mask>>i)&1][i]+offset[i]));}
+  else if(accessOnly){const offset=poses.get(mesh.name)||[0,0,0];for(const vertex of mesh.vertices)include(vertex.map((v,i)=>v+offset[i]));}
+  else if(assemblyOnly){const offsets=movingNames.has(mesh.name)?step.offsets:mesh.name===step.key?step.key_offsets:[[0,0,0]];for(const offset of offsets)for(let mask=0;mask<8;mask++)include([0,1,2].map(i=>mesh.bounds[(mask>>i)&1][i]+offset[i]));}
+  else for(const vertex of mesh.vertices)include(vertex);
+ }
+ if(accessOnly){for(let i=0;i<2;i++){low[i]-=8;high[i]+=8;}for(const mesh of visible){const offset=poses.get(mesh.name)||[0,0,0];for(const v of mesh.vertices){const d=camera(v.map((n,i)=>n+offset[i]))[2];minimumDepth=Math.min(minimumDepth,d);maximumDepth=Math.max(maximumDepth,d);}}}
+ const scale=Math.min(990/(high[0]-low[0]),735/(high[1]-low[1]));
+ const project=q=>[550+(q[0]-(low[0]+high[0])/2)*scale,450+(q[1]-(low[1]+high[1])/2)*scale];
+ const near=maximumDepth+10,far=minimumDepth-10,verticesToDraw=[],contextLines=[];
+ for(const mesh of visible){
+  const offset=poses.get(mesh.name)||[0,0,0];
+  const vertices=mesh.vertices.map(v=>camera(v.map((n,i)=>n+offset[i])));
+  const baseColor=mesh.kind==='operation_space'?mesh.color:assemblyOnly?(mesh.name===step.key?[.95,.55,.12]:movingNames.has(mesh.name)?[.18,.42,.56]:[.62,.66,.69]):mesh.color;
+  for(const f of mesh.faces){
+   const q=f.map(i=>vertices[i]),normal=cross(q[1].map((n,i)=>n-q[0][i]),q[2].map((n,i)=>n-q[0][i]));
+   const length=Math.hypot(...normal);
+   if(normal[2]>=0||length<1e-12)continue;
+   const shade=.62+.38*Math.abs(normal[0]*.2+normal[1]*-.5+normal[2])/(length*1.136);
+   const color=baseColor.map(n=>Math.min(1,n*shade));
+   if(accessOnly&&mesh.name!==step.key&&mesh.kind!=='operation_space'||supportMode&&mesh.kind==='print_part'){
+    for(const [a,b]of [[0,1],[1,2],[2,0]])for(const index of [a,b]){const point=q[index],screen=project(point);contextLines.push(screen[0]/550-1,1-screen[1]/425,1-2*(point[2]-far)/(near-far),.79,.83,.85);}
+    continue;
+   }
+   for(const point of q){const screen=project(point);verticesToDraw.push(screen[0]/550-1,1-screen[1]/425,1-2*(point[2]-far)/(near-far),...color);}
+  }
+ }
+ gl.viewport(0,0,canvas.width,canvas.height);gl.clearColor(.984,.988,.992,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ if(contextLines.length){gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(contextLines),gl.DYNAMIC_DRAW);gl.drawArrays(gl.LINES,0,contextLines.length/6);}
+ gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(verticesToDraw),gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,verticesToDraw.length/6);
+ el('caption').textContent=(supportMode?'橙は支持材の領域、緑は先細ペンチの先端を2×3×12mmで仮置きしたものです。領域ごとにほぐした後の移動を検査しています。':printOnly?printedPart.label+'の造形姿勢の候補です。灰色の面へ接地し、上へ積層します。支持材・印刷条件は未確定です。':accessOnly?step.title+'。橙のつまみと二指の仮外形を中心に拡大しています。緑の箱は各12×10×12mm、周辺部材は輪郭表示です。':assemblyOnly?step.title+'。移動範囲を含む固定の縮尺で表示しています。':jointOnly?'実部品の接合部を切り出し、説明用に離して表示しています。ほぞを差した後、横から橙色の角栓を入れます。':core?'本体と接続部を含む一体部品を表示しています。':switchOnly?'CRS812と抜け止めを含む一体部品、保持ベルト2本を表示しています。':routingOnly?'配線と保持部を含む一体部品を抽出しています。':'金色：Spark。青：接続部とベルト。橙の小部品：角栓と樹脂割りピン。')+' 実物検証前の参考形状です。';
+ window.bodyFrameState={view,visibleNames:visible.map(m=>m.name),visibleKinds:visible.map(m=>m.kind),triangles:verticesToDraw.length/18,coreOnly:core,routingOnly,switchOnly,jointOnly,assemblyOnly,accessOnly,printOnly,printPart:printedPart.name,printSize:printedPart.size_mm,supportMode,supportStepIndex:supportIndex,supportRegionCount:supportPart.region_count,supportProgress,supportOffsets:Object.fromEntries(poses),assemblyIndex,assemblyProgress:progress,assemblyOffsets:Object.fromEntries(poses),fanAxes:data.validation.fan_straight_removal,overallSize:data.validation.overall_size_mm};
+}
+const report=data.validation;
+el('support-summary').textContent='支持材を置く領域は'+supportPlan.parts_with_regions+'部品に'+supportPlan.region_count+'個。領域を小分けにし、ペンチ先端の仮外形と共に外へ引き出す'+supportPlan.removal_steps+'工程を検査しました。部品分割は維持し、接触面を避けるため造形方向を調整しています。支持材の構造と印刷経路は未生成です。';
+el('print-summary').textContent='造形対象は'+printPlan.printed_part_count+'個（ラックと栓'+printPlan.rack_parts+'個、制御器の本体と蓋'+printPlan.controller_case_parts+'個）。全数に造形方向の候補を設定し、平面の接地と外周5mmの接着補助を含む造形範囲を確認しました。複雑な一体部品は支持材が必要です。';
+el('access-summary').textContent='角栓'+access.key_grips+'箇所で、つまみを挟む二指の仮外形を動かし、差し込み後に指だけ離せることを形状で確認しました。バンドとバックルの前には'+access.release_reservations.length+'個の操作空間を予約しています。';
+el('size').textContent=report.overall_size_mm.map(n=>Math.round(n*10)/10).join(' × ')+' mm';
+el('installation-size').textContent=report.cable_routing.installation_size_mm.map(n=>Math.round(n*10)/10).join(' × ')+' mm';
+el('cable-summary').textContent='経路予約は'+report.cable_routing.path_count+'系統。ネットワークの暫定最小曲げ半径は42mm、余長予約は半径55mmで左右各3周です。背面ファンとの距離は本体から'+data.scene.parameters.rear_fan_gap+'mmに広げています。';
+for(const text of data.scene.cable_management.service_sequence){const li=document.createElement('li');li.textContent=text;el('service-sequence').appendChild(li);}
+el('parts').textContent=report.candidate_parts+'部品';
+el('screwless-summary').textContent='組立用のビス0本・ナット0個。ほぞの接合'+report.screwless_assembly.tenon_joints+'箇所、角栓'+report.screwless_assembly.square_keys+'個、ファン用の樹脂割りピン'+report.screwless_assembly.fan_pins+'本を形状で確認しています。';
+el('assembly-summary').textContent='作業台での接合'+report.assembly_order.bench_join_operations+'工程と、本体への搭載'+report.assembly_order.mounting_operations+'工程を再検査し、剛体経路の検査対象'+report.assembly_order.rigid_objects+'個を手順に含めています。ベルト一式と配線は最後に取り付けます。';
+for(const text of data.assembly.phases){const li=document.createElement('li');li.textContent=text;el('assembly-phases').appendChild(li);}
+const labels={spark:'DGX Spark',switch:'CRS812',comet:'GL-RM10',kvm:'TESmart HKS401-P23',power:'電源アダプター',controller:'ファンコントローラー',fan_140:'140mmファン',fan_120:'120mmファン'};
+for(const [kind,count]of Object.entries(report.inventory)){const tr=document.createElement('tr');for(const text of [labels[kind],count+'個']){const td=document.createElement('td');td.textContent=text;tr.appendChild(td);}el('inventory').appendChild(tr);}
+for(const text of ['140mm：2列それぞれの前面と背面、合計4個','120mm：電源区画の左右に各1個、合計2個','6個とも斜めの取付軸を禁止し、直線の着脱経路を検査']){const li=document.createElement('li');li.textContent=text;el('axis-list').appendChild(li);}
+el('validation').textContent='候補部品'+report.candidate_parts+'個の有効性・造形範囲、機器と部品の干渉、端子の仮空間、配線予約と固定物、仮の排気通路、ファン6個の連続した直線着脱、保存後の再読込を確認しました。筐体を含む接触関係は'+report.contact_components_with_sparks+'群で、本体を除くと'+report.contact_components_without_sparks+'群に分かれます。';
+for(const text of report.remaining){const li=document.createElement('li');li.textContent=text;el('remaining').appendChild(li);}
+for(const id of ['core-only','fans','cables','storage','external','routing-only','switch-only','joint-only','assembly-only','assembly-progress','access-only','release-space','print-only','print-part','support-view','support-progress'])el(id).addEventListener(['assembly-progress','support-progress'].includes(id)?'input':'change',draw);
+el('support-step').addEventListener('change',()=>{el('support-progress').value=0;draw();});
+el('assembly-step').addEventListener('change',()=>{el('assembly-progress').value=100;draw();});
+for(const [id,delta]of [['assembly-prev',-1],['assembly-next',1]])el(id).addEventListener('click',()=>{el('assembly-step').value=Math.max(0,Math.min(assemblySteps.length-1,Number(el('assembly-step').value)+delta));el('assembly-progress').value=100;draw();});
+el('assembly-complete').addEventListener('click',()=>{el('assembly-only').checked=false;draw();});
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{view=button.dataset.view;yaw=-.72;tilt=.37;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b===button));draw();}));
+let drag=null;
+canvas.addEventListener('pointerdown',event=>{if(view!=='iso')return;drag=[event.clientX,event.clientY,yaw,tilt];canvas.setPointerCapture(event.pointerId);});
+canvas.addEventListener('pointermove',event=>{if(!drag)return;yaw=drag[2]+(event.clientX-drag[0])*.005;tilt=Math.max(.06,Math.min(1.4,drag[3]+(event.clientY-drag[1])*.004));draw();});
+canvas.addEventListener('pointerup',()=>drag=null);
+canvas.addEventListener('pointercancel',()=>drag=null);
+if(location.hash==='#assembly')el('assembly-only').checked=true;
+if(location.hash==='#access'){el('assembly-only').checked=true;el('access-only').checked=true;}
+if(location.hash==='#print')el('print-only').checked=true;
+if(location.hash==='#support'){el('print-only').checked=true;el('support-view').checked=true;el('print-part').value=printPlan.parts.findIndex(p=>p.name==='spark_fan_0_rear_holder');}
+draw();
+}
+</script>
+</html>

@@ -108,3 +108,20 @@ def hardware_bom():
             'M3x12_90deg_countersunk_screws':2,'M3_nuts':2,
             'case_screw_head_max_diameter_mm':6.0,'case_screw_length_includes_head':True,
             'rack_screw_head_max_diameter_mm':8.0,'rack_screw_head_max_height_mm':4.0}
+
+
+def screwless_cradle(case_length, case_width):
+    """現行ねじ式ドックとは別の受け台。下端の壁と解除式結束バンドでケースを保持する。"""
+    shape = rounded_plate(-LENGTH/2, -WIDTH/2, 0, LENGTH, WIDTH, THICKNESS, OUTER_RADIUS)
+    opening = rounded_plate(-22, -WIDTH/2+6, -1, 60, WIDTH-12, THICKNESS+2, WINDOW_RADIUS)
+    shape = shape.cut(opening)
+    for v in (-RACK_PITCH/2, RACK_PITCH/2):
+        shape = shape.fuse(hole(RACK_U, v, -STANDOFF, 6, STANDOFF))
+    cu, cv = case_length/2+.3, case_width/2+.3
+    for side in (-1, 1):
+        u = cu if side > 0 else -cu-3
+        shape = shape.fuse(box(u, -WIDTH/2, THICKNESS, 3, WIDTH, 6))
+        v = cv if side > 0 else -WIDTH/2
+        span = WIDTH/2-cv
+        shape = shape.fuse(box(-cu, v, THICKNESS, 2*cu, span, 6))
+    return shape.removeSplitter()

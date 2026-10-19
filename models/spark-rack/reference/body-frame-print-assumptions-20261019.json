@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-19",
+  "purpose": "本体を骨格にする参考案の肉厚と部品別造形方向",
+  "material_source": "print-projects/README.md",
+  "material_status": "本番はユーザー指定の黒の炭素繊維入り耐熱ナイロン PAHT-CF。試作はポリ乳酸。本番印刷条件は未設定。",
+  "sources": [
+    {
+      "url": "https://help.prusa3d.com/article/modeling-with-3d-printing-in-mind_164135",
+      "accessed": "2026-10-19",
+      "scope": "積層による方向差、支持材、薄肉と押出し幅、材料・向きに依存するはめ合いについての一般的な指針。Bambu製プリンターや本材料の合格値ではない。"
+    }
+  ],
+  "design_assumptions": [
+    "造形方向は部品単位の候補で、同一プレートへの配置とスライサー設定は未生成。",
+    "造形範囲246mmと外周5mmの接着補助を候補の検査条件とする。",
+    "角栓の中央断面は1.8mm以上、ほぞの角栓穴周囲は指定断面で1mm以上を設計条件とする。強度の規格値ではない。",
+    "構造部の上下方向、ファン保持部の長い腕、角栓の軸と曲がり、割りピンの軸と弾性方向を層の面内へ置く候補を選ぶ。",
+    "割りピンの二股の中央断面1.35mmと頭1.6mmは薄肉の例外。材料の適合・割れ・繰り返し解除は未検証。",
+    "角栓の造形面と端子の空間を両立するため、本体間の上下の隙間は14mmから20mmへ広げる。高さは6mm増える。"
+  ],
+  "slicer_validated": false,
+  "physical_validation": false,
+  "manufacturing_geometry": false
+}
