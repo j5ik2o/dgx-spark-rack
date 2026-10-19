@@ -432,3 +432,354 @@ class Parameters:
         assert self.module_depth > self.support_rear_y+self.beam_width/2
         assert self.support_top > 30 and self.window_radius > 0
         assert 0 < self.fascia_rail_width <= self.side_thickness
+
+
+def body_frame_scene(p, pending, inventory, network):
+    """本体骨格案の機器・接続部・受け・端子予約の配置を定義する。"""
+    from body_frame_layout import box, REFERENCES, REQUIREMENTS
+    equipment, corners, boxes = [], [], []
+    half = p.core_width / 2
+    center_x = (p.spark_width + p.column_gap) / 2
+    for col, x in enumerate((-half, p.column_gap / 2)):
+        for row, z in enumerate((p.lower_base, p.upper_base)):
+            equipment.append(box(f'spark_{col}_{row}', f'Spark・{"左" if col == 0 else "右"}{"下" if row == 0 else "上"}',
+                                 (x, 0, z), (p.spark_width, p.spark_depth, p.spark_height), 'spark'))
+    stages = (('foot', 0, p.lower_base + p.foot_grip),
+              ('joint', p.lower_base + p.spark_height - p.corner_grip,
+               p.stack_gap + 2 * p.corner_grip),
+              ('top', p.core_top - p.corner_grip, p.corner_grip + p.top_riser))
+    for stage, z, h in stages:
+        for end, y in (('front', -p.corner_outside), ('back', p.spark_depth - p.corner_inside)):
+            # 端子が未実測でも背面全体を開ける。背面側は側面と上下の面だけで保持する。
+            depth = p.corner_inside + (p.corner_outside if end == 'front' else 0)
+            for group, spans in (
+                ('left', [(-half - p.corner_outside, p.corner_inside + p.corner_outside)]),
+                ('pair', [(-p.column_gap / 2 - p.corner_inside, p.corner_inside + p.corner_outside),
+                          (p.column_gap / 2 - p.corner_outside, p.corner_inside + p.corner_outside)]),
+                ('right', [(half - p.corner_inside, p.corner_inside + p.corner_outside)])):
+                pieces = [dict(origin=[x, y, z], size=[w, depth, h]) for x, w in spans]
+                if group == 'pair':
+                    x0, x1 = spans[0][0] + spans[0][1] - 1, spans[1][0] + 1
+                    pieces.append(dict(origin=[x0, y, z], size=[x1 - x0, depth, h]))
+                stage_label = {'foot': '脚', 'joint': '上下段', 'top': '上部機器'}[stage]
+                group_label = {'left': '左列の外側', 'pair': '左右の列の間', 'right': '右列の外側'}[group]
+                end_label = '前側' if end == 'front' else '背面側'
+                corners.append(dict(name=f'core_{stage}_{group}_{end}', label=f'{stage_label}の局所接続部・{group_label}・{end_label}',
+                                    kind='body_connector', pieces=pieces))
+    beam_half = half + p.beam_overhang
+    beam_ys = (10, p.spark_depth - p.corner_inside)
+    for row, y in enumerate(beam_ys):
+        for side, x in enumerate((-beam_half, 0)):
+            boxes.append(box(f'accessory_beam_{row}_{side}', '周辺機器の短い横梁',
+                             (x, y, p.beam_z), (beam_half, p.beam_width, p.beam_height), 'accessory_support'))
+    rail_x = half + p.corner_outside - 2
+    for side in (-1, 1):
+        x = side * rail_x - p.beam_width / 2
+        for row, y in enumerate(beam_ys):
+            boxes.append(box(f'network_riser_{side}_{row}', '本体上の機器だけを支える支柱',
+                             (x, y, p.accessory_surface), (p.beam_width, p.beam_width, p.network_standoff),
+                             'network_support'))
+        boxes.append(box(f'network_rail_{side}', 'CRS812を底面で受ける短いレール',
+                         (x, beam_ys[0], p.network_rail_z),
+                         (p.beam_width, p.network_rail_depth, p.beam_height), 'network_support'))
+    remote = pending['remote_console']
+    cw, cd, ch = remote['comet_pro']['body_mm']
+    kw, kd, kh = remote['kvm_switch']['body_mm']
+    device_z = p.accessory_surface + p.tray_thickness
+    equipment += [
+        box('comet', 'GL-RM10・前面に画面', (-cw / 2, p.comet_front_y, device_z), (cw, cd, ch), 'comet'),
+        box('kvm', 'TESmart HKS401-P23・未実測の参考外形', (-kw / 2, p.kvm_front_y, device_z), (kw, kd, kh), 'kvm'),
+    ]
+    sw = network['final_phase']['switch']['body_envelope_mm']
+    equipment.append(box('crs812', 'CRS812・耳と奥行は未実測',
+                         (-sw[0] / 2, p.switch_front_y, p.network_rail_z + p.beam_height), sw, 'switch'))
+    boxes.append(box('comet_tray', 'GL-RM10の小さな載せ台',
+                     (-cw / 2 - 4, p.comet_front_y, p.accessory_surface),
+                     (cw + 8, cd + 4, p.tray_thickness), 'accessory_tray', tray_device='comet'))
+    for side, x in enumerate((-kw / 2 - 5, 0)):
+        boxes.append(box(f'kvm_tray_{side}', '切替器の分割した載せ台',
+                         (x, p.kvm_front_y - 4, p.accessory_surface),
+                         (kw / 2 + 5, kd + 8, p.tray_thickness), 'accessory_tray',
+                         tray_device='kvm', tray_side=side))
+    adapter = [99.05, 98.99, 35.17]
+    for col, x in enumerate((-center_x, center_x)):
+        for row in range(2):
+            y = p.power_first_y + row * p.power_row_pitch
+            equipment.append(box(f'power_{col}_{row}', '電源アダプター・参考外形',
+                                 (x - adapter[0] / 2, y, p.power_bottom), adapter, 'power'))
+            size = p.power_tray_size
+            boxes.append(box(f'power_tray_{col}_{row}', '電源を囲い込まない小さな受け',
+                             (x - size / 2, y - (size - adapter[1]) / 2, p.power_bottom - p.tray_thickness),
+                             (size, size, p.tray_thickness), 'power_tray'))
+    fan_z = p.lower_base + (2 * p.spark_height + p.stack_gap) / 2
+    fans = []
+    for col, x in enumerate((-center_x, center_x)):
+        for end, y, axis in (
+                ('front', -p.front_fan_gap - p.fan_depth, [0, -1, 0]),
+                ('rear', p.spark_depth + p.rear_fan_gap, [0, 1, 0])):
+            fans.append(box(f'spark_fan_{col}_{end}', f'Spark列の{"前面" if end == "front" else "背面"}・140mm固定ファン',
+                            (x - p.fan_size / 2, y, fan_z - p.fan_size / 2),
+                            (p.fan_size, p.fan_depth, p.fan_size), 'fan',
+                            axis=axis, fan_size=p.fan_size, pitch=p.fan_pitch, opening=p.fan_opening,
+                            mounting='fixed_axis_aligned', mount_face=end, attachment_stage='joint'))
+    side_plane = half + p.corner_outside + p.power_fan_gap
+    for side in (-1, 1):
+        x = side_plane + p.fan_plate if side > 0 else -side_plane - p.fan_plate - p.fan_depth
+        fans.append(box(f'power_fan_{side}', '電源用・側面120mm固定ファン',
+                        (x, p.power_fan_center_y - p.power_fan_size / 2,
+                         p.power_fan_center_z - p.power_fan_size / 2),
+                        (p.fan_depth, p.power_fan_size, p.power_fan_size), 'fan',
+                        axis=[side, 0, 0], fan_size=p.power_fan_size,
+                        pitch=p.power_fan_pitch, opening=p.power_fan_opening,
+                        mounting='fixed_axis_aligned', mount_face='right' if side > 0 else 'left',
+                        attachment_stage='foot'))
+    equipment += fans
+    controllers = []
+    for side in (-1, 1):
+        y = p.controller_right_y if side > 0 else p.controller_left_y
+        u, v, w = [0, side, 0], [0, 0, 1], [side, 0, 0]
+        dock_x = side * (half + p.controller_offset)
+        for row in range(3):
+            z = p.controller_first_z + row * p.controller_pitch_z
+            x = dock_x - 3 if side > 0 else dock_x + 3 - p.controller_depth
+            controller = box(f'controller_{side}_{row}', f'{"右" if side > 0 else "左"}側の{"下中上"[row]}段制御器・正立',
+                             (x, y - p.controller_width / 2, z - p.controller_height / 2),
+                             (p.controller_depth, p.controller_width, p.controller_height), 'controller',
+                             dock_origin=[dock_x, y, z], u=u, v=v, w=w)
+            controllers.append(controller)
+            # 実際の取付位置は共通ドックの正本から形状生成時に求める。
+            boxes.append(dict(name=f'controller_mount_{side}_{row}', label='制御器ごとの局所取付部',
+                              kind='controller_mount', controller=controller['name']))
+    equipment += controllers
+    connectors = [
+        box(f'{e["name"]}_ports', 'Spark背面の端子用の仮空間・実端子未確認',
+            (e['origin'][0], p.spark_depth, e['origin'][2]),
+            (p.spark_width, p.rear_connector_depth, p.spark_height), 'connector_space')
+        for e in equipment if e['kind'] == 'spark'
+    ]
+    connectors += [
+        box('comet_ports', 'GL-RM10の背面配線用の仮空間',
+            (-cw / 2, p.comet_front_y + cd, device_z), (cw, 60, ch), 'connector_space'),
+        box('kvm_ports', '切替器の背面配線用の仮空間',
+            (-kw / 2, p.kvm_front_y + kd, device_z), (kw, 60, kh), 'connector_space'),
+    ]
+    models={'spark':'DGX Spark','switch':'CRS812','comet':'GL-RM10','kvm':'TESmart HKS401-P23'}
+    for entry in equipment:
+        if entry['kind'] in models:
+            entry['model']=models[entry['kind']]
+    scene = dict(parameters=asdict(p), equipment=equipment, corners=corners, boxes=boxes,
+                connectors=connectors, references=list(REFERENCES) + [REQUIREMENTS],
+                expected_inventory={'spark': 4, 'switch': 1, 'comet': 1, 'kvm': 1,
+                                    'power': 4, 'controller': inventory['controllers']['quantity'],
+                                    'fan_140': inventory['fans'][0]['quantity'],
+                                    'fan_120': inventory['fans'][1]['quantity']},
+                assumptions=[
+                    'Sparkの箱の参考外形へ局所接続部を当てる。外装へ荷重を掛けることはメーカー確認・実測前。',
+                    'CRS812の奥行は資料間の不一致が残るため268mmを参考値とする。足と取付耳は未確認。',
+                    'TESmartの300×117×30mmは検索要約に基づく未実測の参考値。',
+                    '背面ファンは直線方向へ外して端子へアクセスする。斜め取付やヒンジは使わない。',
+                    'Spark下段の交換は、上の機器と上段を先に外す手順が必要。独立した引き出し式ではない。',
+                ], manufacturing_geometry=False, physical_validation=False)
+    return scene
+
+
+def body_frame_routing(scene, p):
+    """本体骨格案の配線・余長・留め部の配置を定義する。"""
+    import math
+    from body_frame_cables import rounded_path
+    equipment = {e['name']: e for e in scene['equipment']}
+    paths, mounts, storage = [], [], []
+
+    def route(name, label, family, points, radius, diameter, endpoints, **extra):
+        segments, length = rounded_path(points, radius)
+        paths.append(dict(name=name, label=label, family=family, points=points,
+                          segments=segments, centerline_length_mm=length,
+                          radius_mm=radius, diameter_mm=diameter, endpoints=endpoints,
+                          exact_port_positions_verified=False, length_fit_verified=False, **extra))
+
+    def mount(name, label, origin, size, slots=False):
+        mounts.append(dict(name=name, label=label, origin=origin, size=size,
+                           kind='cable_mount', slots=slots))
+
+    rear, outside = p.cable_rear_y, p.cable_side_x
+    kvm_signal_z = equipment['kvm']['origin'][2]+19
+    switch_network_z = equipment['crs812']['origin'][2]+22
+    switch_power_z = equipment['crs812']['origin'][2]+26
+    for col, side in enumerate((-1, 1)):
+        side_label = '左' if side < 0 else '右'
+        anchor_x = p.core_width / 2 + 4
+        mount(f'cable_tie_arm_{col}', side_label + 'の中間接続部へ留める短い配線腕',
+              [anchor_x if side > 0 else -anchor_x - 4, p.spark_depth,
+               p.lower_base+p.spark_height+p.stack_gap/2-4], [4, 66, 8])
+        mount(f'cable_tie_plate_{col}', side_label + 'の解除式結束バンドを通す束の留め板',
+              [anchor_x if side > 0 else -anchor_x - 4, 216, 70], [4, 16, 104])
+        mounts[-1]['tie_plate'] = True
+        # 全段をつなぐ柱にはせず、上部の横梁だけから支持する。
+        edge = p.core_width / 2 + p.beam_overhang
+        arm_outer = outside + 42
+        mount(f'cable_outreach_{col}', side_label + 'の上部横梁から出す短い腕',
+              [edge if side > 0 else -(outside + 26), 134, p.beam_z],
+              [outside + 26 - edge, 16, 10])
+        mount(f'cable_side_arm_{col}', side_label + 'の余長受けだけを支える腕',
+              [outside + 26 if side > 0 else -arm_outer, 134, p.beam_z],
+              [16, 224, 10])
+        mount(f'cable_storage_floor_{col}', side_label + 'の開放式余長受け・結束バンド用の穴',
+              [outside - 32 if side > 0 else -arm_outer, 180, p.beam_z - 4],
+              [74, 178, 4], slots=True)
+        mounts[-1].update(feed_x=side * outside, feed_y=340)
+        for turn in range(3):
+            storage.append(dict(name=f'network_storage_{col}_{turn}',
+                                label=side_label + f'の余長予約・{turn + 1}周目（実配線ではない）',
+                                kind='cable_storage', family='network',
+                                center=[side * (outside - 12 + turn * 12), 295, p.cable_storage_center_z],
+                                normal=[1, 0, 0], radius=p.cable_storage_radius, diameter=8,
+                                length_mm=2 * math.pi * p.cable_storage_radius))
+        rear_tray = next(b for b in scene['boxes'] if b['name'] == f'power_tray_{col}_1')
+        tray_back = rear_tray['origin'][1] + rear_tray['size'][1]
+        mount(f'signal_storage_floor_{col}', side_label + 'の映像・USBの余長受け',
+              [rear_tray['origin'][0], tray_back, 10],
+              [rear_tray['size'][0], 366 - tray_back, 4], slots=True)
+        mounts[-1].update(feed_x=side * 140, feed_y=338)
+        for level in range(4):
+            for radius in (30, 45):
+                storage.append(dict(name=f'signal_storage_{col}_{level}_{radius}',
+                                    label=side_label + 'の映像・USB余長の予約（実配線ではない）',
+                                    kind='cable_storage', family='signal',
+                                    center=[side * 85, 310, 20 + level * 13], normal=[0, 0, 1],
+                                    radius=radius, diameter=12, length_mm=2 * math.pi * radius))
+        split = [side * outside, rear, 200]
+        for row in range(2):
+            spark = equipment[f'spark_{col}_{row}']
+            z = spark['origin'][2] + 22
+            x = side * (140 - 10 * row)
+            route(f'network_branch_{col}_{row}', f'{side_label}{"下" if row == 0 else "上"}段のネットワーク経路',
+                  'network', [[x, p.spark_depth + 35, z], [x, rear, z],
+                              [side * outside, rear, z], split], 42, 8,
+                  [spark['name'], f'network_split_{col}'], cable_group=f'breakout_{col}')
+            # 映像線とUSB線は同じ束の予約。束の内部で個別端子へ配る部分は未採寸。
+            vx = side * (140 + 5 * row)
+            route(f'video_usb_{col}_{row}', f'{side_label}{"下" if row == 0 else "上"}段の映像・USBの束',
+                  'signal', [[vx, 150, z + 8], [vx, 300 + row * 20, z + 8],
+                             [vx, 300 + row * 20, kvm_signal_z], [vx, 237, kvm_signal_z]],
+                  20, 12, [spark['name'], 'kvm'], nominal_length_mm=1500)
+            power = equipment[f'power_{col}_{row}']
+            y, zpower = power['origin'][1], power['origin'][2] + 17
+            px = side * (85 + row * 12)
+            # 受けを8mm持ち上げ、下を通す。端子面は仮定で、現物に合わせる。
+            route(f'spark_dc_{col}_{row}', side_label + f'の電源{row + 1}から本体への直流配線',
+                  'dc', [[px, y, zpower], [px, y - 25, zpower], [px, y - 25, p.cable_underfloor_z],
+                         [px, 320, p.cable_underfloor_z], [side * 140, 320, p.cable_underfloor_z],
+                         [side * 140, 350, p.cable_underfloor_z],
+                         [side * 140, 350, z + 15], [side * 140, 150, z + 15]],
+                  10, 6, [power['name'], spark['name']])
+            ac_y = y if row == 0 else y + power['size'][1]
+            guide_y = -95 if row == 0 else 370
+            outlet = [350 + col * 24 + row * 12, 0 if row == 0 else 90, 25]
+            route(f'adapter_ac_{col}_{row}', side_label + f'の電源{row + 1}の交流配線',
+                  'ac', [[side * 85, ac_y, zpower], [side * 85, guide_y, zpower],
+                         [outlet[0], guide_y, zpower], [outlet[0], outlet[1], zpower]],
+                  20, 8, [power['name'], 'external_power_strip'])
+        route(f'network_trunk_{col}', side_label + 'の分岐点からCRS812への主線', 'network',
+              [split, [side * outside, rear, switch_network_z],
+               [side * 130, rear, switch_network_z], [side * 130, 293, switch_network_z]],
+              42, 10, [f'network_split_{col}', 'crs812'], cable_group=f'breakout_{col}')
+        route(f'switch_ac_{col}', f'CRS812の交流電源{col + 1}', 'ac',
+              [[side * 170, -10, switch_power_z], [side * 170, -95, switch_power_z],
+               [side * 240, -95, switch_power_z], [side * 240, -95, 30],
+               [440 + col * 25, -95, 30], [440 + col * 25, 0, 30]],
+              25, 8, ['crs812', 'external_power_strip'])
+        for row in range(3):
+            controller = equipment[f'controller_{side}_{row}']
+            cy = controller['dock_origin'][1]
+            cz = controller['dock_origin'][2]
+            start = [side * (p.core_width / 2 + p.controller_offset + 41), cy, cz]
+            disconnect = [side * 240, -65 if row == 0 else 355, 210 if row < 2 else 160]
+            route(f'fan_feed_{col}_{row}', side_label + f'の制御器{row + 1}から着脱コネクターまで', 'control',
+                  [start, [side * 240, cy, cz], [side * 240, cy, disconnect[2]], disconnect],
+                  6, 4, [controller['name'], f'fan_disconnect_{col}_{row}'])
+            fan_name = f'spark_fan_{col}_{"front" if row == 0 else "rear"}' if row < 2 else f'power_fan_{side}'
+            fan = equipment[fan_name]
+            if row < 2:
+                fy = fan['origin'][1] + p.fan_depth / 2
+                end = [side * 150, fy, fan['origin'][2]+fan['size'][2]-4.5]
+                tail = [disconnect, [side * 150, disconnect[1], disconnect[2]],
+                        [side * 150, fy, disconnect[2]], end]
+            else:
+                end = [side * 219, 290, 108]
+                tail = [disconnect, [side * 240, 290, 160], [side * 240, 290, 108], end]
+            route(f'fan_tail_{col}_{row}', side_label + f'のファン{row + 1}の取り外す短線', 'control',
+                  tail, 6, 4, [f'fan_disconnect_{col}_{row}', fan_name], detachable_with=fan_name)
+            route(f'controller_supply_{col}_{row}', side_label + f'の制御器{row + 1}の給電・センサー用経路予約', 'control',
+                  [[start[0], cy + 10, cz], [side * 250, cy + 10, cz],
+                   [side * 250, cy + 10, 170], [side * 250, 355, 170]],
+                  6, 5, [controller['name'], 'auxiliary_supply_and_sensors'], unfinished_terminal=True)
+    route('comet_video_usb', 'GL-RM10と切替器の映像・キーボード操作の束', 'signal',
+          [[0, 44, 225], [0, 90, 225], [185, 90, 225], [185, 280, 225],
+           [40, 280, 225], [40, 237, 225]], 18, 12, ['comet', 'kvm'])
+    route('comet_ethernet', 'GL-RM10の管理用有線ネットワーク', 'signal',
+          [[25, 44, 235], [25, 90, 235], [195, 90, 235], [195, 340, 235],
+           [195, 340, 285], [195, 258, 285]], 15, 6, ['comet', 'crs812'])
+    for name, x, y, z in [('comet', -25, 44, 240), ('kvm', -140, 237, 225)]:
+        route(name + '_dc', name + 'の低電圧給電', 'dc',
+              [[x, y, z], [x, y + 30, z], [-210, y + 30, z],
+               [-210, 355, z], [-210, 355, 170]], 10, 5,
+              [name, 'external_peripheral_adapters'], unfinished_terminal=True)
+    airflow = [dict(name=f'airflow_{col}', label='Spark列の中央を開ける仮の排気通路',
+                    origin=[side * 85 - 40, 210, 65], size=[80, p.spark_depth + p.rear_fan_gap - 4 - 210, 105])
+               for col, side in enumerate((-1, 1))]
+    return dict(paths=paths, storage=storage, mounts=mounts, airflow_spaces=airflow,
+                endpoint_status='端子位置とプラグ形状は仮定。各端子への短い接続区間は未採寸。',
+                path_scope='束の通過領域。束同士の重なりは許し、固定物と着脱経路との干渉を検査する。',
+                external_regions=[dict(name='external_power_strip', label='机上別置きタップ・8口以上、補助電源と電源線余長の予約',
+                                       origin=[320, 0, 0], size=[360, 90, 90],
+                                       kind='external_reservation', purchased_product=False)],
+                service_sequence=['電源を切り、対象ファンの着脱コネクターを外す。',
+                                  '対象ファンの短線の留め具を開放し、短線をファン側へ寄せる。',
+                                  '保持部の抜け止め用の角栓を外し、ファンと保持部を軸方向へ110mmまっすぐ引く。',
+                                  '機器交換時は対象の結束バンドのロックを解除する。面ファスナーを併用した箇所も開放し、上部から順に分解する。'],
+                unresolved=['端子中心、プラグ外形、実線径と束の内部配置',
+                            '2m分岐ケーブルの主線・分岐線の長さ、分岐点の実寸と位置',
+                            '電源タップの製品・定格・差込間隔、補助電源と周辺機器用アダプターの外形',
+                            '制御器の給電仕様と温度センサーの取付・末端配線',
+                            '保持帯と着脱コネクターの実物、実機での組立と冷却'])
+
+
+def body_frame_switch_plan(scene, p):
+    switch = next(e for e in scene['equipment'] if e['name'] == 'crs812')
+    x, y, z = switch['origin']
+    width, depth, height = switch['size']
+    clearance, wall = p.switch_fit_clearance, p.switch_stop_thickness
+    front, rear = y - clearance - wall, y + depth + clearance + wall
+    middle = (front + rear) / 2
+    original = [r for r in scene['boxes'] if r['name'].startswith('network_rail_')]
+    scene['boxes'] = [r for r in scene['boxes'] if r not in original]
+    rails = []
+    for rail in original:
+        side = 1 if rail['origin'][0] > 0 else -1
+        for end, lo, hi, keeper_y in (
+                ('front', front, middle, y + 60),
+                ('rear', middle, rear, y + depth - 48)):
+            recipe = dict(rail, name=rail['name'] + '_' + end,
+                          label='CRS812の低い抜け止め付き支持レール・' + ('前側' if end == 'front' else '後側'),
+                          origin=[rail['origin'][0], lo, rail['origin'][2]],
+                          size=[rail['size'][0], hi - lo, rail['size'][2]],
+                          switch_keeper=dict(side=side, end=end, keeper_y=keeper_y))
+            rails.append(recipe)
+    scene['boxes'] += rails
+    bands = []
+    for number, band_y in enumerate((y + 80, y + depth - 68)):
+        bands.append(dict(name=f'switch_band_{number}', label='CRS812と支持レールを一緒に抱く保持ベルト',
+                          kind='switch_band', y=band_y, width=p.switch_band_width,
+                          inner_x=[x - clearance, x + width + clearance],
+                          inner_z=[p.network_rail_z, z + height], thickness=p.switch_band_thickness,
+                          buckle_origin=[-15, band_y - 2, z + height + p.switch_band_thickness],
+                          buckle_size=[30, p.switch_band_width + 4, 8]))
+    return dict(target='crs812', scope='スイッチ単体の横滑り・落下を抑える簡易固定。机への固定は対象外。',
+                rail_names=[r['name'] for r in rails], bands=bands,
+                horizontal_clearance_mm=clearance, stop_height_mm=p.switch_stop_height,
+                buckle_status='非伸縮の保持ベルトとバックルの参考形状。製品・締付け・耐荷重は未確定。',
+                disassembly=['電源を切り、端子からケーブルを外す。',
+                             '2本のベルトのバックルを開いて緩める。',
+                             '低い抜け止めを越えるまで持ち上げ、CRS812を取り出す。'],
+                physical_validation=False, seismic_rating_verified=False,
+                requirement_reference='models/spark-rack/reference/body-frame-switch-retention-20261019.json')

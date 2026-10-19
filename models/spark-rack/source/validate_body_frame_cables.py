@@ -3,7 +3,7 @@ from body_frame_cables import validate_routing
 
 
 def validate_cables(model):
-    from body_frame_geometry import block
+    from freecad_spark_rack import block
     from validate_body_frame import near, bounds
     import FreeCAD as App
     data = model['scene']['cable_management']

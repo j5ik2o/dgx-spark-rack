@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT/'tools/cad'))
 @unittest.skipIf(App is None, 'FreeCAD同梱Pythonで実行してください')
 class JoineryTests(unittest.TestCase):
     def setUp(self):
-        from body_frame_geometry import block, item
+        from freecad_spark_rack import block, item
         from body_frame_joinery import design_joint
         a = item('left', '左', block([-20, -8, 10], [20, 16, 10]), 'support')
         b = item('right', '右', block([0, -8, 10], [20, 16, 10]), 'support')
@@ -47,7 +47,7 @@ class JoineryTests(unittest.TestCase):
             self.assertLess(shifted.common(female).Volume, 1e-5)
 
     def test_larger_contact_face_does_not_choose_a_trapped_insertion_axis(self):
-        from body_frame_geometry import block,item,fuse
+        from freecad_spark_rack import block,item,fuse
         from body_frame_joinery import design_joint
         a=item('wrap','上下の段差が相手を挟む部品',fuse([
             block([-20,-8,10],[20,16,20]),block([0,-8,10],[15,16,4]),
@@ -58,7 +58,7 @@ class JoineryTests(unittest.TestCase):
         self.assertEqual(joint[-1]['normal_axis'],0)
 
     def test_integral_guard_cannot_trap_the_square_key(self):
-        from body_frame_geometry import block,item,fuse
+        from freecad_spark_rack import block,item,fuse
         from body_frame_joinery import design_joint
         a=item('guarded','栓の片側に一体ガイドがある部品',fuse([
             block([-20,-8,10],[20,16,10]),block([-20,-18,10],[26,4,10]),

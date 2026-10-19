@@ -39,10 +39,11 @@ def exit_distance(shape, center, axis, sign):
 def design_joint(first, second, obstacles, number, clearance=.15, maximum_depth=5,
                  minimum_key_width=1.8, minimum_ligament=1):
     """実際の平面接触から、ほぞと角栓が入る局所領域を探す。"""
-    from body_frame_geometry import item
+    from freecad_spark_rack import item
     from validate_body_frame import near, shared_area
     from body_frame_assembly import MotionCheck, escape
-    from body_frame_access import key_grip, grip_path, fan_key_path
+    from body_frame_access import grip_path, fan_key_path
+    from freecad_spark_rack import key_grip
     original_motion = MotionCheck({e['name']:e for e in (first, second)})
     for _, normal, plane, face in contact_faces(first['shape'], second['shape'])[:6]:
         tangent = [i for i in range(3) if i != normal]
@@ -224,7 +225,7 @@ def connect_parts(parts, references, parameters=None):
 
 def joint_detail(parts, scene):
     """実際の接合部から切り出した説明図。組立モデルそのものの位置は変えない。"""
-    from body_frame_geometry import block, item
+    from freecad_spark_rack import block, item
     lookup = {e['name']: e for e in parts}
     candidates = [j for j in scene['screwless_assembly']['joints']
                   if not any(j[k].endswith('_holder') for k in ('donor', 'receiver'))]

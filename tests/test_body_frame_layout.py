@@ -1,8 +1,11 @@
 """維持する機器、2段×2列、斜め取付の拒否を検査する。"""
 from dataclasses import replace
 from pathlib import Path
+import json
 import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'models/spark-rack/source'))
 from body_frame_layout import layout, validate_layout
@@ -70,6 +73,40 @@ class BodyFrameLayoutTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'ビス・ナットは0'):
                 validate_layout(self.scene)
             self.scene['screwless_requirement'][field] = 0
+
+    def test_integral_float_fan_dimensions_keep_the_same_inventory(self):
+        scene=layout(replace(BodyFrameParameters(),fan_size=140.0,power_fan_size=120.0))
+        self.assertEqual(validate_layout(scene)['inventory'],validate_layout(self.scene)['inventory'])
+
+    def test_fractional_fan_dimensions_do_not_round_to_a_supported_size(self):
+        with self.assertRaisesRegex(ValueError,'個数'):
+            validate_layout(layout(replace(BodyFrameParameters(),fan_size=140.5)))
+
+    def assert_requirement_change_rejected(self,change):
+        import body_frame_layout
+        data=json.loads((body_frame_layout.ROOT/body_frame_layout.REQUIREMENTS).read_text())
+        change(data)
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/'requirements.json'
+            path.write_text(json.dumps(data))
+            with patch.object(body_frame_layout,'REQUIREMENTS',str(path)):
+                with self.assertRaisesRegex(ValueError,'設計条件'):
+                    validate_layout(layout())
+
+    def test_changed_row_requirement_is_not_ignored(self):
+        self.assert_requirement_change_rejected(lambda d:d.update(spark_rows=3))
+
+    def test_changed_equipment_requirement_is_not_ignored(self):
+        self.assert_requirement_change_rejected(lambda d:d.update(maintained_equipment=[]))
+
+    def test_changed_fastener_requirement_is_not_ignored(self):
+        self.assert_requirement_change_rejected(lambda d:d['assembly_fasteners'].update(screws=1))
+
+    def test_changed_model_requirement_is_not_ignored(self):
+        self.assert_requirement_change_rejected(lambda d:d['maintained_equipment'][0].update(model='別の本体'))
+
+    def test_changed_fan_mounting_requirement_is_not_ignored(self):
+        self.assert_requirement_change_rejected(lambda d:d['fan_mounting'].update(mode='hinged_open'))
 
 
 if __name__ == '__main__':

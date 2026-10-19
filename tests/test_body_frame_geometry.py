@@ -44,7 +44,7 @@ class BodyFrameGeometryTests(unittest.TestCase):
             validate(model)
 
     def cable_model_with_probe(self, name, origin, size):
-        from body_frame_geometry import block
+        from freecad_spark_rack import block
         model = dict(self.model, cables=[dict(e) for e in self.model['cables']])
         cable = next(e for e in model['cables'] if e['name'] == name)
         cable['shape'] = block(origin, size)
@@ -81,7 +81,7 @@ class BodyFrameGeometryTests(unittest.TestCase):
             validate_retention(model)
 
     def test_plain_rails_cannot_pass_as_actual_sliding_stops(self):
-        from body_frame_geometry import block
+        from freecad_spark_rack import block
         from body_frame_switch_retention import validate_retention
         recipes = {r['name']: r for r in self.model['scene']['boxes'] if r.get('switch_keeper')}
         parts = [e for e in self.model['parts'] if not set(e.get('integrated_members', [e['name']])) & recipes.keys()]
@@ -117,6 +117,20 @@ class BodyFrameGeometryTests(unittest.TestCase):
         model = dict(self.model, references=[e for e in self.model['references'] if e['name'] != name])
         with self.assertRaisesRegex(ValueError, '解除式バンドが欠け'):
             validate_screwless(model)
+
+    def test_shared_mount_check_covers_all_screwless_controller_cases(self):
+        report=self.report['controller_mounts']
+        self.assertEqual(report['controllers'],6)
+        self.assertTrue(all(case['side_clearance_mm']>=.29 for case in report['cases']))
+        self.assertTrue(all(case['bands']==2 for case in report['cases']))
+        self.assertFalse(report['physical_validation'])
+
+    def test_shared_mount_check_rejects_a_missing_controller_band(self):
+        from check_controller_mounts import check_screwless_mounts
+        name=next(e['name'] for e in self.model['references'] if e['kind']=='controller_band')
+        model=dict(self.model,references=[e for e in self.model['references'] if e['name']!=name])
+        with self.assertRaisesRegex(ValueError,'解除式バンドが不足'):
+            check_screwless_mounts(model)
 
     def test_assembly_order_covers_the_whole_rigid_inventory(self):
         from body_frame_assembly import SOFT_KINDS

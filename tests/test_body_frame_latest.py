@@ -13,8 +13,8 @@ class LatestPreviewTests(unittest.TestCase):
     def make_run(self,parent,name,status='generated'):
         folder=parent/name
         folder.mkdir()
-        (folder/'manifest.json').write_text(json.dumps(dict(status=status)))
-        (folder/'body-frame.html').write_text('<html>生成済みモデル</html>')
+        (folder/'manifest.json').write_text(json.dumps(dict(status=status)),encoding='utf-8')
+        (folder/'body-frame.html').write_text('<html>生成済みモデル</html>',encoding='utf-8')
         return folder
 
     def test_publishing_a_new_run_preserves_previous_generated_files(self):
@@ -43,7 +43,7 @@ class LatestPreviewTests(unittest.TestCase):
             parent=Path(temp)
             run=self.make_run(parent,'run')
             (parent/'latest').mkdir()
-            (parent/'latest'/'keep.txt').write_text('preserve')
+            (parent/'latest'/'keep.txt').write_text('preserve',encoding='utf-8')
             with self.assertRaisesRegex(ValueError,'既存'):
                 publish_latest(run)
-            self.assertEqual((parent/'latest'/'keep.txt').read_text(),'preserve')
+            self.assertEqual((parent/'latest'/'keep.txt').read_text(encoding='utf-8'),'preserve')

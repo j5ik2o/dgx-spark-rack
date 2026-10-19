@@ -29,7 +29,7 @@ class PrintOrientationTests(unittest.TestCase):
             self.assertAlmostEqual(rows[0].cross(rows[1]).dot(rows[2]),1,places=6)
 
     def test_fan_pin_has_a_full_length_flat_without_standing_its_axis_up(self):
-        from body_frame_screwless import fan_pin
+        from freecad_spark_rack import fan_pin
         from body_frame_print_plan import bed_faces
         from spark_rack_parameters import BodyFrameParameters
         fan=dict(origin=[-70,-57,50.5],size=[140,27,140],axis=[0,-1,0])
@@ -44,7 +44,7 @@ class PrintOrientationTests(unittest.TestCase):
 @unittest.skipIf(App is None,'FreeCAD同梱Pythonで実行してください')
 class JointSectionTests(unittest.TestCase):
     def setUp(self):
-        from body_frame_geometry import block,item
+        from freecad_spark_rack import block,item
         from body_frame_joinery import design_joint
         from spark_rack_parameters import BodyFrameParameters
         a=item('left','左',block([-20,-8,10],[20,16,10]),'support')

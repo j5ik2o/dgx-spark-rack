@@ -132,7 +132,7 @@ def validate(model):
         movements.append(dict(fan=fan['name'], axis=fan['axis'], straight_removal_mm=p.fan_removal_distance))
     obstructions = []
     for space in scene['connectors']:
-        from body_frame_geometry import block
+        from freecad_spark_rack import block
         probe = block(space['origin'], space['size'])
         owner = space['name'].removesuffix('_ports')
         for entry in all_items:
@@ -160,6 +160,8 @@ def validate(model):
     switch_retention = validate_retention(model)
     from body_frame_joinery import validate_screwless
     screwless = validate_screwless(model)
+    from check_controller_mounts import check_screwless_mounts
+    controller_mounts = check_screwless_mounts(model)
     from body_frame_assembly import build_plan
     from validate_body_frame_assembly import validate_plan
     from body_frame_controller_assembly import check_controller_assembly
@@ -182,6 +184,7 @@ def validate(model):
         cable_routing=cable_report,
         switch_retention=switch_retention,
         screwless_assembly=screwless,
+        controller_mounts=controller_mounts,
         assembly_order=assembly_order,
         print_plan=dict(status='candidate',printed_part_count=model['print_plan']['printed_part_count'],
                         minimum_key_width_mm=model['print_plan']['minimum_key_width_mm'],

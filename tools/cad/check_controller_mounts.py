@@ -16,6 +16,62 @@ for model in ('spark-rack','adapter-rack'):
     sys.path.insert(0,str(ROOT/'models'/model/'source'))
 
 
+def check_screwless_mounts(body_frame):
+    """本体骨格案の6ケース、共通受け台、保持帯と解除後の着脱を検査する。"""
+    import FreeCAD as App
+    import Part
+    from controller_mount import place,screwless_cradle,THICKNESS,LENGTH,WIDTH
+    from body_frame_assembly import MotionCheck
+    from validate_body_frame import shared_area
+    items={e['name']:e for e in body_frame['parts']+body_frame['references']}
+    controllers=[e for e in body_frame['scene']['equipment'] if e['kind']=='controller']
+    if len(controllers)!=body_frame['scene']['expected_inventory']['controller']:
+        raise ValueError('ねじ不要ケースの検査対象数が一致しません')
+    results=[]
+    for controller in controllers:
+        name=controller['name']
+        frame=App.Matrix()
+        for column,values in enumerate((controller['u'],controller['v'],controller['w'],controller['dock_origin']),1):
+            for row,value in enumerate(values,1):
+                setattr(frame,f'A{row}{column}',value)
+        inverse=App.Placement(frame).inverse()
+        cases=[items[name+'_'+suffix]['shape'] for suffix in ('body','lid')]
+        local=[]
+        for shape in cases:
+            normalized=shape.copy()
+            normalized.Placement=inverse.multiply(normalized.Placement)
+            local.append(normalized)
+        bounds=Part.makeCompound(local).optimalBoundingBox(False)
+        if abs(bounds.ZMin-THICKNESS)>1e-5:
+            raise ValueError('ねじ不要ケースの底面と受け台の高さが一致しません: '+name)
+        cradle=screwless_cradle(bounds.XLength,bounds.YLength)
+        expected=place(cradle,controller['dock_origin'],controller['u'],controller['v'],controller['w'])
+        actual=next((e for e in body_frame['parts'] if name+'_dock' in e.get('integrated_members',[e['name']])),None)
+        if actual is None or expected.cut(actual['shape']).Volume>1e-3:
+            raise ValueError('共通のねじ不要受け台とラックの配置が一致しません: '+name)
+        if any(shape.common(actual['shape']).Volume>1e-5 for shape in cases):
+            raise ValueError('ねじ不要ケースと受け台が干渉します: '+name)
+        walls=cradle.common(Part.makeBox(LENGTH+2,WIDTH+2,6,App.Vector(-LENGTH/2-1,-WIDTH/2-1,THICKNESS+.01)))
+        clearance=min(shape.distToShape(walls)[0] for shape in local)
+        if clearance<.29:
+            raise ValueError('ねじ不要ケースと保持壁の隙間が不足しています: '+name)
+        bands=[e for e in body_frame['references'] if e.get('group')==name and e['kind']=='controller_band']
+        if len(bands)!=2 or any(shared_area(b['shape'],expected)<1 or shared_area(b['shape'],cases[1])<1 for b in bands):
+            raise ValueError('ケースと受け台を抱く解除式バンドが不足しています: '+name)
+        moving={e['name'] for e in body_frame['references'] if e.get('group')==name and e['kind']!='controller_band'}
+        fixed=set(items)-moving-{b['name'] for b in bands}
+        path=[[0,0,0],[30*v for v in controller['w']]]
+        if MotionCheck(items).path(moving,fixed,path):
+            raise ValueError('バンド解除後にケースを外側へ取り出せません: '+name)
+        results.append(dict(name=name,side_clearance_mm=clearance,bands=2,outward_removal_mm=30))
+    case=body_frame['scene']['controller_case_assembly']
+    if case['assembly_screws'] or case['assembly_nuts']:
+        raise ValueError('ねじ不要ケースに組立用ビス・ナットが残っています')
+    return dict(status='passed',controllers=len(results),cases=results,assembly_screws=0,assembly_nuts=0,
+                scope='共通受け台との形状一致、底面高さ、保持壁の隙間、保持帯の接触と、帯と配線を外した後の参考形状の直線着脱。',
+                physical_validation=False)
+
+
 def main():
     import FreeCAD as App
     import FreeCADGui as Gui
@@ -25,7 +81,7 @@ def main():
     from PySide6.QtWidgets import QApplication
     from controller_mount import dock,place,THICKNESS,RACK_PITCH,RACK_U,CASE_PITCH,STANDOFF,hardware_bom,case_mount_bolt
     from spark_rack_parameters import Parameters
-    from freecad_spark_rack import shapes,assembly_shapes,LAYOUTS
+    from freecad_spark_rack import shapes,assembly_shapes,LAYOUTS,create_body_frame
     from freecad_adapter_rack import create as create_adapter
     from validate_adapter_rack import visible_links,show_layout,value
 
@@ -139,6 +195,10 @@ def main():
                                 -value(adapter,'PostY')-RACK_U,value(adapter,'ModuleHeight')/2),
                                (0,1,0),(0,0,sign),(sign,0,0)))
             scenes['adapter_'+layout]=verify('adapter',layout,visible_links(adapter),mounts)
+        body_frame_doc,body_frame_model=create_body_frame()
+        report['layouts']['spark_body_frame']=check_screwless_mounts(body_frame_model)
+        scenes['spark_body_frame']=[(e['name'],e['shape']) for e in body_frame_model['parts']+body_frame_model['references']]
+        App.closeDocument(body_frame_doc.Name)
         # 分解詳細は外観確認用。取付検査の8構成とは区別する。
         detail=[('dock',dock())]
         for label,shape in normalized:

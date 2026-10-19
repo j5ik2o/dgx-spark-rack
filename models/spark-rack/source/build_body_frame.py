@@ -23,9 +23,9 @@ def write(path, value):
 
 def publish_latest(folder):
     """生成が完了した実行への案内だけを更新し、過去の生成物は変更しない。"""
-    manifest = json.loads((folder/'manifest.json').read_text())
+    manifest = json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
     html = folder/'body-frame.html'
-    if manifest.get('status') != 'generated' or not html.is_file() or '__BODY_FRAME_DATA__' in html.read_text():
+    if manifest.get('status') != 'generated' or not html.is_file() or '__BODY_FRAME_DATA__' in html.read_text(encoding='utf-8'):
         raise ValueError('生成が完了していない表示ページは公開できません')
     latest = folder.parent/'latest'
     if latest.exists() and not latest.is_symlink():
@@ -43,7 +43,7 @@ def worker(folder):
     import FreeCADGui as Gui
     import Part
     from freecad_spark_rack import create_body_frame
-    from body_frame_geometry import COLORS
+    from freecad_spark_rack import COLORS
     from validate_body_frame import validate
     Gui.showMainWindow()
     doc, model = create_body_frame()
@@ -107,7 +107,7 @@ def build():
         datetime.now(ZoneInfo('Asia/Tokyo')).strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8])
     sources = [SOURCE / n for n in (
         'freecad_spark_rack.py', 'spark_rack_parameters.py', 'body_frame_layout.py',
-        'body_frame_geometry.py', 'validate_body_frame.py', 'build_body_frame.py', 'body_frame_view.html')]
+        'validate_body_frame.py', 'build_body_frame.py', 'body_frame_view.html')]
     sources += [SOURCE / n for n in ('body_frame_cables.py', 'body_frame_cable_geometry.py', 'validate_body_frame_cables.py',
                                     'body_frame_switch_retention.py', 'body_frame_screwless.py', 'body_frame_joinery.py',
                                     'body_frame_assembly.py','validate_body_frame_assembly.py','body_frame_controller_assembly.py',
@@ -117,7 +117,7 @@ def build():
     sources += [ROOT / name for name in (
         'models/spark-rack/reference/tesmart-hks401-p23-dimensions-20261014.png',
         'models/fan-controller/source/freecad_fan_controller.py',
-        'tools/cad/controller_mount.py', 'tools/cad/edge_finishing.py',
+        'tools/cad/controller_mount.py', 'tools/cad/check_controller_mounts.py', 'tools/cad/edge_finishing.py',
         'tests/test_body_frame_layout.py', 'tests/test_body_frame_geometry.py',
         'tests/test_body_frame_cables.py',
         'tests/test_body_frame_joinery.py',
@@ -143,14 +143,14 @@ def build():
         (folder / 'freecad.log').write_text(result.stdout + result.stderr, encoding='utf-8')
         if result.returncode or not (folder / 'validation.json').exists():
             raise RuntimeError('本体連結案の形状検査に失敗しました: ' + str(folder / 'freecad.log'))
-        payload = dict(meshes=json.loads((folder / 'body-frame-scene.json').read_text()),
-                       scene=json.loads((folder / 'layout.json').read_text()),
-                       assembly=json.loads((folder / 'assembly-plan.json').read_text()),
-                       printPlan=json.loads((folder / 'print-plan.json').read_text()),
-                       supportPlan=json.loads((folder / 'support-plan.json').read_text()),
-                       supportMeshes=json.loads((folder / 'support-scene.json').read_text()),
-                       validation=json.loads((folder / 'validation.json').read_text()))
-        template = (SOURCE / 'body_frame_view.html').read_text()
+        payload = dict(meshes=json.loads((folder / 'body-frame-scene.json').read_text(encoding='utf-8')),
+                       scene=json.loads((folder / 'layout.json').read_text(encoding='utf-8')),
+                       assembly=json.loads((folder / 'assembly-plan.json').read_text(encoding='utf-8')),
+                       printPlan=json.loads((folder / 'print-plan.json').read_text(encoding='utf-8')),
+                       supportPlan=json.loads((folder / 'support-plan.json').read_text(encoding='utf-8')),
+                       supportMeshes=json.loads((folder / 'support-scene.json').read_text(encoding='utf-8')),
+                       validation=json.loads((folder / 'validation.json').read_text(encoding='utf-8')))
+        template = (SOURCE / 'body_frame_view.html').read_text(encoding='utf-8')
         if template.count('__BODY_FRAME_DATA__') != 1:
             raise ValueError('表示用データの挿入位置が不正です')
         (folder / 'body-frame.html').write_text(template.replace('__BODY_FRAME_DATA__',

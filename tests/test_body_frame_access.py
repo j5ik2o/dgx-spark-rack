@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'models/spark-rack/so
 @unittest.skipIf(App is None, 'FreeCAD同梱Pythonで実行してください')
 class FingerAccessTests(unittest.TestCase):
     def make_grip(self, offset=0):
-        from body_frame_access import key_grip
+        from freecad_spark_rack import key_grip
         return key_grip([0, 0, 20], 0, 1, 1, 0, 1.8, offset)
 
     def test_key_passes_but_fingers_hit_between_clear_endpoints(self):
@@ -44,7 +44,8 @@ class FingerAccessTests(unittest.TestCase):
             self.assertEqual(grip_path(items, 'key', grip, {'guard'}, [[0, 40, 0], [0, 0, 0]]), expected)
 
     def test_finger_boxes_never_fill_the_tab_itself_on_any_axis(self):
-        from body_frame_access import key_grip, finger_shape
+        from freecad_spark_rack import key_grip
+        from body_frame_access import finger_shape
         for axis in range(3):
             for normal in (i for i in range(3) if i != axis):
                 for sign in (-1, 1):

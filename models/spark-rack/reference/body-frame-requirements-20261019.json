@@ -4,15 +4,47 @@
   "spark_rows": 2,
   "spark_columns": 2,
   "structural_concept": "筐体の側面と上下の面へ局所接続部を当て、本体の剛性を使う案。筐体への荷重許容は未確認。",
-  "fan_mounting": "前後面または側面に平行な正立固定。斜め取付とヒンジで開いた運転姿勢は禁止。",
+  "fan_mounting": {
+    "mode": "fixed_axis_aligned",
+    "vertical": true
+  },
   "maintained_equipment": [
-    "DGX Spark 4台",
-    "CRS812 1台",
-    "GL-RM10 1台",
-    "TESmart HKS401-P23 1台",
-    "冷却ファン",
-    "ファンコントローラー",
-    "電源アダプター4個"
+    {
+      "kind": "spark",
+      "quantity": 4,
+      "model": "DGX Spark"
+    },
+    {
+      "kind": "switch",
+      "quantity": 1,
+      "model": "CRS812"
+    },
+    {
+      "kind": "comet",
+      "quantity": 1,
+      "model": "GL-RM10"
+    },
+    {
+      "kind": "kvm",
+      "quantity": 1,
+      "model": "TESmart HKS401-P23"
+    },
+    {
+      "kind": "power",
+      "quantity": 4
+    },
+    {
+      "kind": "controller",
+      "quantity": 6
+    },
+    {
+      "kind": "fan_140",
+      "quantity": 4
+    },
+    {
+      "kind": "fan_120",
+      "quantity": 2
+    }
   ],
   "initial_inventory_basis": "ファン140mm 4個、120mm 2個、制御器6組は従来の設計条件を維持した初期案。現在の所有数や新しい数量合意を示すものではない。",
   "physical_validation": false,
@@ -23,5 +55,6 @@
     "method": "木造の継手・仕口を参考にしたほぞ差しと角栓。ファンと制御器ケースもねじ不要。",
     "reference": "models/spark-rack/reference/body-frame-screwless-20261019.json"
   },
-  "assembly_order": "各小組みの最後の部材と角栓まで差せる順序を検査する。機器は下部受け・電源・下段本体・中間連結部・上段本体・上部支持部・周辺機器の順。ベルトと配線は最後。"
+  "assembly_order": "各小組みの最後の部材と角栓まで差せる順序を検査する。機器は下部受け・電源・下段本体・中間連結部・上段本体・上部支持部・周辺機器の順。ベルトと配線は最後。",
+  "fan_mounting_description": "前後面または側面に平行な正立固定。斜め取付とヒンジで開いた運転姿勢は禁止。"
 }

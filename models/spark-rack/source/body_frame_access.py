@@ -4,49 +4,10 @@ import Part
 
 
 FINGER_SIZE = [12, 10, 12]  # 接合面の法線、つまみを挟む方向、栓の引出し方向。
-TAB_WIDTH = 10
-TAB_START = 4
-TAB_END = 10
 
 
 def rectangular(low, high):
     return Part.makeBox(*[high[i]-low[i] for i in range(3)], App.Vector(*low))
-
-
-def key_grip(center, end, axis, sign, normal, shaft_width, offset=0, flat_side=-1):
-    """細い栓の外側へ、幅10mmの平たいつまみと二指分の予約を作る。"""
-    other = next(i for i in range(3) if i not in (axis, normal))
-    low, high = list(center), list(center)
-    for i in (normal, other):
-        low[i], high[i] = center[i]-shaft_width/2-1, center[i]+shaft_width/2+1
-    bed = center[other]+flat_side*shaft_width/2
-    if flat_side < 0:
-        low[other] = bed
-    else:
-        high[other] = bed
-    low[axis], high[axis] = sorted((end, end+sign*TAB_START))
-    low[normal] += min(0, offset)
-    high[normal] += max(0, offset)
-    neck = rectangular(low, high)
-    low[normal], high[normal] = center[normal]+offset-shaft_width/2-1, center[normal]+offset+shaft_width/2+1
-    low[other], high[other] = sorted((bed, bed-flat_side*TAB_WIDTH))
-    low[axis], high[axis] = sorted((end+sign*TAB_START, end+sign*TAB_END))
-    tab = rectangular(low, high)
-    fingers = []
-    for side in (-1, 1):
-        fl, fh = list(low), list(high)
-        fl[normal], fh[normal] = center[normal]+offset-FINGER_SIZE[0]/2, center[normal]+offset+FINGER_SIZE[0]/2
-        fl[axis], fh[axis] = sorted((end+sign*3, end+sign*15))
-        edge = low[other] if side < 0 else high[other]
-        fl[other], fh[other] = sorted((edge, edge+side*FINGER_SIZE[1]))
-        fingers.append(dict(origin=fl, size=[fh[i]-fl[i] for i in range(3)]))
-    return neck.fuse(tab).removeSplitter(), dict(
-        tab_width_mm=TAB_WIDTH, tab_length_mm=TAB_END-TAB_START,
-        tab_thickness_mm=shaft_width+2, stand_off_mm=TAB_START, grip_offset_mm=offset,
-        print_build_axis=[-flat_side if i==other else 0 for i in range(3)],
-        print_bed_coordinate_mm=bed,
-        axis=[sign if i == axis else 0 for i in range(3)],
-        finger_boxes=fingers, assumption='各指12×10×12mmの直方体。素手の仮の操作空間で、人体寸法の規格値ではない。')
 
 
 def finger_shape(grip):
@@ -117,7 +78,7 @@ def check_release_reservations(model):
     """解除部は外向き。未選定の購入品に対して、操作側の空間だけを先に予約する。"""
     from controller_mount import place
     from body_frame_assembly import MotionCheck, unit_bounds, shape_bounds
-    from body_frame_geometry import block
+    from freecad_spark_rack import block
     scene = model['scene']
     items = {e['name']:e for e in model['parts']+model['references']+model['cables']+model['cable_storage']}
     source = scene['controller_case_assembly']
