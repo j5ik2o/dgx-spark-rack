@@ -1,0 +1,39 @@
+{
+  "recorded_on": "2026-10-19",
+  "authorization": "ユーザーは配線を含めて配置を詰める推奨案を選択。",
+  "scope": "実ケーブルの完成配線ではなく、固定物・ファン着脱との干渉を確認する経路予約。束の内部配置と束同士の重なりは未判定。",
+  "network_bend_radius": {
+    "source": "https://www.naddod.com/products/103563.html",
+    "checked_on": "2026-10-19",
+    "manufacturer_range_mm": [
+      37,
+      42
+    ],
+    "adopted_reference_minimum_mm": 42,
+    "note": "主線と分岐線への適用、線径、分岐点、各長さは未確認。2mを各分岐線の長さと扱わない。"
+  },
+  "switch_orientation": "CRS812は通信端子面をラック背面側へ向ける候補。電源線は反対面から左右へ逃がす。端子面と吸排気・電源ファンの操作範囲は実機で確認し、必要なら向きを変える。",
+  "provisional_geometry": "図中の線径、プラグ突出35mm、端子中心、一般配線の曲げ半径は設計上の仮定。製品の確定仕様ではない。",
+  "power_strip": "8口以上のタップと補助電源を机上別置きする360×90×90mmの予約。Spark用4口、GL-RM10用1口、切替器用1口、CRS812用2口の計8口。制御器の給電仕様次第で追加口が必要。製品選定・電気容量・プラグの差込適合は未判定。",
+  "source_records": [
+    "models/spark-rack/reference/pending-mount-measurements.json",
+    "models/spark-rack/reference/selected-network-20261012/configuration.json"
+  ],
+  "physical_validation": false,
+  "binding_method": {
+    "general": "保持部の穴へ解除式の結束バンド（インシュロック）を通し、切断せずに解除して外す。",
+    "network": "太い分岐線は締め付けず緩く保持し、面ファスナーも併用。",
+    "current_slot_mm": [
+      8,
+      3
+    ],
+    "selected_product": null,
+    "releasable_type_reference": "https://www.hellermanntyton.co.jp/product/cabletie/repeat/rf.html",
+    "checked_on": "2026-10-19",
+    "separate_from_device_retention": true,
+    "default_type": "releasable",
+    "decision_basis": "ユーザーが解除式（推奨）を選択したため、配線固定の標準として採用。",
+    "release_access": "解除レバーを保持部の外側から操作できる向きにする。製品と操作空間は選定後に確認。",
+    "cutting_required_for_service": false
+  }
+}

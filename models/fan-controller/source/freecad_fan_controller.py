@@ -523,3 +523,49 @@ App.Console.PrintMessage("ケース箱外形（取付耳を除く）: %.2f x %.2
 # Mesh.export([case_lid], "/absolute/output/CaseLid.stl")
 # 本体: 底面を下。蓋: 天面を下。独立押さえ: 広い下面を下。
 # 任意で保存: doc.saveAs("/absolute/output/FanControllerCase.FCStd")
+
+
+def screwless_case_parts():
+    """ねじを加工しない別案。基板押さえを蓋と一体にし、外側の解除式バンドで保持する。"""
+    body = round_horizontal_rims(round_outer_corners(body_with_vents, body_height), (bottom_z, lid_z))
+    lid = round_horizontal_rims(round_outer_corners(lid_with_openings, LID_THICKNESS), (lid_top_z,))
+    for pocket, (x, y) in zip(clamp_pockets, clamp_screw_centers):
+        body = body.cut(pocket)
+        front = y < 0
+        reach = CLAMP_SCREW_OFFSET + gap + SUPPORT_EDGE_OVERLAP
+        clamp = box(-CLAMP_LUG_WIDTH/2, -CLAMP_LUG_LENGTH/2, 0,
+                    CLAMP_LUG_WIDTH, CLAMP_LUG_LENGTH, CLAMP_THICKNESS)
+        clamp = clamp.fuse(box(-SUPPORT_LENGTH/2, 0, 0, SUPPORT_LENGTH, reach, CLAMP_THICKNESS))
+        if not front:
+            clamp.rotate(App.Vector(), App.Vector(0, 0, 1), 180)
+        clamp.translate(App.Vector(x, y, retainer_bottom_z))
+        post = box(x-CLAMP_LUG_WIDTH/2, y-CLAMP_LUG_LENGTH/2,
+                   retainer_bottom_z+CLAMP_THICKNESS-BOOLEAN_OVERLAP,
+                   CLAMP_LUG_WIDTH, CLAMP_LUG_LENGTH,
+                   lid_z-retainer_bottom_z-CLAMP_THICKNESS+2*BOOLEAN_OVERLAP)
+        lid = lid.fuse(clamp).fuse(post)
+    body, lid = body.removeSplitter(), lid.removeSplitter()
+    for shape, label in ((body, 'ScrewlessCaseBody'), (lid, 'ScrewlessCaseLid')):
+        valid_solid(shape, label)
+        for reference in (pcb_envelope, terminal_envelope):
+            require(shape.common(reference).Volume < VOLUME_TOLERANCE,
+                    label + ': 基板または端子台の参考外形に干渉しています。')
+    require(body.common(lid).Volume < VOLUME_TOLERANCE, 'ねじ不要ケースの本体と蓋が干渉しています。')
+    return dict(body=body, lid=lid, assembly_screws=0, assembly_nuts=0,
+                nominal_thickness_mm=dict(wall=WALL,floor=FLOOR,lid=LID_THICKNESS,
+                                          pcb_retainer=CLAMP_THICKNESS,
+                                          retainer_post=[CLAMP_LUG_WIDTH,CLAMP_LUG_LENGTH]),
+                pcb_retention='蓋と一体の4本の押さえ。基板との隙間は0.2mm。',
+                lid_retention='ケースと受け台を一緒に抱く解除式結束バンド2本。',
+                reference_boxes=[
+                    dict(name='pcb', label='基板の外形', origin=[0,0,0], size=[PCB_LENGTH,PCB_WIDTH,PCB_THICKNESS]),
+                    dict(name='terminal', label='端子台の外形', origin=[terminal_x,terminal_y,PCB_THICKNESS],
+                         size=[TERMINAL_LENGTH,TERMINAL_WIDTH,TERMINAL_TOP_Z-PCB_THICKNESS]),
+                    dict(name='display', label='表示器の外形', origin=[DISPLAY_X,DISPLAY_Y,PCB_THICKNESS],
+                         size=[DISPLAY_LENGTH,DISPLAY_WIDTH,DISPLAY_TOP_Z-PCB_THICKNESS]),
+                    dict(name='encoder', label='つまみ土台の外形',
+                         origin=[ENCODER_X-ENCODER_BASE_LENGTH/2,ENCODER_BASE_BOTTOM_Y,PCB_THICKNESS],
+                         size=[ENCODER_BASE_LENGTH,ENCODER_BASE_WIDTH,ENCODER_BASE_TOP_Z-PCB_THICKNESS])],
+                knob_reference=dict(origin=[ENCODER_X,ENCODER_Y,ENCODER_BASE_TOP_Z], radius=KNOB_PASS_DIAMETER/2,
+                                    height=KNOB_TOP_Z-ENCODER_BASE_TOP_Z),
+                physical_validation=False)

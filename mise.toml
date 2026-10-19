@@ -46,6 +46,10 @@ run = "python3 models/spark-rack/source/build_rack_candidate_overview.py"
 description = "固定段・独立電源区画の形状候補と交換予約を検査して生成（造形用ではない）"
 run = "python3 models/spark-rack/source/build_fixed_rack.py"
 
+[tasks."body-frame:spark-rack"]
+description = "Spark本体を骨格にする参考形状・配線経路・余長受け・正立ファンの直線着脱を検査"
+run = "python3 models/spark-rack/source/build_body_frame.py"
+
 [tasks."upper-bay:spark-rack"]
 description = "上枠を共有する上部専用段と中段の遠隔操作機器棚の形状候補・3案の比較・検査を生成（造形用ではない）"
 run = "python3 models/spark-rack/source/build_fixed_rack.py --switch-bay upper"

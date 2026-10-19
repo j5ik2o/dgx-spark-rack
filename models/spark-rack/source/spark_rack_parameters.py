@@ -3,6 +3,130 @@ from dataclasses import dataclass, asdict
 
 
 @dataclass(frozen=True)
+class BodyFrameParameters:
+    """Spark本体を骨格に使う2段×2列の寸法候補。接触部・荷重・冷却は未実測。"""
+    spark_width: float = 150
+    spark_depth: float = 150
+    spark_height: float = 50.5
+    column_gap: float = 20
+    stack_gap: float = 20
+    lower_base: float = 60
+    corner_inside: float = 20
+    corner_outside: float = 8
+    corner_grip: float = 6
+    foot_grip: float = 12
+    fit_clearance: float = 0.3
+    top_riser: float = 16
+    beam_width: float = 16
+    beam_height: float = 10
+    beam_overhang: float = 16
+    tray_thickness: float = 4
+    network_standoff: float = 63
+    network_rail_depth: float = 236
+    switch_front_y: float = -10
+    comet_front_y: float = -40
+    kvm_front_y: float = 120
+    front_fan_gap: float = 30
+    rear_fan_gap: float = 230
+    fan_size: float = 140
+    fan_depth: float = 27
+    fan_pitch: float = 124.5
+    fan_opening: float = 132
+    fan_plate: float = 4
+    fan_rim: float = 4
+    fan_arm_size: float = 8
+    power_fan_size: float = 120
+    power_fan_pitch: float = 105
+    power_fan_opening: float = 114
+    power_fan_center_y: float = 234
+    power_fan_center_z: float = 64
+    power_fan_gap: float = 20
+    power_fan_arm_overlap: float = 8
+    power_first_y: float = 5
+    power_row_pitch: float = 135
+    power_bottom: float = 16
+    power_tray_size: float = 110
+    controller_offset: float = 20
+    controller_right_y: float = 40
+    controller_left_y: float = 106
+    controller_first_z: float = 26
+    controller_pitch_z: float = 50
+    controller_width: float = 100
+    controller_depth: float = 44
+    controller_height: float = 46
+    rear_connector_depth: float = 60
+    fan_removal_distance: float = 110
+    usable_print_size: float = 246
+    cable_rear_y: float = 350
+    cable_side_x: float = 260
+    cable_storage_radius: float = 55
+    cable_storage_center_z: float = 256
+    cable_underfloor_z: float = 6
+    switch_stop_height: float = 8
+    switch_stop_thickness: float = 4
+    switch_fit_clearance: float = .5
+    switch_band_width: float = 16
+    switch_band_thickness: float = 1.5
+    joinery_clearance: float = .15
+    joinery_max_depth: float = 5
+    joint_key_min_width: float = 1.8
+    joint_min_ligament: float = 1.0
+    fan_pin_split_length: float = 12
+    fan_pin_flat_offset: float = 1.2
+
+    @property
+    def core_width(self):
+        return 2 * self.spark_width + self.column_gap
+
+    @property
+    def upper_base(self):
+        return self.lower_base + self.spark_height + self.stack_gap
+
+    @property
+    def core_top(self):
+        return self.upper_base + self.spark_height
+
+    @property
+    def beam_z(self):
+        return self.core_top + self.top_riser
+
+    @property
+    def accessory_surface(self):
+        return self.beam_z + self.beam_height
+
+    @property
+    def network_rail_z(self):
+        return self.accessory_surface + self.network_standoff
+
+    def validate(self):
+        import math
+        coordinates = {'switch_front_y', 'comet_front_y'}
+        for key, value in asdict(self).items():
+            if not math.isfinite(value) or (key not in coordinates and value <= 0):
+                raise ValueError('本体連結案の寸法は有限の正の値にしてください: ' + key)
+        if self.stack_gap <= 2 * self.fit_clearance:
+            raise ValueError('本体間の接続部を置く隙間が不足しています')
+        if self.corner_inside >= min(self.spark_width, self.spark_depth) / 2:
+            raise ValueError('コーナー接続部が本体の半分以上を覆っています')
+        if self.rear_fan_gap <= self.rear_connector_depth:
+            raise ValueError('背面ファンが端子の仮空間へ入ります')
+        if self.controller_pitch_z <= self.controller_height:
+            raise ValueError('制御器の段間隔が不足しています')
+        if self.spark_depth + self.rear_fan_gap - self.fan_plate <= self.cable_rear_y + 8:
+            raise ValueError('背面ファンと配線区画の間隔が不足しています')
+        if self.power_bottom - self.tray_thickness <= self.cable_underfloor_z + 4:
+            raise ValueError('電源受けの下に配線を通す高さが不足しています')
+        if self.joinery_max_depth < 2:
+            raise ValueError('ほぞの最大差し込み量は2mm以上にしてください')
+        if self.power_fan_arm_overlap < 8:
+            raise ValueError('電源ファンの接合面の重なりは8mm以上にしてください')
+        if not 5 <= self.fan_pin_split_length < self.fan_depth+self.fan_plate-5:
+            raise ValueError('割りピンの弾性部は5mm以上で、根元を5mm以上残してください')
+        if not 0 < self.fan_pin_flat_offset < 1.8:
+            raise ValueError('割りピンの造形面は軸の半径1.8mm以内にしてください')
+
+
+@dataclass(frozen=True)
 class FixedRackParameters:
     """固定段と独立電源区画を持つ4台ラックの設計候補。単位mm。"""
     width: float = 544

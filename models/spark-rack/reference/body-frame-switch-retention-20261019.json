@@ -1,0 +1,15 @@
+{
+  "recorded_on": "2026-10-19",
+  "user_requirement": "東京の地震で上に載せたCRS812が滑って落ちないようにする。一応固定されている程度の簡易固定でよい。",
+  "clarified_scope": "机へのクランプは不要。ラック全体の耐震化や特定震度への適合認証ではなく、上部スイッチの横滑りと落下を抑える。",
+  "design": "支持レールへ低い前後左右の抜け止めを設け、非伸縮の着脱式ベルト2本でスイッチ本体と支持レールを一緒に抱く。粘着材や摩擦だけには依存しない。",
+  "reference_only": "CRS812の参考外形に基づく。足、通気口、ベルト・バックルと荷重許容は実測・確認前。",
+  "verification_scope": "参考外形の水平4方向と上方向の移動を保持部が遮ること、ベルトが支持レールと筐体の両方に掛かることを形状で確認する。",
+  "earthquake_note": "気象庁は同じ震度でも振幅・周期・継続時間や構造物の状態によって被害が異なると説明している。震度2・3という表現を単一の静荷重や試験合格値へ変換しない。",
+  "sources": [
+    "https://www.jma.go.jp/jma/kishou/know/shindo/kaisetsu.html",
+    "https://www.bousai.metro.tokyo.lg.jp/bousai/1000027/1000295.html"
+  ],
+  "physical_validation": false,
+  "seismic_rating_verified": false
+}
