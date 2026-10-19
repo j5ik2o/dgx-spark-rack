@@ -66,6 +66,19 @@ class AssemblyMotionTests(unittest.TestCase):
         check=MotionCheck({'ring':{'shape':ring},'obstacle':{'shape':obstacle}})
         self.assertEqual(check.path({'ring'},{'obstacle'},[[0,0,0],[3,0,0]]),['ring','obstacle'])
 
+    def test_planar_faces_after_a_rounded_rim_keep_the_full_negative_motion(self):
+        from body_frame_assembly import MotionCheck
+        ring=Part.makeTorus(4.4,.4,App.Vector(5,0,0),App.Vector(1,0,0))
+        tab=Part.makeBox(1,1,1,App.Vector(5,8,0))
+        moving=Part.makeCompound([ring,tab])
+        obstacle=Part.makeBox(.2,.2,.2,App.Vector(.5,8.2,.2))
+        self.assertEqual(moving.common(obstacle).Volume,0)
+        end=moving.copy()
+        end.translate(App.Vector(-10,0,0))
+        self.assertEqual(end.common(obstacle).Volume,0)
+        check=MotionCheck({'moving':{'shape':moving},'obstacle':{'shape':obstacle}})
+        self.assertEqual(check.path({'moving'},{'obstacle'},[[0,0,0],[-10,0,0]]),['moving','obstacle'])
+
 
 if __name__ == '__main__':
     unittest.main()

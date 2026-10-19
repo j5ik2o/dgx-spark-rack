@@ -55,12 +55,12 @@ def sweep_probes(shape, vector):
             axis = max(range(3),key=lambda i:abs(vector[i]))
             center = [surface.Center.x,surface.Center.y,surface.Center.z]
             center[axis] = lo[axis]
-            direction = App.Vector(*[int(i==axis) for i in range(3)])
+            ring_axis = App.Vector(*[int(i==axis) for i in range(3)])
             outer = Part.makeCylinder(surface.MajorRadius+surface.MinorRadius,
-                                      hi[axis]-lo[axis],App.Vector(*center),direction)
+                                      hi[axis]-lo[axis],App.Vector(*center),ring_axis)
             inner_radius = max(0,surface.MajorRadius-surface.MinorRadius)
             if inner_radius > 1e-7:
-                inner = Part.makeCylinder(inner_radius,hi[axis]-lo[axis],App.Vector(*center),direction)
+                inner = Part.makeCylinder(inner_radius,hi[axis]-lo[axis],App.Vector(*center),ring_axis)
                 outer = outer.cut(inner)
             probes.append(outer)
         else:
